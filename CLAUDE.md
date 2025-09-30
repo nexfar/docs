@@ -1,96 +1,46 @@
-# CLAUDE.md
+# Documentação Mintlify
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Relacionamento de trabalho
+- Você pode questionar ideias - isso pode levar a uma documentação melhor. Cite fontes e explique seu raciocínio quando fizer isso
+- SEMPRE peça esclarecimentos em vez de fazer suposições
+- NUNCA minta, adivinhe ou invente informações
 
-## Project Overview
+## Contexto do projeto
+- Formato: Arquivos MDX com frontmatter YAML
+- Configuração: docs.json para navegação, tema, configurações
+- Componentes: Componentes Mintlify
 
-This is a Mintlify documentation site. Mintlify is a documentation platform that uses MDX (Markdown + React components) to create interactive documentation sites.
+## Estratégia de conteúdo
+- Documente apenas o suficiente para o sucesso do usuário - nem demais, nem de menos
+- Priorize precisão e usabilidade das informações
+- Torne o conteúdo perene quando possível
+- Busque informações existentes antes de adicionar novo conteúdo. Evite duplicação, a menos que seja feito por uma razão estratégica
+- Verifique padrões existentes para consistência
+- Comece fazendo as menores mudanças razoáveis
 
-## Development Commands
+## Requisitos de frontmatter para páginas
+- title: Título de página claro e descritivo
+- description: Resumo conciso para SEO/navegação
 
-### Local Development
-```bash
-# Install Mintlify CLI (requires Node.js v19+)
-npm i -g mint
+## Padrões de escrita
+- Voz em segunda pessoa ("você")
+- Pré-requisitos no início do conteúdo processual
+- Teste todos os exemplos de código antes de publicar
+- Combine estilo e formatação das páginas existentes
+- Inclua casos de uso básicos e avançados
+- Tags de linguagem em todos os blocos de código
+- Texto alternativo em todas as imagens
+- Caminhos relativos para links internos
 
-# Start local development server at http://localhost:3000
-mint dev
+## Fluxo de trabalho Git
+- NUNCA use --no-verify ao fazer commit
+- Pergunte como lidar com mudanças não commitadas antes de começar
+- Crie um novo branch quando não houver branch claro para mudanças
+- Faça commit frequentemente durante o desenvolvimento
+- NUNCA pule ou desabilite pre-commit hooks
 
-# Use custom port
-mint dev --port 3333
-
-# Update CLI to latest version
-npm mint update
-```
-
-### Validation
-```bash
-# Check for broken links in documentation
-mint broken-links
-```
-
-## Architecture
-
-### Configuration
-- `docs.json`: Main configuration file that defines:
-  - Site theme and colors
-  - Navigation structure (tabs, groups, pages)
-  - Logo and branding
-  - Footer and social links
-  - Contextual options for AI tools integration
-
-### Content Structure
-Documentation is organized in a tab-based navigation:
-
-1. **Guides Tab**:
-   - `index.mdx`, `quickstart.mdx`, `development.mdx`: Getting started pages
-   - `essentials/`: Core documentation writing guides (settings, navigation, markdown, code, images, reusable-snippets)
-   - `ai-tools/`: AI tool integration guides (cursor, claude-code, windsurf)
-
-2. **API Reference Tab**:
-   - `api-reference/introduction.mdx`: API overview
-   - `api-reference/endpoint/`: Example endpoint documentation (get, create, delete, webhook)
-   - `api-reference/openapi.json`: OpenAPI spec for auto-generated API docs
-
-3. **Shared Resources**:
-   - `snippets/`: Reusable MDX content snippets
-   - `images/`: Image assets
-   - `logo/`: Light and dark logo variants
-
-### Page Format
-All documentation pages use MDX with frontmatter:
-```mdx
----
-title: "Page Title"
-description: "Page description"
----
-
-Content here with MDX components
-```
-
-### Navigation System
-Pages are added to navigation by:
-1. Creating the `.mdx` file in appropriate directory
-2. Adding the page path (without extension) to `docs.json` under the relevant group in the navigation structure
-
-### Deployment
-Changes are automatically deployed to production when pushed to the main branch (requires GitHub app integration from Mintlify dashboard).
-
-## Common Tasks
-
-When adding new documentation pages:
-1. Create `.mdx` file in appropriate directory (essentials/, ai-tools/, api-reference/, etc.)
-2. Add frontmatter with title and description
-3. Update `docs.json` navigation structure to include the new page path
-4. Test locally with `mint dev`
-5. Verify no broken links with `mint broken-links`
-
-When modifying navigation:
-- Edit the `navigation.tabs` array in `docs.json`
-- Pages are referenced by their file path without the `.mdx` extension
-- Groups organize related pages together
-
-When updating branding:
-- Edit colors in `docs.json` under the `colors` key
-- Update logos in `logo/` directory (light.svg and dark.svg)
-- Update favicon at root level
+## Não faça
+- Pular frontmatter em qualquer arquivo MDX
+- Usar URLs absolutas para links internos
+- Incluir exemplos de código não testados
+- Fazer suposições - sempre peça esclarecimentos

@@ -68,29 +68,10 @@
         ]
       }
     ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentação",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    "global": { }
   },
   "logo": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
   "navbar": {
-    "links": [
-      {
-        "label": "Suporte",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
     "primary": {
       "type": "button",
       "label": "Painel",
