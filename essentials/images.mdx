@@ -1,6 +1,6 @@
 ---
-title: 'Images and embeds'
-description: 'Add image, video, and other HTML elements'
+title: 'Imagens e embeds'
+description: 'Adicionar imagem, vídeo e outros elementos HTML'
 icon: 'image'
 ---
 
@@ -9,27 +9,27 @@ icon: 'image'
   src="https://mintlify-assets.b-cdn.net/bigbend.jpg"
 />
 
-## Image
+## Imagem
 
-### Using Markdown
+### Usando Markdown
 
-The [markdown syntax](https://www.markdownguide.org/basic-syntax/#images) lets you add images using the following code
+A [sintaxe markdown](https://www.markdownguide.org/basic-syntax/#images) permite adicionar imagens usando o seguinte código
 
 ```md
 ![title](/path/image.jpg)
 ```
 
-Note that the image file size must be less than 5MB. Otherwise, we recommend hosting on a service like [Cloudinary](https://cloudinary.com/) or [S3](https://aws.amazon.com/s3/). You can then use that URL and embed.
+Note que o tamanho do arquivo de imagem deve ser menor que 5MB. Caso contrário, recomendamos hospedar em um serviço como [Cloudinary](https://cloudinary.com/) ou [S3](https://aws.amazon.com/s3/). Você pode então usar essa URL e incorporar.
 
-### Using embeds
+### Usando embeds
 
-To get more customizability with images, you can also use [embeds](/writing-content/embed) to add images
+Para obter mais personalização com imagens, você também pode usar [embeds](/writing-content/embed) para adicionar imagens
 
 ```html
 <img height="200" src="/path/image.jpg" />
 ```
 
-## Embeds and HTML elements
+## Embeds e elementos HTML
 
 <iframe
   width="560"
@@ -46,13 +46,13 @@ To get more customizability with images, you can also use [embeds](/writing-cont
 
 <Tip>
 
-Mintlify supports [HTML tags in Markdown](https://www.markdownguide.org/basic-syntax/#html). This is helpful if you prefer HTML tags to Markdown syntax, and lets you create documentation with infinite flexibility.
+Mintlify suporta [tags HTML em Markdown](https://www.markdownguide.org/basic-syntax/#html). Isso é útil se você preferir tags HTML à sintaxe Markdown, e permite criar documentação com flexibilidade infinita.
 
 </Tip>
 
 ### iFrames
 
-Loads another HTML page within the document. Most commonly used for embedding videos.
+Carrega outra página HTML dentro do documento. Mais comumente usado para incorporar vídeos.
 
 ```html
 <iframe src="https://www.youtube.com/embed/4KzFe50RQkQ"> </iframe>

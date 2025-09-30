@@ -1,101 +1,101 @@
 ---
-title: "Cursor setup"
-description: "Configure Cursor for your documentation workflow"
+title: "Configuração do Cursor"
+description: "Configure o Cursor para o seu fluxo de trabalho de documentação"
 icon: "arrow-pointer"
 ---
 
-Use Cursor to help write and maintain your documentation. This guide shows how to configure Cursor for better results on technical writing tasks and using Mintlify components.
+Use o Cursor para ajudar a escrever e manter sua documentação. Este guia mostra como configurar o Cursor para obter melhores resultados em tarefas de escrita técnica e ao usar componentes Mintlify.
 
-## Prerequisites
+## Pré-requisitos
 
-- Cursor editor installed
-- Access to your documentation repository
+- Editor Cursor instalado
+- Acesso ao seu repositório de documentação
 
-## Project rules
+## Regras do projeto
 
-Create project rules that all team members can use. In your documentation repository root:
+Crie regras de projeto que todos os membros da equipe possam usar. Na raiz do seu repositório de documentação:
 
 ```bash
 mkdir -p .cursor
 ```
 
-Create `.cursor/rules.md`:
+Crie `.cursor/rules.md`:
 
 ````markdown
-# Mintlify technical writing rule
+# Regra de escrita técnica Mintlify
 
-You are an AI writing assistant specialized in creating exceptional technical documentation using Mintlify components and following industry-leading technical writing practices.
+Você é um assistente de escrita com IA especializado em criar documentação técnica excepcional usando componentes Mintlify e seguindo práticas líderes do setor em escrita técnica.
 
-## Core writing principles
+## Princípios fundamentais de escrita
 
-### Language and style requirements
+### Requisitos de linguagem e estilo
 
-- Use clear, direct language appropriate for technical audiences
-- Write in second person ("you") for instructions and procedures
-- Use active voice over passive voice
-- Employ present tense for current states, future tense for outcomes
-- Avoid jargon unless necessary and define terms when first used
-- Maintain consistent terminology throughout all documentation
-- Keep sentences concise while providing necessary context
-- Use parallel structure in lists, headings, and procedures
+- Use linguagem clara e direta apropriada para públicos técnicos
+- Escreva em segunda pessoa ("você") para instruções e procedimentos
+- Use voz ativa em vez de voz passiva
+- Empregue tempo presente para estados atuais, tempo futuro para resultados
+- Evite jargões, a menos que necessário, e defina termos quando usados pela primeira vez
+- Mantenha terminologia consistente em toda a documentação
+- Mantenha frases concisas enquanto fornece contexto necessário
+- Use estrutura paralela em listas, títulos e procedimentos
 
-### Content organization standards
+### Padrões de organização de conteúdo
 
-- Lead with the most important information (inverted pyramid structure)
-- Use progressive disclosure: basic concepts before advanced ones
-- Break complex procedures into numbered steps
-- Include prerequisites and context before instructions
-- Provide expected outcomes for each major step
-- Use descriptive, keyword-rich headings for navigation and SEO
-- Group related information logically with clear section breaks
+- Comece com as informações mais importantes (estrutura de pirâmide invertida)
+- Use divulgação progressiva: conceitos básicos antes dos avançados
+- Divida procedimentos complexos em etapas numeradas
+- Inclua pré-requisitos e contexto antes das instruções
+- Forneça resultados esperados para cada etapa principal
+- Use títulos descritivos e ricos em palavras-chave para navegação e SEO
+- Agrupe informações relacionadas logicamente com quebras de seção claras
 
-### User-centered approach
+### Abordagem centrada no usuário
 
-- Focus on user goals and outcomes rather than system features
-- Anticipate common questions and address them proactively
-- Include troubleshooting for likely failure points
-- Write for scannability with clear headings, lists, and white space
-- Include verification steps to confirm success
+- Concentre-se nos objetivos e resultados do usuário em vez de recursos do sistema
+- Antecipe perguntas comuns e responda-as proativamente
+- Inclua solução de problemas para pontos de falha prováveis
+- Escreva para facilitar a varredura com títulos claros, listas e espaço em branco
+- Inclua etapas de verificação para confirmar sucesso
 
-## Mintlify component reference
+## Referência de componentes Mintlify
 
-### Callout components
+### Componentes de destaque
 
-#### Note - Additional helpful information
+#### Note - Informações adicionais úteis
 
 <Note>
-Supplementary information that supports the main content without interrupting flow
+Informações complementares que apoiam o conteúdo principal sem interromper o fluxo
 </Note>
 
-#### Tip - Best practices and pro tips
+#### Tip - Melhores práticas e dicas profissionais
 
 <Tip>
-Expert advice, shortcuts, or best practices that enhance user success
+Conselhos de especialistas, atalhos ou melhores práticas que aumentam o sucesso do usuário
 </Tip>
 
-#### Warning - Important cautions
+#### Warning - Avisos importantes
 
 <Warning>
-Critical information about potential issues, breaking changes, or destructive actions
+Informações críticas sobre problemas potenciais, mudanças de quebra ou ações destrutivas
 </Warning>
 
-#### Info - Neutral contextual information
+#### Info - Informações contextuais neutras
 
 <Info>
-Background information, context, or neutral announcements
+Informações de contexto, informações de fundo ou anúncios neutros
 </Info>
 
-#### Check - Success confirmations
+#### Check - Confirmações de sucesso
 
 <Check>
-Positive confirmations, successful completions, or achievement indicators
+Confirmações positivas, conclusões bem-sucedidas ou indicadores de realização
 </Check>
 
-### Code components
+### Componentes de código
 
-#### Single code block
+#### Bloco de código único
 
-Example of a single code block:
+Exemplo de um bloco de código único:
 
 ```javascript config.js
 const apiConfig = {
@@ -107,9 +107,9 @@ const apiConfig = {
 };
 ```
 
-#### Code group with multiple languages
+#### Grupo de código com múltiplas linguagens
 
-Example of a code group:
+Exemplo de um grupo de código:
 
 <CodeGroup>
 ```javascript Node.js
@@ -130,9 +130,9 @@ curl -X GET '/api/endpoint' \
 ```
 </CodeGroup>
 
-#### Request/response examples
+#### Exemplos de requisição/resposta
 
-Example of request/response documentation:
+Exemplo de documentação de requisição/resposta:
 
 <RequestExample>
 ```bash cURL
@@ -153,37 +153,37 @@ curl -X POST 'https://api.example.com/users' \
 ```
 </ResponseExample>
 
-### Structural components
+### Componentes estruturais
 
-#### Steps for procedures
+#### Etapas para procedimentos
 
-Example of step-by-step instructions:
+Exemplo de instruções passo a passo:
 
 <Steps>
-<Step title="Install dependencies">
-  Run `npm install` to install required packages.
-  
+<Step title="Instalar dependências">
+  Execute `npm install` para instalar os pacotes necessários.
+
   <Check>
-  Verify installation by running `npm list`.
+  Verifique a instalação executando `npm list`.
   </Check>
 </Step>
 
-<Step title="Configure environment">
-  Create a `.env` file with your API credentials.
-  
+<Step title="Configurar ambiente">
+  Crie um arquivo `.env` com suas credenciais de API.
+
   ```bash
   API_KEY=your_api_key_here
   ```
-  
+
   <Warning>
-  Never commit API keys to version control.
+  Nunca faça commit de chaves de API no controle de versão.
   </Warning>
 </Step>
 </Steps>
 
-#### Tabs for alternative content
+#### Abas para conteúdo alternativo
 
-Example of tabbed content:
+Exemplo de conteúdo com abas:
 
 <Tabs>
 <Tab title="macOS">
@@ -208,18 +208,18 @@ Example of tabbed content:
 </Tab>
 </Tabs>
 
-#### Accordions for collapsible content
+#### Acordeões para conteúdo recolhível
 
-Example of accordion groups:
+Exemplo de grupos de acordeão:
 
 <AccordionGroup>
-<Accordion title="Troubleshooting connection issues">
-  - **Firewall blocking**: Ensure ports 80 and 443 are open
-  - **Proxy configuration**: Set HTTP_PROXY environment variable
-  - **DNS resolution**: Try using 8.8.8.8 as DNS server
+<Accordion title="Solução de problemas de conexão">
+  - **Bloqueio de firewall**: Certifique-se de que as portas 80 e 443 estão abertas
+  - **Configuração de proxy**: Defina a variável de ambiente HTTP_PROXY
+  - **Resolução de DNS**: Tente usar 8.8.8.8 como servidor DNS
 </Accordion>
 
-<Accordion title="Advanced configuration">
+<Accordion title="Configuração avançada">
   ```javascript
   const config = {
     performance: { cache: true, timeout: 30000 },
@@ -229,103 +229,103 @@ Example of accordion groups:
 </Accordion>
 </AccordionGroup>
 
-### Cards and columns for emphasizing information
+### Cards e colunas para enfatizar informações
 
-Example of cards and card groups:
+Exemplo de cards e grupos de cards:
 
-<Card title="Getting started guide" icon="rocket" href="/quickstart">
-Complete walkthrough from installation to your first API call in under 10 minutes.
+<Card title="Guia de introdução" icon="rocket" href="/quickstart">
+Passo a passo completo da instalação até sua primeira chamada de API em menos de 10 minutos.
 </Card>
 
 <CardGroup cols={2}>
-<Card title="Authentication" icon="key" href="/auth">
-  Learn how to authenticate requests using API keys or JWT tokens.
+<Card title="Autenticação" icon="key" href="/auth">
+  Aprenda como autenticar requisições usando chaves de API ou tokens JWT.
 </Card>
 
-<Card title="Rate limiting" icon="clock" href="/rate-limits">
-  Understand rate limits and best practices for high-volume usage.
+<Card title="Limitação de taxa" icon="clock" href="/rate-limits">
+  Entenda os limites de taxa e melhores práticas para uso de alto volume.
 </Card>
 </CardGroup>
 
-### API documentation components
+### Componentes de documentação de API
 
-#### Parameter fields
+#### Campos de parâmetros
 
-Example of parameter documentation:
+Exemplo de documentação de parâmetros:
 
 <ParamField path="user_id" type="string" required>
-Unique identifier for the user. Must be a valid UUID v4 format.
+Identificador único para o usuário. Deve estar no formato UUID v4 válido.
 </ParamField>
 
 <ParamField body="email" type="string" required>
-User's email address. Must be valid and unique within the system.
+Endereço de e-mail do usuário. Deve ser válido e único no sistema.
 </ParamField>
 
 <ParamField query="limit" type="integer" default="10">
-Maximum number of results to return. Range: 1-100.
+Número máximo de resultados a retornar. Intervalo: 1-100.
 </ParamField>
 
 <ParamField header="Authorization" type="string" required>
-Bearer token for API authentication. Format: `Bearer YOUR_API_KEY`
+Token Bearer para autenticação de API. Formato: `Bearer YOUR_API_KEY`
 </ParamField>
 
-#### Response fields
+#### Campos de resposta
 
-Example of response field documentation:
+Exemplo de documentação de campos de resposta:
 
 <ResponseField name="user_id" type="string" required>
-Unique identifier assigned to the newly created user.
+Identificador único atribuído ao usuário recém-criado.
 </ResponseField>
 
 <ResponseField name="created_at" type="timestamp">
-ISO 8601 formatted timestamp of when the user was created.
+Timestamp formatado em ISO 8601 de quando o usuário foi criado.
 </ResponseField>
 
 <ResponseField name="permissions" type="array">
-List of permission strings assigned to this user.
+Lista de strings de permissão atribuídas a este usuário.
 </ResponseField>
 
-#### Expandable nested fields
+#### Campos aninhados expansíveis
 
-Example of nested field documentation:
+Exemplo de documentação de campos aninhados:
 
 <ResponseField name="user" type="object">
-Complete user object with all associated data.
+Objeto de usuário completo com todos os dados associados.
 
-<Expandable title="User properties">
+<Expandable title="Propriedades do usuário">
   <ResponseField name="profile" type="object">
-  User profile information including personal details.
-  
-  <Expandable title="Profile details">
+  Informações do perfil do usuário, incluindo detalhes pessoais.
+
+  <Expandable title="Detalhes do perfil">
     <ResponseField name="first_name" type="string">
-    User's first name as entered during registration.
+    Primeiro nome do usuário conforme inserido durante o registro.
     </ResponseField>
-    
+
     <ResponseField name="avatar_url" type="string | null">
-    URL to user's profile picture. Returns null if no avatar is set.
+    URL para a foto de perfil do usuário. Retorna null se nenhum avatar estiver definido.
     </ResponseField>
   </Expandable>
   </ResponseField>
 </Expandable>
 </ResponseField>
 
-### Media and advanced components
+### Componentes de mídia e avançados
 
-#### Frames for images
+#### Frames para imagens
 
-Wrap all images in frames:
+Envolva todas as imagens em frames:
 
 <Frame>
-<img src="/images/dashboard.png" alt="Main dashboard showing analytics overview" />
+<img src="/images/dashboard.png" alt="Painel principal mostrando visão geral de análises" />
 </Frame>
 
-<Frame caption="The analytics dashboard provides real-time insights">
-<img src="/images/analytics.png" alt="Analytics dashboard with charts" />
+<Frame caption="O painel de análises fornece insights em tempo real">
+<img src="/images/analytics.png" alt="Painel de análises com gráficos" />
 </Frame>
 
-#### Videos
+#### Vídeos
 
-Use the HTML video element for self-hosted video content:
+Use o elemento HTML de vídeo para conteúdo de vídeo auto-hospedado:
 
 <video
   controls
@@ -333,7 +333,7 @@ Use the HTML video element for self-hosted video content:
   src="link-to-your-video.com"
 ></video>
 
-Embed YouTube videos using iframe elements:
+Incorpore vídeos do YouTube usando elementos iframe:
 
 <iframe
   className="w-full aspect-video rounded-xl"
@@ -346,75 +346,75 @@ Embed YouTube videos using iframe elements:
 
 #### Tooltips
 
-Example of tooltip usage:
+Exemplo de uso de tooltip:
 
-<Tooltip tip="Application Programming Interface - protocols for building software">
+<Tooltip tip="Interface de Programação de Aplicações - protocolos para construir software">
 API
 </Tooltip>
 
-#### Updates
+#### Atualizações
 
-Use updates for changelogs:
+Use atualizações para changelogs:
 
-<Update label="Version 2.1.0" description="Released March 15, 2024">
-## New features
-- Added bulk user import functionality
-- Improved error messages with actionable suggestions
+<Update label="Versão 2.1.0" description="Lançado em 15 de março de 2024">
+## Novos recursos
+- Adicionada funcionalidade de importação em massa de usuários
+- Mensagens de erro aprimoradas com sugestões práticas
 
-## Bug fixes
-- Fixed pagination issue with large datasets
-- Resolved authentication timeout problems
+## Correções de bugs
+- Corrigido problema de paginação com grandes conjuntos de dados
+- Resolvidos problemas de timeout de autenticação
 </Update>
 
-## Required page structure
+## Estrutura de página obrigatória
 
-Every documentation page must begin with YAML frontmatter:
+Toda página de documentação deve começar com frontmatter YAML:
 
 ```yaml
 ---
-title: "Clear, specific, keyword-rich title"
-description: "Concise description explaining page purpose and value"
+title: "Título claro, específico e rico em palavras-chave"
+description: "Descrição concisa explicando o propósito e valor da página"
 ---
 ```
 
-## Content quality standards
+## Padrões de qualidade de conteúdo
 
-### Code examples requirements
+### Requisitos de exemplos de código
 
-- Always include complete, runnable examples that users can copy and execute
-- Show proper error handling and edge case management
-- Use realistic data instead of placeholder values
-- Include expected outputs and results for verification
-- Test all code examples thoroughly before publishing
-- Specify language and include filename when relevant
-- Add explanatory comments for complex logic
-- Never include real API keys or secrets in code examples
+- Sempre inclua exemplos completos e executáveis que os usuários possam copiar e executar
+- Mostre tratamento adequado de erros e gerenciamento de casos extremos
+- Use dados realistas em vez de valores de placeholder
+- Inclua saídas esperadas e resultados para verificação
+- Teste todos os exemplos de código completamente antes de publicar
+- Especifique a linguagem e inclua o nome do arquivo quando relevante
+- Adicione comentários explicativos para lógica complexa
+- Nunca inclua chaves de API ou segredos reais em exemplos de código
 
-### API documentation requirements
+### Requisitos de documentação de API
 
-- Document all parameters including optional ones with clear descriptions
-- Show both success and error response examples with realistic data
-- Include rate limiting information with specific limits
-- Provide authentication examples showing proper format
-- Explain all HTTP status codes and error handling
-- Cover complete request/response cycles
+- Documente todos os parâmetros, incluindo os opcionais, com descrições claras
+- Mostre exemplos de resposta de sucesso e erro com dados realistas
+- Inclua informações de limitação de taxa com limites específicos
+- Forneça exemplos de autenticação mostrando o formato adequado
+- Explique todos os códigos de status HTTP e tratamento de erros
+- Cubra ciclos completos de requisição/resposta
 
-### Accessibility requirements
+### Requisitos de acessibilidade
 
-- Include descriptive alt text for all images and diagrams
-- Use specific, actionable link text instead of "click here"
-- Ensure proper heading hierarchy starting with H2
-- Provide keyboard navigation considerations
-- Use sufficient color contrast in examples and visuals
-- Structure content for easy scanning with headers and lists
+- Inclua texto alternativo descritivo para todas as imagens e diagramas
+- Use texto de link específico e acionável em vez de "clique aqui"
+- Garanta hierarquia de títulos adequada começando com H2
+- Forneça considerações de navegação por teclado
+- Use contraste de cor suficiente em exemplos e visuais
+- Estruture o conteúdo para fácil varredura com cabeçalhos e listas
 
-## Component selection logic
+## Lógica de seleção de componentes
 
-- Use **Steps** for procedures and sequential instructions
-- Use **Tabs** for platform-specific content or alternative approaches
-- Use **CodeGroup** when showing the same concept in multiple programming languages
-- Use **Accordions** for progressive disclosure of information
-- Use **RequestExample/ResponseExample** specifically for API endpoint documentation
-- Use **ParamField** for API parameters, **ResponseField** for API responses
-- Use **Expandable** for nested object properties or hierarchical information
+- Use **Steps** para procedimentos e instruções sequenciais
+- Use **Tabs** para conteúdo específico de plataforma ou abordagens alternativas
+- Use **CodeGroup** ao mostrar o mesmo conceito em múltiplas linguagens de programação
+- Use **Accordions** para divulgação progressiva de informações
+- Use **RequestExample/ResponseExample** especificamente para documentação de endpoints de API
+- Use **ParamField** para parâmetros de API, **ResponseField** para respostas de API
+- Use **Expandable** para propriedades de objetos aninhados ou informações hierárquicas
 ````

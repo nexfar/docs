@@ -1,16 +1,16 @@
 ---
-title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
+title: 'Navegação'
+description: 'O campo navigation no docs.json define as páginas que vão no menu de navegação'
 icon: 'map'
 ---
 
-The navigation menu is the list of links on every website.
+O menu de navegação é a lista de links em cada website.
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+Você provavelmente atualizará o `docs.json` toda vez que adicionar uma nova página. As páginas não aparecem automaticamente.
 
-## Navigation syntax
+## Sintaxe de navegação
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+Nossa sintaxe de navegação é recursiva, o que significa que você pode fazer grupos de navegação aninhados. Você não precisa incluir `.mdx` nos nomes das páginas.
 
 <CodeGroup>
 
@@ -54,15 +54,15 @@ Our navigation syntax is recursive which means you can make nested navigation gr
 
 </CodeGroup>
 
-## Folders
+## Pastas
 
-Simply put your MDX files in folders and update the paths in `docs.json`.
+Simplesmente coloque seus arquivos MDX em pastas e atualize os caminhos no `docs.json`.
 
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
+Por exemplo, para ter uma página em `https://yoursite.com/your-folder/your-page` você criaria uma pasta chamada `your-folder` contendo um arquivo MDX chamado `your-page.mdx`.
 
 <Warning>
 
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
+Você não pode usar `api` como nome de uma pasta, a menos que a aninhe dentro de outra pasta. Mintlify usa Next.js, que reserva a pasta `api` de nível superior para chamadas internas do servidor. Um nome de pasta como `api-reference` seria aceito.
 
 </Warning>
 
@@ -82,6 +82,6 @@ You cannot use `api` for the name of a folder unless you nest it inside another 
 }
 ```
 
-## Hidden pages
+## Páginas ocultas
 
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.
+Arquivos MDX não incluídos no `docs.json` não aparecerão na barra lateral, mas são acessíveis através da barra de pesquisa e por link direto a eles.

@@ -1,20 +1,20 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Nexfar",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#6633FF",
+    "light": "#FFA500",
+    "dark": "#5229CC"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Guias",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Primeiros passos",
             "pages": [
               "index",
               "quickstart",
@@ -22,14 +22,14 @@
             ]
           },
           {
-            "group": "Customization",
+            "group": "Personalização",
             "pages": [
               "essentials/settings",
               "essentials/navigation"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Escrevendo conteúdo",
             "pages": [
               "essentials/markdown",
               "essentials/code",
@@ -38,7 +38,7 @@
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Ferramentas de IA",
             "pages": [
               "ai-tools/cursor",
               "ai-tools/claude-code",
@@ -48,16 +48,16 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Referência da API",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Documentação da API",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Exemplos de endpoints",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
@@ -71,7 +71,7 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
+          "anchor": "Documentação",
           "href": "https://mintlify.com/docs",
           "icon": "book-open-cover"
         },
@@ -83,20 +83,17 @@
       ]
     }
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
+  "logo": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
   "navbar": {
     "links": [
       {
-        "label": "Support",
+        "label": "Suporte",
         "href": "mailto:hi@mintlify.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
+      "label": "Painel",
       "href": "https://dashboard.mintlify.com"
     }
   },

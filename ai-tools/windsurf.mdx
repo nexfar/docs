@@ -1,96 +1,96 @@
 ---
-title: "Windsurf setup"
-description: "Configure Windsurf for your documentation workflow"
+title: "Configuração do Windsurf"
+description: "Configure o Windsurf para o seu fluxo de trabalho de documentação"
 icon: "water"
 ---
 
-Configure Windsurf's Cascade AI assistant to help you write and maintain documentation. This guide shows how to set up Windsurf specifically for your Mintlify documentation workflow.
+Configure o assistente Cascade AI do Windsurf para ajudá-lo a escrever e manter documentação. Este guia mostra como configurar o Windsurf especificamente para o seu fluxo de trabalho de documentação Mintlify.
 
-## Prerequisites
+## Pré-requisitos
 
-- Windsurf editor installed
-- Access to your documentation repository
+- Editor Windsurf instalado
+- Acesso ao seu repositório de documentação
 
-## Workspace rules
+## Regras do workspace
 
-Create workspace rules that provide Windsurf with context about your documentation project and standards.
+Crie regras de workspace que forneçam ao Windsurf contexto sobre seu projeto de documentação e padrões.
 
-Create `.windsurf/rules.md` in your project root:
+Crie `.windsurf/rules.md` na raiz do seu projeto:
 
 ````markdown
-# Mintlify technical writing rule
+# Regra de escrita técnica Mintlify
 
-## Project context
+## Contexto do projeto
 
-- This is a documentation project on the Mintlify platform
-- We use MDX files with YAML frontmatter  
-- Navigation is configured in `docs.json`
-- We follow technical writing best practices
+- Este é um projeto de documentação na plataforma Mintlify
+- Usamos arquivos MDX com frontmatter YAML
+- A navegação é configurada em `docs.json`
+- Seguimos as melhores práticas de escrita técnica
 
-## Writing standards
+## Padrões de escrita
 
-- Use second person ("you") for instructions
-- Write in active voice and present tense
-- Start procedures with prerequisites
-- Include expected outcomes for major steps
-- Use descriptive, keyword-rich headings
-- Keep sentences concise but informative
+- Use segunda pessoa ("você") para instruções
+- Escreva em voz ativa e tempo presente
+- Inicie procedimentos com pré-requisitos
+- Inclua resultados esperados para etapas principais
+- Use títulos descritivos e ricos em palavras-chave
+- Mantenha frases concisas, mas informativas
 
-## Required page structure
+## Estrutura de página obrigatória
 
-Every page must start with frontmatter:
+Toda página deve começar com frontmatter:
 
 ```yaml
 ---
-title: "Clear, specific title"
-description: "Concise description for SEO and navigation"
+title: "Título claro e específico"
+description: "Descrição concisa para SEO e navegação"
 ---
 ```
 
-## Mintlify components
+## Componentes Mintlify
 
-### Callouts
+### Destaques
 
-- `<Note>` for helpful supplementary information
-- `<Warning>` for important cautions and breaking changes
-- `<Tip>` for best practices and expert advice  
-- `<Info>` for neutral contextual information
-- `<Check>` for success confirmations
+- `<Note>` para informações complementares úteis
+- `<Warning>` para avisos importantes e mudanças de quebra
+- `<Tip>` para melhores práticas e conselhos de especialistas
+- `<Info>` para informações contextuais neutras
+- `<Check>` para confirmações de sucesso
 
-### Code examples
+### Exemplos de código
 
-- When appropriate, include complete, runnable examples
-- Use `<CodeGroup>` for multiple language examples
-- Specify language tags on all code blocks
-- Include realistic data, not placeholders
-- Use `<RequestExample>` and `<ResponseExample>` for API docs
+- Quando apropriado, inclua exemplos completos e executáveis
+- Use `<CodeGroup>` para exemplos em múltiplas linguagens
+- Especifique tags de linguagem em todos os blocos de código
+- Inclua dados realistas, não placeholders
+- Use `<RequestExample>` e `<ResponseExample>` para documentação de API
 
-### Procedures
+### Procedimentos
 
-- Use `<Steps>` component for sequential instructions
-- Include verification steps with `<Check>` components when relevant
-- Break complex procedures into smaller steps
+- Use o componente `<Steps>` para instruções sequenciais
+- Inclua etapas de verificação com componentes `<Check>` quando relevante
+- Divida procedimentos complexos em etapas menores
 
-### Content organization
+### Organização de conteúdo
 
-- Use `<Tabs>` for platform-specific content
-- Use `<Accordion>` for progressive disclosure
-- Use `<Card>` and `<CardGroup>` for highlighting content
-- Wrap images in `<Frame>` components with descriptive alt text
+- Use `<Tabs>` para conteúdo específico de plataforma
+- Use `<Accordion>` para divulgação progressiva
+- Use `<Card>` e `<CardGroup>` para destacar conteúdo
+- Envolva imagens em componentes `<Frame>` com texto alternativo descritivo
 
-## API documentation requirements
+## Requisitos de documentação de API
 
-- Document all parameters with `<ParamField>` 
-- Show response structure with `<ResponseField>`
-- Include both success and error examples
-- Use `<Expandable>` for nested object properties
-- Always include authentication examples
+- Documente todos os parâmetros com `<ParamField>`
+- Mostre a estrutura de resposta com `<ResponseField>`
+- Inclua exemplos de sucesso e erro
+- Use `<Expandable>` para propriedades de objetos aninhados
+- Sempre inclua exemplos de autenticação
 
-## Quality standards
+## Padrões de qualidade
 
-- Test all code examples before publishing
-- Use relative paths for internal links
-- Include alt text for all images
-- Ensure proper heading hierarchy (start with h2)
-- Check existing patterns for consistency
+- Teste todos os exemplos de código antes de publicar
+- Use caminhos relativos para links internos
+- Inclua texto alternativo para todas as imagens
+- Garanta hierarquia de títulos adequada (comece com h2)
+- Verifique padrões existentes para consistência
 ````

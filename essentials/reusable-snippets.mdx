@@ -1,6 +1,6 @@
 ---
-title: "Reusable snippets"
-description: "Reusable, custom snippets to keep content in sync"
+title: "Snippets reutilizáveis"
+description: "Snippets personalizados e reutilizáveis para manter o conteúdo sincronizado"
 icon: "recycle"
 ---
 
@@ -8,22 +8,22 @@ import SnippetIntro from '/snippets/snippet-intro.mdx';
 
 <SnippetIntro />
 
-## Creating a custom snippet
+## Criando um snippet personalizado
 
-**Pre-condition**: You must create your snippet file in the `snippets` directory.
+**Pré-condição**: Você deve criar seu arquivo de snippet no diretório `snippets`.
 
 <Note>
-  Any page in the `snippets` directory will be treated as a snippet and will not
-  be rendered into a standalone page. If you want to create a standalone page
-  from the snippet, import the snippet into another file and call it as a
-  component.
+  Qualquer página no diretório `snippets` será tratada como um snippet e não
+  será renderizada como uma página independente. Se você quiser criar uma página independente
+  a partir do snippet, importe o snippet para outro arquivo e chame-o como um
+  componente.
 </Note>
 
-### Default export
+### Exportação padrão
 
-1. Add content to your snippet file that you want to re-use across multiple
-   locations. Optionally, you can add variables that can be filled in via props
-   when you import the snippet.
+1. Adicione conteúdo ao seu arquivo de snippet que você deseja reutilizar em múltiplos
+   locais. Opcionalmente, você pode adicionar variáveis que podem ser preenchidas via props
+   quando você importar o snippet.
 
 ```mdx snippets/my-snippet.mdx
 Hello world! This is my content I want to reuse across pages. My keyword of the
@@ -31,11 +31,11 @@ day is {word}.
 ```
 
 <Warning>
-  The content that you want to reuse must be inside the `snippets` directory in
-  order for the import to work.
+  O conteúdo que você deseja reutilizar deve estar dentro do diretório `snippets` para
+  que a importação funcione.
 </Warning>
 
-2. Import the snippet into your destination file.
+2. Importe o snippet para seu arquivo de destino.
 
 ```mdx destination-file.mdx
 ---
@@ -52,9 +52,9 @@ Lorem impsum dolor sit amet.
 <MySnippet word="bananas" />
 ```
 
-### Reusable variables
+### Variáveis reutilizáveis
 
-1. Export a variable from your snippet file:
+1. Exporte uma variável do seu arquivo de snippet:
 
 ```mdx snippets/path/to/custom-variables.mdx
 export const myName = 'my name';
@@ -62,7 +62,7 @@ export const myName = 'my name';
 export const myObject = { fruit: 'strawberries' };
 ```
 
-2. Import the snippet from your destination file and use the variable:
+2. Importe o snippet do seu arquivo de destino e use a variável:
 
 ```mdx destination-file.mdx
 ---
@@ -75,10 +75,10 @@ import { myName, myObject } from '/snippets/path/to/custom-variables.mdx';
 Hello, my name is {myName} and I like {myObject.fruit}.
 ```
 
-### Reusable components
+### Componentes reutilizáveis
 
-1. Inside your snippet file, create a component that takes in props by exporting
-   your component in the form of an arrow function.
+1. Dentro do seu arquivo de snippet, crie um componente que recebe props exportando
+   seu componente na forma de uma função arrow.
 
 ```mdx snippets/custom-component.mdx
 export const MyComponent = ({ title }) => (
@@ -90,11 +90,11 @@ export const MyComponent = ({ title }) => (
 ```
 
 <Warning>
-  MDX does not compile inside the body of an arrow function. Stick to HTML
-  syntax when you can or use a default export if you need to use MDX.
+  MDX não compila dentro do corpo de uma função arrow. Mantenha a sintaxe HTML
+  quando puder ou use uma exportação padrão se precisar usar MDX.
 </Warning>
 
-2. Import the snippet into your destination file and pass in the props
+2. Importe o snippet para seu arquivo de destino e passe os props
 
 ```mdx destination-file.mdx
 ---
