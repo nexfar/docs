@@ -1,0 +1,70 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Nexfar - Documentação de Implantação",
+  "logo": {
+    "light": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
+    "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6633FF",
+    "light": "#FFA500",
+    "dark": "#5229CC"
+  },
+  "topbarCtaButton": {
+    "type": "link",
+    "name": "Portal Nexfar",
+    "url": "https://nexfar.com.br"
+  },
+  "navigation": [
+    {
+      "group": "Começar",
+      "pages": [
+        "index",
+        "deployment/overview"
+      ]
+    },
+    {
+      "group": "Métodos de Extração de Dados",
+      "pages": [
+        "deployment/data-extraction/database-views",
+        "deployment/data-extraction/rest-api",
+        "deployment/data-extraction/edi",
+        "deployment/data-extraction/ftp"
+      ]
+    },
+    {
+      "group": "Cadastros e Configurações",
+      "pages": [
+        "deployment/data-extraction/views/cadastros-basicos",
+        "deployment/data-extraction/views/documentos-fiscais"
+      ]
+    },
+    {
+      "group": "Catálogo de Produtos",
+      "pages": [
+        "deployment/data-extraction/views/produtos"
+      ]
+    },
+    {
+      "group": "Pedidos e Vendas",
+      "pages": [
+        "deployment/data-extraction/views/pedidos",
+        "deployment/data-extraction/views/vendas",
+        "deployment/data-extraction/views/combos"
+      ]
+    },
+    {
+      "group": "Impostos e Margens (NEXOFF)",
+      "pages": [
+        "deployment/data-extraction/views/impostos-margens"
+      ]
+    }
+  ],
+  "footer": {
+    "socials": {
+      "website": "https://nexfar.com.br",
+      "linkedin": "https://www.linkedin.com/company/nexfar"
+    }
+  }
+}

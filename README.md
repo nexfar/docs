@@ -1,43 +1,126 @@
-# Mintlify Starter Kit
+# Nexfar Docs - Mono-Repo
 
-Use the starter kit to get your docs deployed and ready to customize.
+Este repositório contém toda a documentação Nexfar organizada em uma estrutura de **mono-repo**, permitindo múltiplas documentações com diferentes níveis de acesso e públicos-alvo.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
-
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+## Estrutura do Repositório
 
 ```
-npm i -g mint
+nexfar-docs/
+├── shared/                           # Conteúdo compartilhado entre docs
+│   └── deployment/                   # Documentação de implantação (fonte única)
+│
+├── public-docs/                      # docs.nexfar.com.br
+│   ├── mint.json
+│   └── index.mdx
+│
+├── internal-docs/                    # internal_docs.nexfar.com
+│   ├── mint.json
+│   ├── deployment -> ../shared/deployment/    # Symlink
+│   └── ... (todo o conteúdo interno)
+│
+└── integration-docs/                 # int-docs.nexfar.com.br
+    ├── mint.json
+    ├── index.mdx
+    └── deployment -> ../shared/deployment/    # Symlink
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+## Três Ambientes de Documentação
 
+### 1. Public Docs (`docs.nexfar.com.br`)
+**Público:** Usuários finais, clientes
+**Config:** `public-docs/mint.json`
+
+### 2. Internal Docs (`internal_docs.nexfar.com`)
+**Público:** Equipe interna Nexfar
+**Config:** `internal-docs/mint.json`
+**Conteúdo:** TUDO (arquitetura, infraestrutura, deployment, etc.)
+
+### 3. Integration Docs (`int-docs.nexfar.com.br`)
+**Público:** Parceiros técnicos, integradores
+**Config:** `integration-docs/mint.json`
+**Conteúdo:** Apenas documentação de implantação/integração
+
+## Configuração no Mintlify
+
+Criar 3 projetos no [dashboard.mintlify.com](https://dashboard.mintlify.com):
+
+1. **Nexfar Public Docs**
+   - Root Directory: `public-docs/`
+   - Custom Domain: `docs.nexfar.com.br`
+
+2. **Nexfar Internal Docs**
+   - Root Directory: `internal-docs/`
+   - Custom Domain: `internal_docs.nexfar.com`
+
+3. **Nexfar Integration Docs**
+   - Root Directory: `integration-docs/`
+   - Custom Domain: `int-docs.nexfar.com.br`
+
+## Desenvolvimento Local
+
+```bash
+# Testar cada documentação
+cd public-docs && mintlify dev
+cd internal-docs && mintlify dev
+cd integration-docs && mintlify dev
 ```
-mint dev
+
+## Editando Conteúdo
+
+### Conteúdo Compartilhado (Deployment)
+```bash
+# Edite em shared/deployment/
+vim shared/deployment/data-extraction/views/produtos.mdx
+
+# Automaticamente reflete em:
+# - internal_docs.nexfar.com
+# - int-docs.nexfar.com.br
 ```
 
-View your local preview at `http://localhost:3000`.
+### Conteúdo Específico
+```bash
+# Docs públicas
+vim public-docs/index.mdx
 
-## Publishing changes
+# Docs internas
+vim internal-docs/architecture.mdx
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+# Docs de integração
+vim integration-docs/index.mdx
+```
 
-## Need help?
+## Symlinks
 
-### Troubleshooting
+A pasta `shared/deployment/` é referenciada via symlinks:
+- `internal-docs/deployment` → `../shared/deployment/`
+- `integration-docs/deployment` → `../shared/deployment/`
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+**Benefícios:**
+- ✅ Sem duplicação
+- ✅ Fonte única de verdade
+- ✅ Alterações propagam automaticamente
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+## CI/CD
+
+Mintlify detecta mudanças automaticamente ao fazer push para `main` e rebuilda apenas as docs afetadas.
+
+## Comandos Úteis
+
+```bash
+# Verificar symlinks
+find . -type l -ls
+
+# Validar mint.json
+npx mintlify@latest validate public-docs/mint.json
+npx mintlify@latest validate internal-docs/mint.json
+npx mintlify@latest validate integration-docs/mint.json
+```
+
+## Suporte
+
+- **Interno:** #docs no Slack
+- **Externo:** suporte@nexfar.com.br
+
+## Licença
+
+Documentação proprietária da Nexfar.

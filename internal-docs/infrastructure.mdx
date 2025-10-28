@@ -1,0 +1,676 @@
+---
+title: "Infraestrutura"
+description: "Documentação da infraestrutura on-premise da Nexfar - HQ e Data Center"
+---
+
+## Visão Geral
+
+Documentação completa da infraestrutura on-premise da Nexfar, incluindo servidores, equipamentos de rede e recursos localizados no HQ (Headquarters) e Data Center.
+
+<Card
+  title="Estrutura On-Premise"
+  icon="building"
+  href="#estrutura-fisica"
+  horizontal
+>
+  Infraestrutura física distribuída entre HQ e Data Center.
+</Card>
+
+## Estrutura Física
+
+### HQ (Headquarters)
+
+<Info>
+  **Localização**: [Endereço do HQ]
+  
+  **Responsável**: [Nome do responsável]
+  
+  **Virtualization**: Proxmox VE - https://192.168.107.10:8006
+</Info>
+
+#### Servidores HQ
+
+<Columns cols={2}>
+  <Card
+    title="Servidores de Aplicação"
+    icon="server"
+    href="#servidores-aplicacao-hq"
+  >
+    Servidores dedicados para aplicações e serviços.
+  </Card>
+  <Card
+    title="Servidores de Banco de Dados"
+    icon="database"
+    href="#servidores-bd-hq"
+  >
+    Servidores de banco de dados e storage.
+  </Card>
+  <Card
+    title="Servidores de Rede"
+    icon="network-wired"
+    href="#servidores-rede-hq"
+  >
+    Infrastructure de rede e comunicação.
+  </Card>
+  <Card
+    title="Servidores de Backup"
+    icon="hard-drive"
+    href="#servidores-backup-hq"
+  >
+    Sistemas de backup e recuperação.
+  </Card>
+  <Card
+    title="Servidores de Virtualização"
+    icon="layer-group"
+    href="#servidores-virtualizacao-hq"
+  >
+    Hosts de virtualização Proxmox VE.
+  </Card>
+</Columns>
+
+### Data Center (DC)
+
+<Info>
+  **Localização**: [Endereço do DC]
+  
+  **Responsável**: [Nome do responsável]
+</Info>
+
+#### Servidores DC
+
+<Columns cols={2}>
+  <Card
+    title="Servidores de Produção"
+    icon="server"
+    href="#servidores-producao-dc"
+  >
+    Servidores críticos de produção.
+  </Card>
+  <Card
+    title="Servidores de Storage"
+    icon="hdd"
+    href="#servidores-storage-dc"
+  >
+    Sistemas de armazenamento e SAN.
+  </Card>
+  <Card
+    title="Servidores de Virtualização"
+    icon="layer-group"
+    href="#servidores-virtualizacao-dc"
+  >
+    Hosts de virtualização e hypervisors.
+  </Card>
+  <Card
+    title="Servidores de Monitoramento"
+    icon="chart-line"
+    href="#servidores-monitoramento-dc"
+  >
+    Sistemas de monitoramento e observabilidade.
+  </Card>
+</Columns>
+
+## HQ - Inventário de Servidores
+
+### Servidores de Aplicação {#servidores-aplicacao-hq}
+
+<AccordionGroup>
+  <Accordion title="Servidor APP-HQ-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor APP-HQ-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor APP-HQ-003">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Banco de Dados {#servidores-bd-hq}
+
+<AccordionGroup>
+  <Accordion title="Servidor DB-HQ-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **SGBD**: 
+    **Bancos**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor DB-HQ-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **SGBD**: 
+    **Bancos**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Rede {#servidores-rede-hq}
+
+<AccordionGroup>
+  <Accordion title="Servidor NET-HQ-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor NET-HQ-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Backup {#servidores-backup-hq}
+
+<AccordionGroup>
+  <Accordion title="Servidor BCK-HQ-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Virtualização {#servidores-virtualizacao-hq}
+
+<AccordionGroup>
+  <Accordion title="Servidor PVE-HQ-001">
+    **Hostname**: proxmox-hq
+    **IP**: 192.168.107.10
+    **Interface Web**: https://192.168.107.10:8006
+    **Sistema Operacional**: Proxmox VE
+    **Hypervisor**: KVM/LXC
+    **Especificações**: [A ser preenchido]
+    **VMs Ativas**: [A ser preenchido]
+    **Containers LXC**: [A ser preenchido]
+    **Storage**: [A ser preenchido]
+    **Cluster**: [A ser preenchido]
+    **Status**: Ativo
+    **Observações**: Servidor principal de virtualização do HQ
+  </Accordion>
+</AccordionGroup>
+
+## DC - Inventário de Servidores
+
+### Servidores de Produção {#servidores-producao-dc}
+
+<AccordionGroup>
+  <Accordion title="Servidor PROD-DC-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor PROD-DC-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor PROD-DC-003">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Storage {#servidores-storage-dc}
+
+<AccordionGroup>
+  <Accordion title="Servidor STG-DC-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor STG-DC-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Virtualização {#servidores-virtualizacao-dc}
+
+<AccordionGroup>
+  <Accordion title="Servidor VMW-DC-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Hypervisor**: 
+    **Especificações**: 
+    **VMs Ativas**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+
+  <Accordion title="Servidor VMW-DC-002">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Hypervisor**: 
+    **Especificações**: 
+    **VMs Ativas**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+### Servidores de Monitoramento {#servidores-monitoramento-dc}
+
+<AccordionGroup>
+  <Accordion title="Servidor MON-DC-001">
+    **Hostname**: 
+    **IP**: 
+    **Sistema Operacional**: 
+    **Especificações**: 
+    **Função**: 
+    **Status**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+## Equipamentos de Rede
+
+### HQ - Equipamentos de Rede
+
+#### Switches
+<AccordionGroup>
+  <Accordion title="Switch Principal HQ">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Portas**: 
+    **VLANs**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+
+  <Accordion title="Switch Secundário HQ">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Portas**: 
+    **VLANs**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+#### Roteadores
+<AccordionGroup>
+  <Accordion title="Roteador Principal HQ">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Interfaces**: 
+    **Rotas**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+#### Firewalls
+<AccordionGroup>
+  <Accordion title="Firewall HQ">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Interfaces**: 
+    **Regras**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+### DC - Equipamentos de Rede
+
+#### Switches
+<AccordionGroup>
+  <Accordion title="Switch Core DC">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Portas**: 
+    **VLANs**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+
+  <Accordion title="Switch Distribuição DC">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Portas**: 
+    **VLANs**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+#### Roteadores
+<AccordionGroup>
+  <Accordion title="Roteador Principal DC">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Interfaces**: 
+    **Rotas**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+#### Firewalls
+<AccordionGroup>
+  <Accordion title="Firewall DC">
+    **Modelo**: 
+    **IP de Gerência**: 
+    **Interfaces**: 
+    **Regras**: 
+    **Status**: 
+    **Localização**: 
+  </Accordion>
+</AccordionGroup>
+
+## Conectividade
+
+### Conexões entre HQ e DC
+
+<AccordionGroup>
+  <Accordion title="Link Principal">
+    **Tipo**: 
+    **Velocidade**: 
+    **Provedor**: 
+    **IP HQ**: 
+    **IP DC**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+
+  <Accordion title="Link Backup">
+    **Tipo**: 
+    **Velocidade**: 
+    **Provedor**: 
+    **IP HQ**: 
+    **IP DC**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+</AccordionGroup>
+
+### Conexões de Internet
+
+#### HQ
+<AccordionGroup>
+  <Accordion title="Internet Principal HQ">
+    **Provedor**: 
+    **Velocidade**: 
+    **IP Público**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+
+  <Accordion title="Internet Backup HQ">
+    **Provedor**: 
+    **Velocidade**: 
+    **IP Público**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+</AccordionGroup>
+
+#### DC
+<AccordionGroup>
+  <Accordion title="Internet Principal DC">
+    **Provedor**: 
+    **Velocidade**: 
+    **IP Público**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+
+  <Accordion title="Internet Backup DC">
+    **Provedor**: 
+    **Velocidade**: 
+    **IP Público**: 
+    **Status**: 
+    **SLA**: 
+  </Accordion>
+</AccordionGroup>
+
+## Sistemas de Backup e Recovery
+
+### Políticas de Backup
+
+<AccordionGroup>
+  <Accordion title="Backup Diário">
+    **Horário**: 
+    **Servidores**: 
+    **Destino**: 
+    **Retenção**: 
+    **Status**: 
+  </Accordion>
+
+  <Accordion title="Backup Semanal">
+    **Horário**: 
+    **Servidores**: 
+    **Destino**: 
+    **Retenção**: 
+    **Status**: 
+  </Accordion>
+
+  <Accordion title="Backup Mensal">
+    **Horário**: 
+    **Servidores**: 
+    **Destino**: 
+    **Retenção**: 
+    **Status**: 
+  </Accordion>
+</AccordionGroup>
+
+### Testes de Recovery
+
+<AccordionGroup>
+  <Accordion title="Último Teste - [Data]">
+    **Servidor Testado**: 
+    **Resultado**: 
+    **Tempo de Recovery**: 
+    **Observações**: 
+  </Accordion>
+</AccordionGroup>
+
+## Monitoramento e Alertas
+
+### Ferramentas de Monitoramento
+
+<AccordionGroup>
+  <Accordion title="Sistema de Monitoramento Principal">
+    **Nome**: 
+    **Servidor**: 
+    **URL**: 
+    **Itens Monitorados**: 
+    **Status**: 
+  </Accordion>
+
+  <Accordion title="Sistema de Alertas">
+    **Nome**: 
+    **Servidor**: 
+    **Canais**: 
+    **Responsáveis**: 
+    **Status**: 
+  </Accordion>
+</AccordionGroup>
+
+### Métricas Monitoradas
+
+- **Servidores**: CPU, Memória, Disco, Rede
+- **Serviços**: Disponibilidade, Tempo de Resposta
+- **Rede**: Latência, Packet Loss, Bandwidth
+- **Storage**: Espaço Livre, IOPS, Latência
+
+## Segurança
+
+### Controles de Acesso
+
+<AccordionGroup>
+  <Accordion title="Active Directory">
+    **Servidor**: 
+    **Domínio**: 
+    **Usuários**: 
+    **Grupos**: 
+    **Status**: 
+  </Accordion>
+
+  <Accordion title="VPN">
+    **Tipo**: 
+    **Servidor**: 
+    **Usuários Ativos**: 
+    **Status**: 
+  </Accordion>
+</AccordionGroup>
+
+### Políticas de Segurança
+
+- **Senhas**: 
+- **Atualizações**: 
+- **Antivírus**: 
+- **Firewall**: 
+- **Logs**: 
+
+## Manutenção
+
+### Cronograma de Manutenção
+
+<AccordionGroup>
+  <Accordion title="Manutenção Preventiva Mensal">
+    **Data**: 
+    **Horário**: 
+    **Servidores**: 
+    **Atividades**: 
+    **Responsável**: 
+  </Accordion>
+
+  <Accordion title="Atualizações de Segurança">
+    **Frequência**: 
+    **Janela**: 
+    **Processo**: 
+    **Responsável**: 
+  </Accordion>
+</AccordionGroup>
+
+### Histórico de Manutenções
+
+<AccordionGroup>
+  <Accordion title="[Data] - Manutenção">
+    **Tipo**: 
+    **Servidores**: 
+    **Atividades**: 
+    **Resultado**: 
+    **Responsável**: 
+  </Accordion>
+</AccordionGroup>
+
+## Contatos e Responsabilidades
+
+### Equipe Técnica
+
+<AccordionGroup>
+  <Accordion title="Administrador de Sistemas">
+    **Nome**: 
+    **Telefone**: 
+    **Email**: 
+    **Responsabilidades**: 
+  </Accordion>
+
+  <Accordion title="Administrador de Rede">
+    **Nome**: 
+    **Telefone**: 
+    **Email**: 
+    **Responsabilidades**: 
+  </Accordion>
+
+  <Accordion title="DBA">
+    **Nome**: 
+    **Telefone**: 
+    **Email**: 
+    **Responsabilidades**: 
+  </Accordion>
+</AccordionGroup>
+
+### Fornecedores
+
+<AccordionGroup>
+  <Accordion title="Suporte Técnico Hardware">
+    **Empresa**: 
+    **Contato**: 
+    **Telefone**: 
+    **Email**: 
+    **Contratos**: 
+  </Accordion>
+
+  <Accordion title="Provedor de Internet">
+    **Empresa**: 
+    **Contato**: 
+    **Telefone**: 
+    **Email**: 
+    **SLA**: 
+  </Accordion>
+</AccordionGroup>
+
+---
+
+<Note>
+  Esta documentação será preenchida progressivamente conforme o levantamento dos servidores e equipamentos for realizado. Mantenha sempre atualizada para garantir a precisão das informações.
+</Note>
