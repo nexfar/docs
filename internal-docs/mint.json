@@ -7,10 +7,17 @@
     "dark": "#5229CC"
   },
   "favicon": "/favicon.svg",
+  "navigation": [
+    {
+      "group": "Começar",
+      "pages": ["index"]
+    }
+  ],
   "tabs": [
       {
-        "tab": "Guias",
-        "groups": [
+        "name": "Guias",
+        "url": "guides",
+        "navigation": [
           {
             "group": "Primeiros passos",
             "pages": [
@@ -46,7 +53,8 @@
         ]
       },
       {
-        "tab": "Arquitetura",
+        "name": "Arquitetura",
+        "url": "architecture",
         "groups": [
           {
             "group": "Arquitetura",
@@ -57,7 +65,8 @@
         ]
       },
       {
-        "tab": "Infraestrutura",
+        "name": "Infraestrutura",
+        "url": "infrastructure",
         "groups": [
           {
             "group": "Infraestrutura",
@@ -68,7 +77,8 @@
         ]
       },
       {
-        "tab": "Implantação",
+        "name": "Implantação",
+        "url": "deployment",
         "groups": [
           {
             "group": "Visão Geral",
@@ -100,7 +110,8 @@
         ]
       },
       {
-        "tab": "Referência da API",
+        "name": "Referência da API",
+        "url": "api-reference",
         "groups": [
           {
             "group": "Documentação da API",
