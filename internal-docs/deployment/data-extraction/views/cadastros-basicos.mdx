@@ -1,0 +1,183 @@
+---
+title: "Cadastros Básicos"
+description: "VIEWs para importação de clientes, condições de pagamento, vendedores e grupos de preço"
+---
+
+## Visão Geral
+
+As VIEWs de cadastros básicos são fundamentais para iniciar a integração com a Nexfar. Elas fornecem as informações essenciais sobre clientes, condições comerciais, vendedores e tabelas de preço.
+
+<Note>
+  **Importante:** Somente registros **ativos** devem ser enviados em todas as VIEWs desta categoria.
+</Note>
+
+---
+
+## VIEW_NEXFAR_CLIENT
+
+Dados dos clientes que poderão comprar pela plataforma Nexfar.
+
+### Regras de Negócio
+
+- Somente clientes **ativos** devem ser enviados
+- Somente **Pessoas Jurídicas** (com CNPJ válido) devem ser enviados
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `name` | Nome Fantasia do cliente | VARCHAR(255) | SIM |
+| `cnpj` | CNPJ do cliente (único) | VARCHAR(20) | SIM |
+| `externalId` | ID no ERP relacionado ao cliente | VARCHAR(20) | SIM |
+| `razaoSocial` | Razão Social do cliente | VARCHAR(255) | SIM |
+| `state` | Estado (UF) do cliente | VARCHAR(2) | SIM |
+| `cnpjMatriz` | CNPJ da matriz (se for filial) | VARCHAR(20) | NÃO |
+| `emailErp` | E-mail do cliente | VARCHAR(255) | NÃO |
+| `phone` | Telefone do cliente | VARCHAR(20) | NÃO |
+| `cep` | CEP do cliente | VARCHAR(20) | NÃO |
+| `city` | Cidade do cliente | VARCHAR(255) | NÃO |
+| `address` | Endereço completo | VARCHAR(255) | NÃO |
+| `totalCreditLimit` | Limite de crédito total | NUMERIC(10,2) | NÃO |
+| `availableCreditLimit` | Limite de crédito disponível | NUMERIC(10,2) | NÃO |
+| `creditStatus` | Situação de crédito: REGULAR ou IRREGULAR | VARCHAR(50) | NÃO |
+| `drugstore` | É uma farmácia? | BOOLEAN | NÃO |
+
+<Info>
+  **Campo `cnpj`:** Não forma chave primária, mas não pode haver duplicatas. Deve ser um CNPJ válido.
+</Info>
+
+<Tip>
+  Se `creditStatus` for nulo, será considerado como `REGULAR` por padrão.
+</Tip>
+
+---
+
+## VIEW_NEXFAR_PAYMENT_CONDITION
+
+Condições de pagamento (prazos) que serão disponibilizadas na plataforma.
+
+### Regras de Negócio
+
+- Somente condições de pagamento **ativas** devem ser enviadas
+- Se `externalId` vier nulo, o registro será ignorado
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `name` | Nome da condição de pagamento | VARCHAR(255) | SIM |
+| `externalId` | ID da condição no ERP | VARCHAR(255) | SIM |
+| `method` | Método: BOLETO ou CASH | VARCHAR(50) | SIM |
+| `mediumTerm` | Prazo médio em dias | INTEGER | NÃO |
+| `instalments` | Quantidade de parcelas | INTEGER | NÃO |
+| `timesInDays` | Parcelas (ex: 30/60/90) | VARCHAR(255) | NÃO |
+| `discount` | Desconto vinculado ao prazo | NUMERIC(10,2) | NÃO |
+| `orderMinValue` | Valor mínimo do pedido para liberar | NUMERIC(10,2) | NÃO |
+
+<Info>
+  **Campo `method`:** Valor padrão é `BOLETO` se não especificado.
+</Info>
+
+<Tip>
+  **Campo `orderMinValue`:** Quando preenchido, a plataforma exibe automaticamente quanto o cliente precisa alcançar para liberar a condição de pagamento.
+</Tip>
+
+---
+
+## VIEW_NEXFAR_PRICE_GROUP
+
+Tabelas de preço/políticas comerciais/condições comerciais.
+
+### Regras de Negócio
+
+- Somente tabelas de preço **ativas** devem ser enviadas
+- Se `externalId` vier nulo, o registro será ignorado
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `name` | Nome da tabela de preço | VARCHAR(255) | SIM |
+| `externalId` | ID da tabela no ERP | VARCHAR(255) | SIM |
+| `marginCalculationMode` | Preço para cálculo de margem: PRICE ou FINAL_PRICE | VARCHAR(50) | NÃO |
+| `orderMinMargin` | Margem mínima do pedido | NUMERIC(10,2) | NÃO |
+
+<Warning>
+  **Campos EXCLUSIVOS NEXOFF:** `marginCalculationMode` e `orderMinMargin` são utilizados apenas para clientes com Negociação por Margem.
+</Warning>
+
+---
+
+## VIEW_NEXFAR_SELLER
+
+Vendedores e supervisores que atuarão na plataforma.
+
+### Regras de Negócio
+
+- Somente vendedores e supervisores **ativos** devem ser enviados
+- Se `externalId` vier nulo, o registro será ignorado
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `name` | Nome do vendedor | VARCHAR(255) | SIM |
+| `externalId` | ID do vendedor no ERP | VARCHAR(50) | SIM |
+| `team` | Equipe do vendedor | VARCHAR(255) | NÃO |
+| `cpf` | CPF do vendedor | VARCHAR(20) | NÃO |
+| `televendas` | É televendedor? (NEXOFF) | BOOLEAN | SIM |
+| `email` | E-mail do vendedor (NEXOFF) | VARCHAR(100) | NÃO |
+| `isSupervisor` | É supervisor? (NEXOFF) | BOOLEAN | SIM |
+| `supervisorId` | ID do supervisor (NEXOFF) | VARCHAR(255) | NÃO |
+| `clientFullAccess` | Acesso a todos os clientes? (NEXOFF) | BOOLEAN | SIM |
+
+<Warning>
+  **Campos EXCLUSIVOS NEXOFF:** Campos marcados com (NEXOFF) são específicos para a solução de Força de Vendas.
+</Warning>
+
+---
+
+## Exemplo de Consulta SQL
+
+```sql
+-- Exemplo: VIEW_NEXFAR_CLIENT
+CREATE VIEW VIEW_NEXFAR_CLIENT AS
+SELECT
+    c.nome_fantasia AS name,
+    c.cnpj AS cnpj,
+    c.id AS externalId,
+    c.razao_social AS razaoSocial,
+    c.uf AS state,
+    c.cnpj_matriz AS cnpjMatriz,
+    c.email AS emailErp,
+    c.telefone AS phone,
+    c.cep AS cep,
+    c.cidade AS city,
+    CONCAT(c.endereco, ', ', c.numero, ' - ', c.bairro) AS address,
+    c.limite_credito_total AS totalCreditLimit,
+    c.limite_credito_disponivel AS availableCreditLimit,
+    CASE WHEN c.situacao_credito = 1 THEN 'REGULAR' ELSE 'IRREGULAR' END AS creditStatus,
+    c.is_farmacia AS drugstore
+FROM clientes c
+WHERE c.ativo = true
+  AND c.cnpj IS NOT NULL
+  AND LENGTH(c.cnpj) >= 14;
+```
+
+<Tip>
+  Adapte o exemplo acima de acordo com a estrutura do seu banco de dados, mantendo a nomenclatura dos campos Nexfar.
+</Tip>
+
+---
+
+## Próximos Passos
+
+Após implementar as VIEWs de cadastros básicos, prossiga para:
+
+1. [Produtos](/deployment/data-extraction/views/produtos) - Catálogo de produtos e relacionamentos
+2. [Pedidos](/deployment/data-extraction/views/pedidos) - Cabeçalho e itens de pedidos
+3. [Vendas](/deployment/data-extraction/views/vendas) - Histórico de vendas
+
+<Note>
+  Dúvidas sobre campos específicos? Entre em contato com a equipe técnica da Nexfar.
+</Note>

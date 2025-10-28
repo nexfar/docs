@@ -1,0 +1,202 @@
+---
+title: "Vendas (Ofertas)"
+description: "VIEWs para ações comerciais e ofertas especiais na plataforma"
+---
+
+## Visão Geral
+
+As VIEWs de vendas permitem a integração de ações comerciais e ofertas especiais (promoções) que serão exibidas na plataforma Nexfar. Essas ofertas podem ter preços diferenciados e configurações de acesso por cliente ou vendedor.
+
+<Note>
+  **Importante:** As ofertas criadas através destas VIEWs são diferentes dos Combos. Ofertas permitem venda de produtos individuais com desconto, enquanto Combos agrupam múltiplos produtos.
+</Note>
+
+---
+
+## VIEW_NEXFAR_SALE_HEADER
+
+Cabeçalho das ofertas/ações comerciais que serão importadas.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID da oferta no ERP | VARCHAR(255) | SIM |
+| `title` | Título da oferta (exibido na plataforma) | VARCHAR(255) | SIM |
+| `branchId` | ID da base vinculada | VARCHAR(255) | SIM |
+| `warehouseId` | ID do centro de distribuição | VARCHAR(255) | SIM |
+| `description` | Descrição pública da ação | VARCHAR(255) | NÃO |
+| `internalInstructions` | Observação comercial interna | VARCHAR(255) | NÃO |
+| `startDate` | Data/hora de início | DATE | SIM |
+| `endDate` | Data/hora de término | DATE | SIM |
+| `scopes` | Canal de vendas | VARCHAR(255) | SIM |
+| `platformScopes` | Plataforma (Web/App) | VARCHAR(255) | SIM |
+
+### Opções de Scopes (Canal)
+
+| Valor | Descrição |
+| --- | --- |
+| `CLIENT` | Apenas E-commerce |
+| `SELLER` | Apenas Força de Vendas |
+| `ALL` | E-commerce e Força de Vendas |
+
+### Opções de Platform Scopes
+
+| Valor | Descrição |
+| --- | --- |
+| `CLIENT_WEB` | E-commerce Web |
+| `CLIENT_APP` | E-commerce App |
+| `SELLER_WEB` | Força de Vendas Web |
+| `SELLER_APP` | Força de Vendas App |
+| `ALL` | Todas as plataformas |
+
+<Info>
+  **Datas:** Se `startDate` ou `endDate` forem nulos, a oferta rodará por tempo indeterminado.
+</Info>
+
+---
+
+## VIEW_NEXFAR_SALE_ITEM
+
+Produtos incluídos na oferta com seus preços promocionais.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID da oferta no ERP | VARCHAR(255) | SIM |
+| `sku` | SKU do produto | VARCHAR(255) | SIM |
+| `minQuantity` | Quantidade mínima | INTEGER | NÃO |
+| `maxQuantity` | Quantidade máxima | INTEGER | SIM |
+| `price` | Preço promocional | NUMERIC(10,2) | SIM |
+| `allowNegotiationUp` | Permite subir preço? | BOOLEAN | NÃO |
+| `allowNegotiationDown` | Permite baixar preço? (sem verba) | BOOLEAN | NÃO |
+| `allowCreditUp` | Gera verba ao subir preço? | BOOLEAN | NÃO |
+| `allowCreditDown` | Permite usar verba para baixar? | BOOLEAN | NÃO |
+| `all_clients` | Disponível para todos os clientes? | BOOLEAN | NÃO |
+
+<Tip>
+  Campos de negociação (`allowNegotiation*` e `allowCredit*`) são específicos para Força de Vendas (NEXOFF).
+</Tip>
+
+---
+
+## VIEW_NEXFAR_SALE_CLIENT
+
+Define quais clientes têm acesso à oferta.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID da oferta no ERP | VARCHAR(255) | NÃO |
+| `clientId` | ID do cliente com acesso | VARCHAR(255) | NÃO |
+
+<Warning>
+  **VIEW CONDICIONAL:** Use esta VIEW apenas se as ofertas forem configuradas por cliente. Caso contrário, não precisa ser implementada.
+
+  **Exclusão mútua:** Se configurar por cliente, não configure por vendedor.
+</Warning>
+
+---
+
+## VIEW_NEXFAR_SALE_SELLER
+
+Define quais vendedores têm acesso à oferta.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID da oferta no ERP | VARCHAR(255) | NÃO |
+| `sellerId` | ID do vendedor com acesso | VARCHAR(255) | NÃO |
+
+<Warning>
+  **VIEW CONDICIONAL:** Use esta VIEW apenas se as ofertas forem configuradas por vendedor/televendedor.
+
+  **Exclusão mútua:** Se configurar por vendedor, não configure por cliente.
+</Warning>
+
+---
+
+## Fluxo de Configuração
+
+### Oferta para Todos
+
+Se a oferta é para **todos os clientes** e **todos os vendedores**:
+
+1. Criar registro em `VIEW_NEXFAR_SALE_HEADER`
+2. Criar registros em `VIEW_NEXFAR_SALE_ITEM`
+3. **Não** criar registros em `SALE_CLIENT` ou `SALE_SELLER`
+
+### Oferta por Cliente
+
+Se a oferta é para **clientes específicos**:
+
+1. Criar registro em `VIEW_NEXFAR_SALE_HEADER`
+2. Criar registros em `VIEW_NEXFAR_SALE_ITEM`
+3. Criar registros em `VIEW_NEXFAR_SALE_CLIENT` para cada cliente
+
+### Oferta por Vendedor
+
+Se a oferta é para **vendedores específicos**:
+
+1. Criar registro em `VIEW_NEXFAR_SALE_HEADER`
+2. Criar registros em `VIEW_NEXFAR_SALE_ITEM`
+3. Criar registros em `VIEW_NEXFAR_SALE_SELLER` para cada vendedor
+
+---
+
+## Exemplo de Consulta SQL
+
+```sql
+-- Exemplo: VIEW_NEXFAR_SALE_HEADER
+CREATE VIEW VIEW_NEXFAR_SALE_HEADER AS
+SELECT
+    o.codigo AS promotionExternalId,
+    o.titulo AS title,
+    o.id_base AS branchId,
+    o.id_cd AS warehouseId,
+    o.descricao AS description,
+    o.observacao_interna AS internalInstructions,
+    o.data_inicio AS startDate,
+    o.data_fim AS endDate,
+    CASE
+        WHEN o.canal = 'ECOMMERCE' THEN 'CLIENT'
+        WHEN o.canal = 'FORCA_VENDAS' THEN 'SELLER'
+        ELSE 'ALL'
+    END AS scopes,
+    'ALL' AS platformScopes
+FROM ofertas o
+WHERE o.ativa = true;
+
+-- Exemplo: VIEW_NEXFAR_SALE_ITEM
+CREATE VIEW VIEW_NEXFAR_SALE_ITEM AS
+SELECT
+    i.codigo_oferta AS promotionExternalId,
+    p.codigo AS sku,
+    i.qtd_minima AS minQuantity,
+    i.qtd_maxima AS maxQuantity,
+    i.preco_promocional AS price,
+    false AS allowNegotiationUp,
+    false AS allowNegotiationDown,
+    false AS allowCreditUp,
+    false AS allowCreditDown,
+    CASE WHEN i.todos_clientes = 1 THEN true ELSE false END AS all_clients
+FROM oferta_itens i
+INNER JOIN produtos p ON i.id_produto = p.id;
+```
+
+---
+
+## Próximos Passos
+
+Após implementar as VIEWs de vendas, considere:
+
+1. [Combos](/deployment/data-extraction/views/combos) - Promoções de produtos agrupados
+2. [Impostos e Margens](/deployment/data-extraction/views/impostos-margens) - Cálculos fiscais
+3. [Documentos Fiscais](/deployment/data-extraction/views/documentos-fiscais) - Notas e documentações
+
+<Note>
+  **Modelos disponíveis:** A Nexfar disponibiliza modelos de documentação específicos para E-commerce e Força de Vendas. Entre em contato para acesso aos templates.
+</Note>

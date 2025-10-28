@@ -89,16 +89,35 @@ vim internal-docs/architecture.mdx
 vim integration-docs/index.mdx
 ```
 
-## Symlinks
+## Conteúdo Compartilhado (deployment/)
 
-A pasta `shared/deployment/` é referenciada via symlinks:
-- `internal-docs/deployment` → `../shared/deployment/`
-- `integration-docs/deployment` → `../shared/deployment/`
+⚠️ **Nota:** Mintlify não segue symlinks corretamente. Por isso, a pasta `deployment/` é **copiada** de `shared/deployment/` para:
+- `internal-docs/deployment/`
+- `integration-docs/deployment/`
 
-**Benefícios:**
-- ✅ Sem duplicação
-- ✅ Fonte única de verdade
-- ✅ Alterações propagam automaticamente
+### Como Manter Sincronizado
+
+Quando editar a documentação de deployment:
+
+**Opção 1: Editar em shared/ e copiar**
+```bash
+# 1. Edite em shared/
+vim shared/deployment/data-extraction/views/produtos.mdx
+
+# 2. Copie para os outros ambientes
+cp -r shared/deployment/* internal-docs/deployment/
+cp -r shared/deployment/* integration-docs/deployment/
+
+# 3. Commit
+git add .
+git commit -m "Atualizar documentação de deployment"
+```
+
+**Opção 2: Usar script de sync (recomendado)**
+```bash
+# Criar script sync-deployment.sh
+./sync-deployment.sh
+```
 
 ## CI/CD
 
