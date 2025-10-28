@@ -1,6 +1,5 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "$schema": "https://mintlify.com/schema.json",
   "name": "Nexfar",
   "colors": {
     "primary": "#6633FF",
@@ -8,8 +7,7 @@
     "dark": "#5229CC"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
+  "tabs": [
       {
         "tab": "Guias",
         "groups": [
@@ -122,9 +120,10 @@
         ]
       }
     ],
-    "global": { }
+  "logo": {
+    "light": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
+    "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
   },
-  "logo": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
   "navbar": {
     "primary": {
       "type": "button",
