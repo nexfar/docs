@@ -70,6 +70,38 @@
         ]
       },
       {
+        "tab": "Implantação",
+        "groups": [
+          {
+            "group": "Visão Geral",
+            "pages": [
+              "deployment/overview"
+            ]
+          },
+          {
+            "group": "Métodos de Extração",
+            "pages": [
+              "deployment/data-extraction/database-views",
+              "deployment/data-extraction/rest-api",
+              "deployment/data-extraction/edi",
+              "deployment/data-extraction/ftp"
+            ]
+          },
+          {
+            "group": "Referência de VIEWs",
+            "pages": [
+              "deployment/data-extraction/views/cadastros-basicos",
+              "deployment/data-extraction/views/produtos",
+              "deployment/data-extraction/views/pedidos",
+              "deployment/data-extraction/views/vendas",
+              "deployment/data-extraction/views/combos",
+              "deployment/data-extraction/views/impostos-margens",
+              "deployment/data-extraction/views/documentos-fiscais"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Referência da API",
         "groups": [
           {

@@ -1,0 +1,129 @@
+---
+title: "Acesso via Banco de Dados"
+description: "Integração com a Nexfar através de VIEWs padronizadas no banco de dados"
+---
+
+## Visão Geral
+
+O acesso via banco de dados permite que a Nexfar extraia dados do seu ERP através de VIEWs SQL padronizadas. Este é um dos métodos mais performáticos e diretos de integração.
+
+## Requisitos Técnicos
+
+### IPs para Liberação
+
+Para que a Nexfar possa acessar seu banco de dados, é necessário liberar os seguintes endereços IP:
+
+<Warning>
+  **IPs que devem ser liberados no firewall:**
+  - `189.28.42.170`
+  - `170.84.19.69`
+</Warning>
+
+### Nomenclatura das VIEWs
+
+As views, tabelas ou endpoints devem sempre sinalizar que são destinadas à integração da Nexfar:
+
+- **VIEW**: Deve se chamar `VIEW_NEXFAR_CLIENT`, `VIEW_NEXFAR_PRODUCT`, etc.
+- **Tabela**: Deve se chamar `NEXFAR_CLIENT`, `NEXFAR_PRODUCT`, etc.
+- **Endpoint**: Deve se chamar `NEXFAR_CLIENT`, `NEXFAR_PRODUCT`, etc.
+
+## Opções de Implementação
+
+### Opção 1: VIEWs Diretas
+
+Criação de VIEWs que acessam diretamente as tabelas do ERP.
+
+<Info>
+  Esta é a opção mais simples e recomendada quando não há restrições de acesso direto ao banco de produção.
+</Info>
+
+### Opção 2: Banco Intermediário
+
+Caso o cliente opte por disponibilizar um banco intermediário, as tabelas deste banco devem:
+
+- **Ser incrementais**: Os dados devem ser sempre acrescentados, nunca removidos e inseridos novamente
+- **Possuir coluna de auditoria**: Incluir uma coluna que informe a data em que o registro foi inserido ou atualizado
+
+<Note>
+  **Views Materializadas**: Caso não seja possível realizar uma implementação incremental dos dados, é fundamental a criação de views materializadas. Recomendamos o uso do PostgreSQL para este cenário.
+</Note>
+
+#### Fluxo com Views Materializadas
+
+```sql
+-- 1. Apagar os registros da tabela
+TRUNCATE TABLE nexfar_client;
+
+-- 2. Repopular a tabela
+INSERT INTO nexfar_client SELECT * FROM erp_clients WHERE active = true;
+
+-- 3. Dar refresh na view materializada
+REFRESH MATERIALIZED VIEW view_nexfar_client;
+```
+
+### Opção 3: API REST
+
+Caso o cliente opte por disponibilizar uma API, os endpoints disponibilizados devem permitir o uso de `queryFilters` para todos os campos:
+
+- **VARCHAR**: Operações LIKE
+- **DATE/TIMESTAMP**: Intervalos
+- **INTEGER**: Operadores `>` e `<`
+- **Paginação**: Filtros padrão `page` e `pageSize`
+
+## Legendas e Sinalizações
+
+Ao analisar a documentação das VIEWs, você encontrará os seguintes símbolos:
+
+- **#️⃣** Campos que formam o `hashErp` - a combinação deles deve ser única por registro
+- **🔍** Campos frequentemente utilizados para busca - devem ser indexados
+- **⚠️** Campos que não devem ser enviados por padrão - tratados via regra do integrador
+
+<Note>
+  Nas tabelas de referência, as colunas em **verde** sinalizam informações que podem ser compartilhadas com o cliente, enquanto as em **cinza** apresentam informações exclusivamente internas.
+</Note>
+
+## VIEWs Disponíveis
+
+As VIEWs estão organizadas por categoria para facilitar a implementação:
+
+<CardGroup cols={2}>
+  <Card title="Cadastros Básicos" icon="users" href="/deployment/data-extraction/views/cadastros-basicos">
+    Clientes, Condições de Pagamento, Vendedores e Grupos de Preço
+  </Card>
+
+  <Card title="Produtos" icon="box" href="/deployment/data-extraction/views/produtos">
+    Produtos, Filiais, Armazéns, Preços e Restrições
+  </Card>
+
+  <Card title="Pedidos" icon="file-invoice" href="/deployment/data-extraction/views/pedidos">
+    Cabeçalho e Itens de Pedidos (normais e distribuidores)
+  </Card>
+
+  <Card title="Vendas" icon="chart-line" href="/deployment/data-extraction/views/vendas">
+    Cabeçalho, Itens, Clientes e Vendedores de Vendas
+  </Card>
+
+  <Card title="Combos" icon="layer-group" href="/deployment/data-extraction/views/combos">
+    Cabeçalho, Itens, Clientes e Vendedores de Combos
+  </Card>
+
+  <Card title="Impostos e Margens" icon="percent" href="/deployment/data-extraction/views/impostos-margens">
+    Determinações e Valores de Impostos e Margens
+  </Card>
+
+  <Card title="Documentos Fiscais" icon="file-lines" href="/deployment/data-extraction/views/documentos-fiscais">
+    Notas Fiscais e Documentos Relacionados
+  </Card>
+</CardGroup>
+
+## Próximos Passos
+
+1. Escolha a opção de implementação mais adequada (VIEW direta, banco intermediário ou API)
+2. Revise as VIEWs necessárias para sua integração
+3. Implemente as VIEWs seguindo as especificações de cada categoria
+4. Libere os IPs da Nexfar no firewall
+5. Entre em contato para validação da integração
+
+<Tip>
+  Recomendamos começar pelas VIEWs de **Cadastros Básicos** (Cliente e Condições de Pagamento) e depois expandir para as demais categorias.
+</Tip>
