@@ -1,0 +1,238 @@
+---
+title: "Combos"
+description: "VIEWs para promoções combo (agrupamento de produtos)"
+---
+
+## Visão Geral
+
+As VIEWs de combos permitem a criação de promoções que agrupam múltiplos produtos em um pacote especial. Combos podem incluir produtos com desconto e/ou bonificações, com controles de limite por cliente, vendedor e carrinho.
+
+<Note>
+  **Diferença entre Combo e Oferta:**
+  - **Combo:** Agrupa múltiplos produtos em um pacote (ex: compre 2 produtos X + 1 produto Y por R$100)
+  - **Oferta:** Desconto em produtos individuais (ex: produto X por R$50)
+</Note>
+
+---
+
+## VIEW_NEXFAR_COMBO_HEADER
+
+Cabeçalho das promoções combo.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID do combo no ERP | VARCHAR(255) | SIM |
+| `title` | Título do combo (exibido na plataforma) | VARCHAR(255) | SIM |
+| `branchId` | ID da base vinculada | VARCHAR(255) | SIM |
+| `warehouseId` | ID do centro de distribuição | VARCHAR(255) | SIM |
+| `description` | Descrição pública | VARCHAR(255) | NÃO |
+| `internalInstructions` | Observação comercial interna | VARCHAR(255) | NÃO |
+| `startDate` | Data/hora de início | DATE | SIM |
+| `endDate` | Data/hora de término | DATE | SIM |
+| `scopes` | Canal de vendas | VARCHAR(255) | SIM |
+| `platformScopes` | Plataforma (Web/App) | VARCHAR(255) | SIM |
+| `quantityAvailable` | Qtd. disponível do combo | INTEGER | NÃO |
+| `cartLimit` | Limite por carrinho | INTEGER | NÃO |
+| `clientLimit` | Limite por cliente | INTEGER | NÃO |
+| `sellerLimit` | Limite por vendedor | INTEGER | NÃO |
+| `marginValidation` | Considerar no cálculo de margem? | BOOLEAN | SIM |
+| `all_clients` | Disponível para todos os clientes? | BOOLEAN | NÃO |
+
+### Opções de Scopes
+
+| Valor | Descrição |
+| --- | --- |
+| `CLIENT` | Apenas E-commerce |
+| `SELLER` | Apenas Força de Vendas |
+| `ALL` | E-commerce e Força de Vendas |
+
+### Opções de Platform Scopes
+
+| Valor | Descrição |
+| --- | --- |
+| `CLIENT_WEB` | E-commerce Web |
+| `CLIENT_APP` | E-commerce App |
+| `SELLER_WEB` | Força de Vendas Web |
+| `SELLER_APP` | Força de Vendas App |
+| `ALL` | Todas as plataformas |
+
+<Info>
+  **Limites nulos:** Quando os campos de limite (`quantityAvailable`, `cartLimit`, `clientLimit`, `sellerLimit`) são nulos, não há limitação.
+</Info>
+
+---
+
+## VIEW_NEXFAR_COMBO_ITEM
+
+Produtos incluídos no combo.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID do combo no ERP | VARCHAR(255) | SIM |
+| `sku` | SKU do produto | VARCHAR(255) | SIM |
+| `quantity` | Quantidade vendida | INTEGER | NÃO |
+| `subsidizedQuantity` | Quantidade bonificada | INTEGER | NÃO |
+| `price` | Preço do produto no combo | NUMERIC(10,2) | NÃO |
+
+<Tip>
+  **Campos nulos:** Se `quantity` ou `subsidizedQuantity` forem nulos, serão considerados como `0`.
+</Tip>
+
+### Exemplo de Configuração
+
+```sql
+-- Combo: Compre 2 Produto A + 1 Produto B por R$100
+-- (Produto B é bonificado)
+
+-- COMBO_ITEM para Produto A
+promotionExternalId = 'COMBO001'
+sku = 'PROD_A'
+quantity = 2
+subsidizedQuantity = 0
+price = 50.00  -- R$50 cada (total R$100 para 2)
+
+-- COMBO_ITEM para Produto B
+promotionExternalId = 'COMBO001'
+sku = 'PROD_B'
+quantity = 0
+subsidizedQuantity = 1  -- Bonificado
+price = 0.00
+```
+
+---
+
+## VIEW_NEXFAR_COMBO_CLIENT
+
+Define quais clientes têm acesso ao combo.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID do combo no ERP | VARCHAR(255) | SIM |
+| `clientId` | ID do cliente com acesso | VARCHAR(255) | NÃO |
+| `cnpj` | CNPJ do cliente com acesso | VARCHAR(255) | NÃO |
+
+<Warning>
+  **VIEW CONDICIONAL:** Use esta VIEW apenas se os combos forem configurados por cliente.
+
+  **Exclusão mútua:** Se configurar por cliente, não configure por vendedor.
+</Warning>
+
+---
+
+## VIEW_NEXFAR_COMBO_SELLER
+
+Define quais vendedores têm acesso ao combo.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `promotionExternalId` | ID do combo no ERP | VARCHAR(255) | SIM |
+| `sellerId` | ID do vendedor com acesso | VARCHAR(255) | NÃO |
+
+<Warning>
+  **VIEW CONDICIONAL:** Use esta VIEW apenas se os combos forem configurados por vendedor/televendedor.
+
+  **Exclusão mútua:** Se configurar por vendedor, não configure por cliente.
+</Warning>
+
+---
+
+## Fluxo de Configuração
+
+### Combo para Todos
+
+Se o combo é para **todos**:
+
+1. Criar registro em `VIEW_NEXFAR_COMBO_HEADER` com `all_clients = true`
+2. Criar registros em `VIEW_NEXFAR_COMBO_ITEM`
+3. **Não** criar registros em `COMBO_CLIENT` ou `COMBO_SELLER`
+
+### Combo por Cliente
+
+Se o combo é para **clientes específicos**:
+
+1. Criar registro em `VIEW_NEXFAR_COMBO_HEADER`
+2. Criar registros em `VIEW_NEXFAR_COMBO_ITEM`
+3. Criar registros em `VIEW_NEXFAR_COMBO_CLIENT` para cada cliente
+
+### Combo por Vendedor
+
+Se o combo é para **vendedores específicos**:
+
+1. Criar registro em `VIEW_NEXFAR_COMBO_HEADER`
+2. Criar registros em `VIEW_NEXFAR_COMBO_ITEM`
+3. Criar registros em `VIEW_NEXFAR_COMBO_SELLER` para cada vendedor
+
+---
+
+## Controles de Limite
+
+| Limite | Descrição | Exemplo |
+| --- | --- | --- |
+| `quantityAvailable` | Total de combos disponíveis | 100 combos no total |
+| `cartLimit` | Combos por pedido/carrinho | Máximo 2 combos por pedido |
+| `clientLimit` | Combos por cliente (período) | Cada cliente pode comprar 5 combos |
+| `sellerLimit` | Combos por vendedor (período) | Cada vendedor pode vender 20 combos |
+
+<Info>
+  Os limites trabalham em conjunto. Por exemplo, mesmo que `clientLimit = 5`, se `cartLimit = 2`, o cliente só pode adicionar 2 combos por pedido.
+</Info>
+
+---
+
+## Exemplo de Consulta SQL
+
+```sql
+-- Exemplo: VIEW_NEXFAR_COMBO_HEADER
+CREATE VIEW VIEW_NEXFAR_COMBO_HEADER AS
+SELECT
+    c.codigo AS promotionExternalId,
+    c.titulo AS title,
+    c.id_base AS branchId,
+    c.id_cd AS warehouseId,
+    c.descricao AS description,
+    c.data_inicio AS startDate,
+    c.data_fim AS endDate,
+    'ALL' AS scopes,
+    'ALL' AS platformScopes,
+    c.qtd_disponivel AS quantityAvailable,
+    c.limite_carrinho AS cartLimit,
+    c.limite_cliente AS clientLimit,
+    c.limite_vendedor AS sellerLimit,
+    CASE WHEN c.validar_margem = 1 THEN true ELSE false END AS marginValidation,
+    CASE WHEN c.todos_clientes = 1 THEN true ELSE false END AS all_clients
+FROM combos c
+WHERE c.ativo = true;
+
+-- Exemplo: VIEW_NEXFAR_COMBO_ITEM
+CREATE VIEW VIEW_NEXFAR_COMBO_ITEM AS
+SELECT
+    i.codigo_combo AS promotionExternalId,
+    p.codigo AS sku,
+    COALESCE(i.quantidade, 0) AS quantity,
+    COALESCE(i.quantidade_bonificada, 0) AS subsidizedQuantity,
+    COALESCE(i.preco, 0) AS price
+FROM combo_itens i
+INNER JOIN produtos p ON i.id_produto = p.id;
+```
+
+---
+
+## Próximos Passos
+
+Após implementar as VIEWs de combos, considere:
+
+1. [Impostos e Margens](/integration/deployment/data-extraction/views/impostos-margens) - Cálculos fiscais e margem
+2. [Documentos Fiscais](/integration/deployment/data-extraction/views/documentos-fiscais) - Notas e documentações
+3. Testar cenários de limite e bonificação
+
+<Note>
+  **Modelos disponíveis:** A Nexfar disponibiliza templates de documentação para combos. Entre em contato para acesso.
+</Note>

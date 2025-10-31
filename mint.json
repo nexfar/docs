@@ -1,0 +1,193 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Nexfar",
+  "logo": {
+    "light": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
+    "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6633FF",
+    "light": "#FFA500",
+    "dark": "#5229CC"
+  },
+  "topbarCtaButton": {
+    "type": "link",
+    "name": "Acessar Plataforma",
+    "url": "https://app.nexfar.com.br"
+  },
+  "navigation": [
+    {
+      "group": "Documentação Pública",
+      "pages": [
+        "index"
+      ]
+    }
+  ],
+  "tabs": [
+    {
+      "name": "Developer Docs",
+      "url": "dev",
+      "navigation": [
+        {
+          "group": "Começar",
+          "pages": [
+            "dev/index"
+          ]
+        },
+        {
+          "group": "Guias",
+          "pages": [
+            "dev/quickstart",
+            "dev/development"
+          ]
+        },
+        {
+          "group": "Personalização",
+          "pages": [
+            "dev/essentials/settings",
+            "dev/essentials/navigation"
+          ]
+        },
+        {
+          "group": "Escrevendo conteúdo",
+          "pages": [
+            "dev/essentials/markdown",
+            "dev/essentials/code",
+            "dev/essentials/images",
+            "dev/essentials/reusable-snippets"
+          ]
+        },
+        {
+          "group": "Ferramentas de IA",
+          "pages": [
+            "dev/ai-tools/cursor",
+            "dev/ai-tools/claude-code",
+            "dev/ai-tools/windsurf"
+          ]
+        },
+        {
+          "group": "Arquitetura",
+          "pages": [
+            "dev/architecture"
+          ]
+        },
+        {
+          "group": "Infraestrutura",
+          "pages": [
+            "dev/infrastructure"
+          ]
+        },
+        {
+          "group": "Implantação - Visão Geral",
+          "pages": [
+            "dev/deployment/overview"
+          ]
+        },
+        {
+          "group": "Implantação - Métodos de Extração",
+          "pages": [
+            "dev/deployment/data-extraction/database-views",
+            "dev/deployment/data-extraction/rest-api",
+            "dev/deployment/data-extraction/edi",
+            "dev/deployment/data-extraction/ftp"
+          ]
+        },
+        {
+          "group": "Implantação - Referência de VIEWs",
+          "pages": [
+            "dev/deployment/data-extraction/views/cadastros-basicos",
+            "dev/deployment/data-extraction/views/produtos",
+            "dev/deployment/data-extraction/views/pedidos",
+            "dev/deployment/data-extraction/views/vendas",
+            "dev/deployment/data-extraction/views/combos",
+            "dev/deployment/data-extraction/views/impostos-margens",
+            "dev/deployment/data-extraction/views/documentos-fiscais"
+          ]
+        },
+        {
+          "group": "Referência da API",
+          "pages": [
+            "dev/api-reference/introduction"
+          ]
+        },
+        {
+          "group": "Exemplos de endpoints",
+          "pages": [
+            "dev/api-reference/endpoint/get",
+            "dev/api-reference/endpoint/create",
+            "dev/api-reference/endpoint/delete",
+            "dev/api-reference/endpoint/webhook"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Documentação de Integração",
+      "url": "integration",
+      "navigation": [
+        {
+          "group": "Começar",
+          "pages": [
+            "integration/index",
+            "integration/deployment/overview"
+          ]
+        },
+        {
+          "group": "Métodos de Extração de Dados",
+          "pages": [
+            "integration/deployment/data-extraction/database-views",
+            "integration/deployment/data-extraction/rest-api",
+            "integration/deployment/data-extraction/edi",
+            "integration/deployment/data-extraction/ftp"
+          ]
+        },
+        {
+          "group": "Cadastros e Configurações",
+          "pages": [
+            "integration/deployment/data-extraction/views/cadastros-basicos",
+            "integration/deployment/data-extraction/views/documentos-fiscais"
+          ]
+        },
+        {
+          "group": "Catálogo de Produtos",
+          "pages": [
+            "integration/deployment/data-extraction/views/produtos"
+          ]
+        },
+        {
+          "group": "Pedidos e Vendas",
+          "pages": [
+            "integration/deployment/data-extraction/views/pedidos",
+            "integration/deployment/data-extraction/views/vendas",
+            "integration/deployment/data-extraction/views/combos"
+          ]
+        },
+        {
+          "group": "Impostos e Margens (NEXOFF)",
+          "pages": [
+            "integration/deployment/data-extraction/views/impostos-margens"
+          ]
+        }
+      ]
+    }
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "website": "https://nexfar.com.br",
+      "linkedin": "https://www.linkedin.com/company/nexfar"
+    }
+  }
+}

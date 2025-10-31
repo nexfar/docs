@@ -1,0 +1,244 @@
+---
+title: "REST API"
+description: "Integração via endpoints REST para extração de dados"
+---
+
+## Visão Geral
+
+A integração via REST API permite que a Nexfar extraia dados do seu ERP através de endpoints HTTP padronizados. Este método oferece flexibilidade, controle de acesso e facilidade de manutenção.
+
+<Note>
+  **Documentação em desenvolvimento:** Esta seção será expandida com especificações detalhadas dos endpoints. Entre em contato com a equipe Nexfar para mais informações.
+</Note>
+
+---
+
+## Requisitos Técnicos
+
+### Endpoint Base
+
+Todos os endpoints devem seguir o padrão RESTful:
+
+```
+https://seu-erp.com/api/nexfar/{resource}
+```
+
+### Autenticação
+
+- **Recomendado:** OAuth 2.0 ou API Key
+- Headers de autenticação devem ser incluídos em todas as requisições
+
+### Formato de Resposta
+
+- **Content-Type:** `application/json`
+- Encoding: UTF-8
+- Estrutura padronizada de resposta
+
+---
+
+## Query Filters Obrigatórios
+
+Todos os endpoints devem suportar os seguintes filtros:
+
+### Campos VARCHAR
+
+```http
+GET /api/nexfar/clients?name__like=Farmacia
+```
+
+- Operador `__like` para buscas parciais
+
+### Campos DATE/TIMESTAMP
+
+```http
+GET /api/nexfar/orders?orderDate__gte=2024-01-01&orderDate__lte=2024-12-31
+```
+
+- Operadores: `__gte` (maior ou igual), `__lte` (menor ou igual)
+
+### Campos INTEGER/NUMERIC
+
+```http
+GET /api/nexfar/products?price__gt=100&price__lt=500
+```
+
+- Operadores: `__gt` (maior que), `__lt` (menor que)
+
+### Paginação
+
+```http
+GET /api/nexfar/clients?page=1&pageSize=100
+```
+
+- `page`: Número da página (default: 1)
+- `pageSize`: Quantidade de registros (default: 50, max: 500)
+
+---
+
+## Endpoints Necessários
+
+### Cadastros Básicos
+
+<CardGroup cols={2}>
+  <Card title="GET /nexfar/clients" icon="users">
+    Lista de clientes ativos
+  </Card>
+
+  <Card title="GET /nexfar/payment-conditions" icon="credit-card">
+    Condições de pagamento
+  </Card>
+
+  <Card title="GET /nexfar/price-groups" icon="tag">
+    Tabelas de preço
+  </Card>
+
+  <Card title="GET /nexfar/sellers" icon="user-tie">
+    Vendedores ativos
+  </Card>
+</CardGroup>
+
+### Produtos
+
+<CardGroup cols={2}>
+  <Card title="GET /nexfar/products" icon="box">
+    Catálogo de produtos
+  </Card>
+
+  <Card title="GET /nexfar/product-prices" icon="dollar-sign">
+    Preços por tabela
+  </Card>
+
+  <Card title="GET /nexfar/product-stock" icon="warehouse">
+    Estoque por CD
+  </Card>
+</CardGroup>
+
+### Pedidos
+
+<CardGroup cols={2}>
+  <Card title="GET /nexfar/orders" icon="file-invoice">
+    Pedidos Nexfar
+  </Card>
+
+  <Card title="PUT /nexfar/orders/:id/status" icon="refresh">
+    Atualizar status do pedido
+  </Card>
+</CardGroup>
+
+---
+
+## Exemplo de Requisição
+
+### Listar Clientes
+
+```http
+GET /api/nexfar/clients?state=SP&page=1&pageSize=50
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Resposta:**
+
+```json
+{
+  "data": [
+    {
+      "externalId": "12345",
+      "name": "Farmácia Exemplo",
+      "cnpj": "12345678000190",
+      "razaoSocial": "Farmácia Exemplo Ltda",
+      "state": "SP",
+      "city": "São Paulo",
+      "creditStatus": "REGULAR"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "pageSize": 50,
+    "totalRecords": 150,
+    "totalPages": 3
+  }
+}
+```
+
+---
+
+## Exemplo de Atualização de Status
+
+### Atualizar Pedido
+
+```http
+PUT /api/nexfar/orders/12345/status
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "BILLED",
+  "statusLabel": "Faturado e aguardando envio",
+  "billingDate": "2024-10-28",
+  "nfeNumber": "987654",
+  "nfeKey": "35241012345678000190550010009876541234567890"
+}
+```
+
+---
+
+## Segurança e Performance
+
+### Rate Limiting
+
+Implemente controle de taxa de requisições:
+
+- Máximo: 100 requisições por minuto
+- Header de resposta: `X-RateLimit-Remaining`
+
+### Caching
+
+Utilize headers HTTP para cache:
+
+```http
+Cache-Control: max-age=300
+ETag: "abc123"
+```
+
+### Logs de Auditoria
+
+Registre todas as requisições da Nexfar para auditoria.
+
+---
+
+## Nomenclatura dos Endpoints
+
+Mantenha consistência com a nomenclatura das VIEWs:
+
+| VIEW | Endpoint |
+| --- | --- |
+| `VIEW_NEXFAR_CLIENT` | `/api/nexfar/clients` |
+| `VIEW_NEXFAR_PRODUCT` | `/api/nexfar/products` |
+| `VIEW_NEXFAR_ORDER_HEADER` | `/api/nexfar/orders` |
+
+---
+
+## Próximos Passos
+
+1. Revise a [documentação de VIEWs](/dev/deployment/data-extraction/database-views) para entender os campos necessários
+2. Implemente os endpoints seguindo os padrões REST
+3. Configure autenticação e rate limiting
+4. Forneça à Nexfar:
+   - URL base da API
+   - Credenciais de autenticação
+   - Documentação OpenAPI/Swagger (se disponível)
+
+<Warning>
+  Entre em contato com a equipe técnica da Nexfar para validar a implementação antes de disponibilizar em produção.
+</Warning>
+
+---
+
+## Suporte
+
+Para mais informações sobre a integração via REST API:
+
+- Email: integracao@nexfar.com.br
+- Confluence: [Documentação Técnica](https://nexfar.atlassian.net/)
+- Solicite especificação OpenAPI completa

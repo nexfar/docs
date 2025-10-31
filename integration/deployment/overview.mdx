@@ -1,0 +1,56 @@
+---
+title: "Visão Geral da Implantação"
+description: "Entenda como integrar seu ERP com a plataforma Nexfar para extração de dados"
+---
+
+## Objetivo
+
+Esta seção documenta os métodos de integração disponíveis para que a Nexfar possa extrair dados do seu ERP. A integração permite que a plataforma Nexfar acesse informações essenciais como clientes, produtos, pedidos e condições comerciais diretamente do seu sistema.
+
+## Métodos de Extração de Dados
+
+A Nexfar oferece diferentes métodos de integração para atender às necessidades e infraestrutura de cada cliente:
+
+<CardGroup cols={2}>
+  <Card title="Banco de Dados" icon="database" href="/deployment/data-extraction/database-views">
+    Acesso direto ao banco de dados através de VIEWs padronizadas Nexfar ou replicação CDC
+  </Card>
+
+  <Card title="REST API" icon="plug" href="/deployment/data-extraction/rest-api">
+    Integração via endpoints REST com query filters e paginação
+  </Card>
+
+  <Card title="FTP/EDI" icon="folder-open" href="/deployment/data-extraction/ftp">
+    Transferência de arquivos via protocolo FTP, normalmente usado para envio e retorno de pedidos
+  </Card>
+</CardGroup>
+
+## Escolhendo o Método Ideal
+
+Cada método de integração possui características específicas:
+
+### Banco de Dados:
+- **Melhor para**: Acesso direto e em tempo real aos dados
+- **Requisitos**: Liberação de IPs (whitelist) para acesso ao banco de dados via NAT ou via VPN Site-to-Site.
+- **Vantagens**: Performance, dados atualizados, queries customizadas
+
+### REST API Nexfar
+- **Melhor para**: Integrações modernas e flexíveis onde o distribuidor ou indústria nos envia os dados.
+- **Requisitos**: Desenvolvimento de integração com a nossa API
+- **Vantagens**: Flexibilidade, facilidade de manutenção e atualização
+
+### FTP/EDI
+- **Melhor para**: Transferência de arquivos EDI e/ou arquivos em lote
+- **Requisitos**: Servidor FTP configurado
+- **Vantagens**: Simplicidade, processamento batch, baixo acoplamento
+
+## Próximos Passos
+
+1. Escolha o método de integração mais adequado para sua infraestrutura
+2. Revise a documentação específica do método escolhido
+3. Prepare seu ambiente seguindo os requisitos técnicos
+4. Entre em contato com a equipe Nexfar para agendar a integração
+
+<Note>
+  Dúvidas sobre qual método escolher? Entre em contato com a equipe técnica da Nexfar para uma análise personalizada.
+</Note>

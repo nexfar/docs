@@ -1,0 +1,282 @@
+---
+title: "Produtos"
+description: "VIEWs para catálogo de produtos, preços, estoque e restrições"
+---
+
+## Visão Geral
+
+As VIEWs de produtos gerenciam o catálogo completo de produtos, incluindo informações básicas, preços, estoque, restrições e bloqueios de venda.
+
+<Note>
+  **Importante:** Somente produtos **ativos** devem ser enviados. VIEWs de relacionamento (Branch, Warehouse, Price) devem referenciar apenas produtos já cadastrados.
+</Note>
+
+---
+
+## VIEW_NEXFAR_PRODUCT
+
+Catálogo principal de produtos disponíveis na plataforma.
+
+### Regras de Negócio
+
+- Somente produtos **ativos** devem ser enviados
+- SKU e EAN devem ser únicos (não podem ser duplicados)
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `name` | Nome do Produto | VARCHAR(255) | SIM |
+| `sku` | SKU do Produto (único) | VARCHAR(20) | SIM |
+| `ean` | Código de Barras (único) | VARCHAR(20) | NÃO |
+| `maker` | Fabricante do Produto | VARCHAR(255) | NÃO |
+| `category` | Categoria do Produto | VARCHAR(255) | NÃO |
+| `principle` | Princípio ativo | VARCHAR(255) | NÃO |
+| `similar` | Produto semelhante | VARCHAR(255) | NÃO |
+| `reference` | Produto referência | VARCHAR(255) | NÃO |
+| `complementaryDescription` | Descrição complementar | VARCHAR(255) | NÃO |
+| `boxQuantity` | Quantidade por caixa | INTEGER | NÃO |
+| `availableNexOn` | Disponível no E-commerce? | BOOLEAN | NÃO |
+| `availableNexOff` | Disponível na Força de Vendas? | BOOLEAN | NÃO |
+| `controlled` | É produto controlado? | BOOLEAN | NÃO |
+| `requiredDocuments` | Documentos necessários (ex: ANVISA/ALVARA) | VARCHAR(255) | NÃO |
+| `launch` | É lançamento? | BOOLEAN | NÃO |
+| `partnerMaker` | É fornecedor parceiro? | BOOLEAN | SIM |
+
+<Info>
+  **Campos `similar` e `reference`:** Se nulos, replicam o valor de `principle` automaticamente.
+</Info>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_BRANCH
+
+Vincula produtos às bases/filiais com regras de negócio específicas.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `productId` | ID único do produto no ERP | VARCHAR(255) | SIM |
+| `branchId` | ID da Base/Filial | VARCHAR(255) | SIM |
+| `sku` | SKU do Produto | VARCHAR(20) | SIM |
+| `multiple` | Múltiplo de venda (ex: 5 em 5) | INTEGER | SIM |
+
+<Tip>
+  **Campo `multiple`:** Indica em quais múltiplos o produto pode ser vendido. Se nulo, será considerado `1`.
+</Tip>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_WAREHOUSE
+
+Vincula produtos aos centros de distribuição com informações de estoque.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `productId` | ID único do produto no ERP | VARCHAR(255) | SIM |
+| `warehouseId` | ID do Centro de Distribuição | VARCHAR(255) | SIM |
+| `sku` | SKU do Produto | VARCHAR(20) | SIM |
+| `quantityAvailable` | Quantidade em estoque | INTEGER | SIM |
+| `subsidizedQuantityAvailable` | Quantidade para bonificação (NEXOFF) | INTEGER | NÃO |
+| `validUntil` | Data de validade | DATE | NÃO |
+
+<Info>
+  **Campo `quantityAvailable`:** Será considerado `0` quando nulo ou menor que 0.
+</Info>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_PRICE
+
+Preços dos produtos por tabela de preço/política comercial.
+
+### Regras de Negócio
+
+- Ao menos um dos campos `price` ou `finalPrice` deve ser maior que 0
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `productId` | ID único do produto no ERP | VARCHAR(255) | SIM |
+| `priceGroupId` | ID da tabela de preço | VARCHAR(255) | SIM |
+| `sku` | SKU do Produto | VARCHAR(20) | SIM |
+| `price` | Preço sem ST | NUMERIC(10,2) | NÃO |
+| `finalPrice` | Preço com ST | NUMERIC(10,2) | NÃO |
+| `suggestedPrice` | Preço sugerido (NEXOFF) | NUMERIC(10,2) | NÃO |
+| `discount` | Desconto em relação ao preço fábrica | NUMERIC(10,2) | NÃO |
+| `minPrice` | Preço mínimo permitido | NUMERIC(10,2) | NÃO |
+| `negotiationMinPrice` | Preço mínimo de negociação (NEXOFF) | NUMERIC(10,2) | NÃO |
+| `negotiationMaxPrice` | Preço máximo de negociação (NEXOFF) | NUMERIC(10,2) | NÃO |
+| `allowPromotions` | Permite ações comerciais? | BOOLEAN | SIM |
+| `allowNegotiationDown` | Permite negociar desconto? (NEXOFF) | BOOLEAN | SIM |
+| `allowNegotiationUp` | Permite negociar aumento? (NEXOFF) | BOOLEAN | SIM |
+
+<Warning>
+  Campos com **(NEXOFF)** são exclusivos para a solução de Força de Vendas.
+</Warning>
+
+<Tip>
+  **Campo `minPrice`:** Valor padrão é `0.01` se não especificado.
+</Tip>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_PMC_PF
+
+Preço Fábrica e Preço Máximo ao Consumidor por estado.
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `productId` | ID único do produto no ERP | VARCHAR(255) | SIM |
+| `sku` | SKU do Produto | VARCHAR(20) | SIM |
+| `uf` | Estado (UF) | VARCHAR(20) | SIM |
+| `industryPrice` | Preço Fábrica | NUMERIC(10,2) | NÃO |
+| `pmc` | Preço Máximo ao Consumidor | NUMERIC(10,2) | NÃO |
+| `pmpf` | Preço Médio Ponderado ao Consumidor | NUMERIC(10,2) | NÃO |
+
+<Info>
+  Valores serão considerados `null` quando forem 0 ou menores que 0.
+</Info>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_RESTRICTION
+
+Restrições de venda por quantidade, periodicidade e contexto.
+
+### Regras de Negócio
+
+- Deve referenciar produtos, clientes e vendedores já cadastrados
+- Ao menos um dos campos de produto (productId, productSku, productMaker, productCategory ou productPrinciple) deve ser preenchido
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `externalId` | ID da restrição no ERP | VARCHAR(255) | NÃO |
+| **Filtros de Cliente** |
+| `clientId` | ID do cliente (nulo = todos) | VARCHAR(255) | NÃO |
+| `clientCnpj` | CNPJ do cliente | VARCHAR(20) | NÃO |
+| `clientUf` | UF do cliente | VARCHAR(2) | NÃO |
+| **Filtros de Vendedor** |
+| `sellerId` | ID do vendedor (nulo = todos) | VARCHAR(255) | NÃO |
+| `supervisorId` | ID do supervisor | VARCHAR(255) | NÃO |
+| **Filtros de Produto** |
+| `productId` | ID do produto | VARCHAR(255) | NÃO |
+| `productSku` | SKU do produto | VARCHAR(20) | NÃO |
+| `productMaker` | Fabricante | VARCHAR(255) | NÃO |
+| `productCategory` | Categoria | VARCHAR(255) | NÃO |
+| `productPrinciple` | Princípio ativo | VARCHAR(255) | NÃO |
+| **Configuração da Restrição** |
+| `maxQuantity` | Quantidade máxima (deve ser > 1) | INTEGER | NÃO |
+| `periodicity` | DAILY, WEEKLY, MONTHLY ou ORDER | VARCHAR(50) | NÃO |
+| `module` | NEXON, NEXOFF ou ALL | VARCHAR(50) | SIM |
+| `warehouseId` | ID do CD (nulo = todos) | VARCHAR(255) | NÃO |
+| `branchId` | ID da Base (nulo = todas) | VARCHAR(255) | NÃO |
+
+<Tip>
+  **Filtros nulos:** Quando filtros de cliente, vendedor, warehouse ou branch são nulos, a restrição se aplica a todos.
+</Tip>
+
+---
+
+## VIEW_NEXFAR_PRODUCT_SALE_NOT_ALLOWED
+
+Bloqueios de venda de produtos por contexto (cliente, vendedor, local).
+
+### Regras de Negócio
+
+- Similar à VIEW de restrições, mas para **bloqueio total** de venda
+- Ao menos um campo de produto deve ser preenchido
+
+### Campos Principais
+
+| Campo Nexfar | Descrição | Tipo | Obrigatório |
+| --- | --- | --- | --- |
+| `externalId` | ID do bloqueio no ERP | VARCHAR(255) | NÃO |
+| **Filtros de Cliente** |
+| `clientId` | ID do cliente | VARCHAR(255) | NÃO |
+| `clientCnpj` | CNPJ do cliente | VARCHAR(20) | NÃO |
+| `clientUf` | UF do cliente | VARCHAR(2) | NÃO |
+| **Filtros de Vendedor** |
+| `sellerId` | ID do vendedor | VARCHAR(255) | NÃO |
+| `supervisorId` | ID do supervisor | VARCHAR(255) | NÃO |
+| **Filtros de Produto** |
+| `productId` | ID do produto | VARCHAR(255) | NÃO |
+| `productSku` | SKU do produto | VARCHAR(20) | NÃO |
+| `productMaker` | Fabricante | VARCHAR(255) | NÃO |
+| `productCategory` | Categoria | VARCHAR(255) | NÃO |
+| `productPrinciple` | Princípio ativo | VARCHAR(255) | NÃO |
+| **Configuração do Bloqueio** |
+| `module` | NEXON, NEXOFF ou ALL | VARCHAR(50) | SIM |
+| `warehouseId` | ID do CD | VARCHAR(255) | NÃO |
+| `branchId` | ID da Base | VARCHAR(255) | NÃO |
+
+<Warning>
+  **Diferença entre Restriction e Sale Not Allowed:**
+  - **Restriction:** Limita a quantidade que pode ser comprada
+  - **Sale Not Allowed:** Bloqueia completamente a venda do produto
+</Warning>
+
+---
+
+## Exemplo de Consulta SQL
+
+```sql
+-- Exemplo: VIEW_NEXFAR_PRODUCT
+CREATE VIEW VIEW_NEXFAR_PRODUCT AS
+SELECT
+    p.nome AS name,
+    p.codigo AS sku,
+    p.codigo_barras AS ean,
+    p.fabricante AS maker,
+    p.categoria AS category,
+    p.principio_ativo AS principle,
+    p.descricao_complementar AS complementaryDescription,
+    p.qtd_caixa AS boxQuantity,
+    CASE WHEN p.disponivel_ecommerce = 1 THEN true ELSE false END AS availableNexOn,
+    CASE WHEN p.disponivel_forca_vendas = 1 THEN true ELSE false END AS availableNexOff,
+    CASE WHEN p.controlado = 1 THEN true ELSE false END AS controlled,
+    CASE WHEN p.lancamento = 1 THEN true ELSE false END AS launch,
+    CASE WHEN p.fornecedor_parceiro = 1 THEN true ELSE false END AS partnerMaker
+FROM produtos p
+WHERE p.ativo = true;
+
+-- Exemplo: VIEW_NEXFAR_PRODUCT_WAREHOUSE
+CREATE VIEW VIEW_NEXFAR_PRODUCT_WAREHOUSE AS
+SELECT
+    p.codigo AS productId,
+    e.id_cd AS warehouseId,
+    p.codigo AS sku,
+    COALESCE(e.quantidade, 0) AS quantityAvailable,
+    e.data_validade AS validUntil
+FROM estoque e
+INNER JOIN produtos p ON e.id_produto = p.id
+WHERE p.ativo = true
+  AND COALESCE(e.quantidade, 0) >= 0;
+```
+
+---
+
+## Próximos Passos
+
+Após implementar as VIEWs de produtos, prossiga para:
+
+1. [Pedidos](/dev/deployment/data-extraction/views/pedidos) - Integração de pedidos
+2. [Vendas](/dev/deployment/data-extraction/views/vendas) - Histórico de vendas
+3. [Combos](/dev/deployment/data-extraction/views/combos) - Promoções e combos
+
+<Note>
+  **Ordem recomendada de implementação:**
+  1. VIEW_NEXFAR_PRODUCT (cadastro básico)
+  2. VIEW_NEXFAR_PRODUCT_BRANCH (vínculos com bases)
+  3. VIEW_NEXFAR_PRODUCT_WAREHOUSE (estoque)
+  4. VIEW_NEXFAR_PRODUCT_PRICE (preços)
+  5. Demais VIEWs conforme necessidade
+</Note>

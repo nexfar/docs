@@ -1,139 +1,207 @@
-# Nexfar Docs - Mono-Repo
+# Nexfar Docs
 
-Este repositório contém toda a documentação Nexfar organizada em uma estrutura de **mono-repo**, permitindo múltiplas documentações com diferentes níveis de acesso e públicos-alvo.
+Este repositório contém toda a documentação Nexfar organizada em um **único projeto Mintlify** com múltiplas seções acessíveis via tabs e paths.
 
 ## Estrutura do Repositório
 
 ```
 nexfar-docs/
-├── shared/                           # Conteúdo compartilhado entre docs
-│   └── deployment/                   # Documentação de implantação (fonte única)
+├── mint.json                     # Configuração consolidada
+├── index.mdx                     # Homepage pública (docs.nexfar.com.br)
+├── favicon.svg
 │
-├── public-docs/                      # docs.nexfar.com.br
-│   ├── mint.json
-│   └── index.mdx
+├── dev/                          # docs.nexfar.com.br/dev (Developer Docs)
+│   ├── index.mdx
+│   ├── quickstart.mdx
+│   ├── development.mdx
+│   ├── infrastructure.mdx
+│   ├── essentials/               # Guias de personalização e conteúdo
+│   ├── ai-tools/                 # Cursor, Claude Code, Windsurf
+│   ├── api-reference/            # Documentação de API
+│   ├── deployment/               # Métodos de implantação e VIEWs
+│   └── snippets/
 │
-├── internal-docs/                    # internal_docs.nexfar.com
-│   ├── mint.json
-│   ├── deployment -> ../shared/deployment/    # Symlink
-│   └── ... (todo o conteúdo interno)
-│
-└── integration-docs/                 # int-docs.nexfar.com.br
-    ├── mint.json
-    ├── index.mdx
-    └── deployment -> ../shared/deployment/    # Symlink
+└── integration/                  # docs.nexfar.com.br/integration
+    ├── index.mdx                 # Homepage para integradores
+    └── deployment/               # Documentação de implantação (cópia)
 ```
 
-## Três Ambientes de Documentação
+## Três Seções de Documentação
 
-### 1. Public Docs (`docs.nexfar.com.br`)
+### 1. Public Root (`docs.nexfar.com.br`)
 **Público:** Usuários finais, clientes
-**Config:** `public-docs/mint.json`
+**Path:** `/`
+**Conteúdo:** Homepage simples com introdução
 
-### 2. Internal Docs (`internal_docs.nexfar.com`)
+### 2. Developer Docs (`docs.nexfar.com.br/dev`)
 **Público:** Equipe interna Nexfar
-**Config:** `internal-docs/mint.json`
-**Conteúdo:** TUDO (arquitetura, infraestrutura, deployment, etc.)
+**Path:** `/dev`
+**Conteúdo:** TUDO (arquitetura, infraestrutura, deployment, API, etc.)
+**Tab:** "Developer Docs"
 
-### 3. Integration Docs (`int-docs.nexfar.com.br`)
+### 3. Integration Docs (`docs.nexfar.com.br/integration`)
 **Público:** Parceiros técnicos, integradores
-**Config:** `integration-docs/mint.json`
+**Path:** `/integration`
 **Conteúdo:** Apenas documentação de implantação/integração
+**Tab:** "Documentação de Integração"
 
 ## Configuração no Mintlify
 
-Criar 3 projetos no [dashboard.mintlify.com](https://dashboard.mintlify.com):
+Criar **1 único projeto** no [dashboard.mintlify.com](https://dashboard.mintlify.com):
 
-1. **Nexfar Public Docs**
-   - Root Directory: `public-docs/`
-   - Custom Domain: `docs.nexfar.com.br`
+- **Project Name:** Nexfar Documentation
+- **Root Directory:** `/` (raiz do repositório)
+- **Custom Domain:** `docs.nexfar.com.br`
 
-2. **Nexfar Internal Docs**
-   - Root Directory: `internal-docs/`
-   - Custom Domain: `internal_docs.nexfar.com`
-
-3. **Nexfar Integration Docs**
-   - Root Directory: `integration-docs/`
-   - Custom Domain: `int-docs.nexfar.com.br`
+As URLs serão automaticamente:
+- `docs.nexfar.com.br` → Homepage pública
+- `docs.nexfar.com.br/dev` → Developer Docs (internal)
+- `docs.nexfar.com.br/integration` → Integration Docs
 
 ## Desenvolvimento Local
 
 ```bash
-# Testar cada documentação
-cd public-docs && mintlify dev
-cd internal-docs && mintlify dev
-cd integration-docs && mintlify dev
+# Na raiz do repositório
+mintlify dev
+
+# As tabs estarão disponíveis:
+# http://localhost:3000          → Public homepage
+# http://localhost:3000/dev      → Developer Docs
+# http://localhost:3000/integration → Integration Docs
 ```
 
 ## Editando Conteúdo
 
-### Conteúdo Compartilhado (Deployment)
+### Documentação Pública
 ```bash
-# Edite em shared/deployment/
-vim shared/deployment/data-extraction/views/produtos.mdx
-
-# Automaticamente reflete em:
-# - internal_docs.nexfar.com
-# - int-docs.nexfar.com.br
+vim index.mdx
 ```
 
-### Conteúdo Específico
+### Developer Docs (Internal)
 ```bash
-# Docs públicas
-vim public-docs/index.mdx
-
-# Docs internas
-vim internal-docs/architecture.mdx
-
-# Docs de integração
-vim integration-docs/index.mdx
+vim dev/index.mdx
+vim dev/infrastructure.mdx
+vim dev/deployment/overview.mdx
 ```
 
-## Conteúdo Compartilhado (deployment/)
+### Integration Docs
+```bash
+vim integration/index.mdx
+vim integration/deployment/data-extraction/database-views.mdx
+```
 
-⚠️ **Nota:** Mintlify não segue symlinks corretamente. Por isso, a pasta `deployment/` é **copiada** de `shared/deployment/` para:
-- `internal-docs/deployment/`
-- `integration-docs/deployment/`
+## Conteúdo de Deployment Duplicado
+
+⚠️ **Nota Importante:** O conteúdo de deployment (`deployment/`) existe em **dois lugares**:
+- `dev/deployment/` - Para equipe interna
+- `integration/deployment/` - Para parceiros técnicos
 
 ### Como Manter Sincronizado
 
-Quando editar a documentação de deployment:
+Quando editar a documentação de deployment, você precisa atualizar **ambas as cópias**.
 
-**Opção 1: Editar em shared/ e copiar**
+**Opção 1: Editar e copiar manualmente**
 ```bash
-# 1. Edite em shared/
-vim shared/deployment/data-extraction/views/produtos.mdx
+# 1. Edite em dev/deployment/
+vim dev/deployment/data-extraction/views/produtos.mdx
 
-# 2. Copie para os outros ambientes
-cp -r shared/deployment/* internal-docs/deployment/
-cp -r shared/deployment/* integration-docs/deployment/
+# 2. Copie para integration/
+cp -r dev/deployment/* integration/deployment/
 
 # 3. Commit
 git add .
 git commit -m "Atualizar documentação de deployment"
 ```
 
-**Opção 2: Usar script de sync (recomendado)**
+**Opção 2: Criar script de sync**
 ```bash
-# Criar script sync-deployment.sh
-./sync-deployment.sh
+#!/bin/bash
+# sync-deployment.sh
+rsync -av --delete dev/deployment/ integration/deployment/
+echo "✓ Deployment docs synchronized"
+```
+
+**Opção 3: Editar ambos ao mesmo tempo (usando multi-cursor)**
+```bash
+# Use um editor que suporte edição em múltiplos arquivos
+# ou faça substituições com sed/awk quando apropriado
+```
+
+### Por Que Duplicar?
+
+A duplicação permite:
+1. Cada seção funciona independentemente
+2. Paths internos corretos (`/dev/deployment/...` vs `/integration/deployment/...`)
+3. Customização futura específica por audiência (se necessário)
+
+## Estrutura do mint.json
+
+```json
+{
+  "navigation": [...],        // Root navigation (public homepage)
+  "tabs": [
+    {
+      "name": "Developer Docs",
+      "url": "dev",           // Creates /dev path
+      "navigation": [...]
+    },
+    {
+      "name": "Documentação de Integração",
+      "url": "integration",   // Creates /integration path
+      "navigation": [...]
+    }
+  ]
+}
+```
+
+## Links Internos
+
+Ao criar links entre páginas, use paths absolutos baseados na seção:
+
+**Em páginas do dev/:**
+```markdown
+[Ver VIEWs](/dev/deployment/data-extraction/database-views)
+```
+
+**Em páginas do integration/:**
+```markdown
+[Ver VIEWs](/integration/deployment/data-extraction/database-views)
+```
+
+**Da homepage pública:**
+```markdown
+[Developer Docs](/dev)
+[Integration Docs](/integration)
 ```
 
 ## CI/CD
 
-Mintlify detecta mudanças automaticamente ao fazer push para `main` e rebuilda apenas as docs afetadas.
+Mintlify detecta mudanças automaticamente ao fazer push para `main` e rebuilda o site completo.
 
 ## Comandos Úteis
 
 ```bash
-# Verificar symlinks
-find . -type l -ls
-
 # Validar mint.json
-npx mintlify@latest validate public-docs/mint.json
-npx mintlify@latest validate internal-docs/mint.json
-npx mintlify@latest validate integration-docs/mint.json
+npx mintlify@latest validate mint.json
+
+# Iniciar dev server
+mintlify dev
+
+# Verificar links quebrados
+grep -r "](/deployment/" dev/ integration/
 ```
+
+## Developer Docs ("Hidden")
+
+As páginas em `/dev` são consideradas "internas" mas não são tecnicamente protegidas por senha. Se você precisa:
+
+1. **Ocultar da navegação pública:** ✅ Já feito - o tab "Developer Docs" está visível mas o conteúdo é "semi-privado"
+2. **Proteção real com senha:** Requer Mintlify Enterprise com SSO
+
+Na versão gratuita, o conteúdo `/dev` é:
+- Visível para quem conhece a URL
+- Não indexado pelo Google (use `robots.txt` ou meta tags se necessário)
+- Separado visualmente da documentação pública
 
 ## Suporte
 
