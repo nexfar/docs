@@ -172,10 +172,7 @@
         {
           "group": "API de Ingestão REST",
           "pages": [
-            {
-              "page": "API Reference",
-              "openapi": "/integration/api-reference/openapi.json"
-            }
+            "integration/api-reference/openapi"
           ]
         }
       ]
