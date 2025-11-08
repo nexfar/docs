@@ -168,9 +168,21 @@
           "pages": [
             "integration/deployment/data-extraction/views/impostos-margens"
           ]
+        }
+      ]
+    },
+    {
+      "name": "API Reference",
+      "url": "api-reference",
+      "navigation": [
+        {
+          "group": "Getting Started",
+          "pages": [
+            "api-reference/introduction"
+          ]
         },
         {
-          "group": "API Reference",
+          "group": "REST API",
           "pages": [],
           "openapi": "/integration/api-reference/openapi.json"
         }

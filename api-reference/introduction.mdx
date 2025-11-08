@@ -1,0 +1,135 @@
+---
+title: "API de Ingestão"
+description: "Documentação interativa da API REST para ingestão de dados na plataforma Nexfar"
+---
+
+# API de Ingestão Nexfar
+
+Documentação completa e interativa dos endpoints REST para envio de dados à plataforma Nexfar.
+
+## Autenticação
+
+Todos os endpoints requerem autenticação JWT via header:
+
+```
+Authorization: Bearer {seu-token-jwt}
+```
+
+**Formato do Token:**
+- Type: Bearer JWT
+- Claims obrigatórios: `client_id`, `environment`, `scopes`
+- Validade: 24 horas
+
+## Ambientes Disponíveis
+
+<CardGroup cols={2}>
+  <Card title="Sandbox" icon="flask">
+    **URL:** https://nf-nest-integration-staging.up.railway.app
+
+    Ambiente de testes para desenvolvimento e validação de integrações.
+  </Card>
+
+  <Card title="Production" icon="rocket">
+    **URL:** https://api.nexfar.com.br
+
+    Ambiente de produção para operação real.
+  </Card>
+</CardGroup>
+
+## Modelos de Dados Disponíveis
+
+A API suporta **34 modelos de dados** organizados em 4 categorias:
+
+### Cadastros Básicos (5 modelos)
+- Clientes
+- Vendedores
+- Condições de Pagamento
+- Grupos de Preço
+- Transportadoras
+
+### Produtos (8 modelos)
+- Produtos
+- Preços por Tabela
+- Estoque por CD
+- Restrições Comerciais
+- Filiais de Produto
+- Armazéns
+- Categorias
+- Fabricantes
+
+### Pedidos e Vendas (10 modelos)
+- Pedidos Nexfar
+- Itens de Pedido
+- Vendas Realizadas
+- Itens de Venda
+- Notas Fiscais
+- Combos
+- Itens de Combo
+- Condições Comerciais
+- Metas de Vendas
+- Histórico de Preços
+
+### Impostos e Margens (7 modelos)
+- Margens por Produto
+- Impostos
+- Alíquotas
+- Regras Fiscais
+- NCM
+- CEST
+- Benefícios Fiscais
+
+## Começando
+
+Navegue pelos endpoints **REST API** no menu lateral para ver:
+
+<Steps>
+  <Step title="Explore os Schemas">
+    Cada endpoint mostra schemas completos de request e response com validações.
+  </Step>
+
+  <Step title="Veja Exemplos de Código">
+    Exemplos automáticos em curl, Python, Node.js e Java.
+  </Step>
+
+  <Step title="Teste Interativamente">
+    Use "Try it out" para executar requisições reais com seu JWT.
+  </Step>
+</Steps>
+
+## Características da API
+
+<AccordionGroup>
+  <Accordion title="Rate Limiting">
+    - **Limite:** 100 requisições por minuto por cliente
+    - **Headers:** `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+    - **Status 429:** Quando limite excedido
+  </Accordion>
+
+  <Accordion title="Rastreabilidade">
+    - Cada requisição gera `correlation_id` único
+    - Histórico completo em audit log
+    - Hash SHA-256 do payload para integridade
+  </Accordion>
+
+  <Accordion title="Respostas Padronizadas">
+    - **201 Created:** Sucesso na criação
+    - **400 Bad Request:** Dados inválidos (com detalhes)
+    - **401 Unauthorized:** JWT inválido ou ausente
+    - **429 Too Many Requests:** Rate limit excedido
+  </Accordion>
+</AccordionGroup>
+
+## Suporte
+
+<Note>
+**Precisa de ajuda?**
+
+Entre em contato com suporte@nexfar.com.br para:
+- Obter credenciais JWT para Sandbox
+- Solicitar acesso à produção
+- Tirar dúvidas sobre integração
+</Note>
+
+---
+
+**Pronto para começar?** Explore os endpoints no menu lateral →
