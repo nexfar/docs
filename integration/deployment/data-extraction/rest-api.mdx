@@ -1,5 +1,62 @@
 ---
-title: "API de Ingestão Nexfar"
-description: "Documentação interativa completa da API REST para ingestão de dados na plataforma Nexfar - 34 modelos de dados com autenticação JWT"
-openapi: "integration/api-reference/openapi.json"
+title: "REST API"
+description: "Integração via endpoints REST para extração de dados"
 ---
+
+## Visão Geral
+
+A integração via REST API permite que a Nexfar extraia dados do seu ERP através de endpoints HTTP padronizados. Este método oferece flexibilidade, controle de acesso e facilidade de manutenção.
+
+<Note>
+  **API de Ingestão Nexfar:** Para documentação completa e interativa da API de Ingestão da Nexfar (endpoints para envio de dados), consulte a seção [API Reference](#api-reference) no menu lateral.
+</Note>
+
+---
+
+## Requisitos Técnicos
+
+### Endpoint Base
+
+Todos os endpoints devem seguir o padrão RESTful:
+
+```
+https://seu-erp.com/api/nexfar/{resource}
+```
+
+### Autenticação
+
+- **Recomendado:** OAuth 2.0 ou API Key
+- Headers de autenticação devem ser incluídos em todas as requisições
+
+### Formato de Resposta
+
+- **Content-Type:** `application/json`
+- Encoding: UTF-8
+- Estrutura padronizada de resposta
+
+---
+
+## Query Filters Obrigatórios
+
+Todos os endpoints devem suportar os seguintes filtros:
+
+### Paginação
+
+```http
+GET /api/nexfar/clients?page=1&pageSize=100
+```
+
+- `page`: Número da página (default: 1)
+- `pageSize`: Quantidade de registros (default: 50, max: 500)
+
+---
+
+## Próximos Passos
+
+1. Revise a [documentação de VIEWs](/integration/deployment/data-extraction/database-views) para entender os campos necessários
+2. Consulte a [API Reference completa](#api-reference) para exemplos de integração
+3. Entre em contato com a equipe Nexfar para validação
+
+<Warning>
+  Entre em contato com a equipe técnica da Nexfar para validar a implementação antes de disponibilizar em produção.
+</Warning>

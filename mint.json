@@ -168,6 +168,11 @@
           "pages": [
             "integration/deployment/data-extraction/views/impostos-margens"
           ]
+        },
+        {
+          "group": "API Reference",
+          "pages": [],
+          "openapi": "integration/api-reference/openapi.json"
         }
       ]
     }
