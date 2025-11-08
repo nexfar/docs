@@ -168,11 +168,6 @@
           "pages": [
             "integration/deployment/data-extraction/views/impostos-margens"
           ]
-        },
-        {
-          "group": "API de Ingestão REST",
-          "pages": [],
-          "openapi": "integration/api-reference/openapi.json"
         }
       ]
     }
