@@ -172,7 +172,7 @@
         {
           "group": "API Reference",
           "pages": [],
-          "openapi": "integration/api-reference/openapi.json"
+          "openapi": "/integration/api-reference/openapi.json"
         }
       ]
     }
