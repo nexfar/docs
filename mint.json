@@ -171,9 +171,8 @@
         },
         {
           "group": "API de Ingestão REST",
-          "pages": [
-            "integration/api-reference/openapi"
-          ]
+          "pages": [],
+          "openapi": "integration/api-reference/openapi.json"
         }
       ]
     }
