@@ -1,0 +1,5504 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filters",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfinityPaginationUserResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/files/upload": {
+      "post": {
+        "operationId": "FilesLocalController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Files"
+        ]
+      }
+    },
+    "/auth/email/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthEmailLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/email/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRegisterLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/email/confirm": {
+      "post": {
+        "operationId": "AuthController_confirmEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthConfirmEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/email/confirm/new": {
+      "post": {
+        "operationId": "AuthController_confirmNewEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthConfirmEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/forgot/password": {
+      "post": {
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/reset/password": {
+      "post": {
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      },
+      "patch": {
+        "operationId": "AuthController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      },
+      "delete": {
+        "operationId": "AuthController_delete",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "operationId": "HomeController_appInfo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Home"
+        ]
+      }
+    },
+    "/test/protected": {
+      "get": {
+        "operationId": "HomeController_testProtected",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Home"
+        ]
+      }
+    },
+    "/test/scoped": {
+      "get": {
+        "operationId": "HomeController_testScoped",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Home"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/health/live": {
+      "get": {
+        "operationId": "HealthController_getLiveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "HealthController_getReadiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/clients": {
+      "post": {
+        "description": "\n      Ingest client (distributor) data with comprehensive validation.\n\n      **Validations:**\n      - CNPJ format (11 or 14 digits)\n      - Email format\n      - Required fields: cnpj, razao_social, email, status\n\n      **Partitioning:**\n      Data is automatically partitioned by client_id and environment from JWT token.\n    ",
+        "operationId": "CadastrosController_createClient",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - CNPJ already exists"
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo cliente",
+        "tags": [
+          "Cadastros"
+        ]
+      }
+    },
+    "/api/v1/sellers": {
+      "post": {
+        "operationId": "CadastrosController_createSeller",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSellerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vendedor criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - CPF already exists"
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo vendedor",
+        "tags": [
+          "Cadastros"
+        ]
+      }
+    },
+    "/api/v1/payment-conditions": {
+      "post": {
+        "operationId": "CadastrosController_createPaymentCondition",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentConditionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Condição de pagamento criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Payment condition code already exists"
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova condição de pagamento",
+        "tags": [
+          "Cadastros"
+        ]
+      }
+    },
+    "/api/v1/price-groups": {
+      "post": {
+        "operationId": "CadastrosController_createPriceGroup",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePriceGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Grupo de preço criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Price group code already exists"
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo grupo de preço",
+        "tags": [
+          "Cadastros"
+        ]
+      }
+    },
+    "/api/v1/client-branches": {
+      "post": {
+        "operationId": "CadastrosController_createClientBranch",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Filial criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Client branch already exists"
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova filial de cliente",
+        "tags": [
+          "Cadastros"
+        ]
+      }
+    },
+    "/api/v1/products": {
+      "post": {
+        "operationId": "ProdutosController_createProduct",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo produto",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-branches": {
+      "post": {
+        "operationId": "ProdutosController_createProductBranch",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto por filial criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar produto por filial",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-warehouses": {
+      "post": {
+        "operationId": "ProdutosController_createProductWarehouse",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductWarehouseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto por armazém criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar produto por armazém",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-prices": {
+      "post": {
+        "operationId": "ProdutosController_createProductPrice",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductPriceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Preço de produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar preço de produto",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-pmc-pf": {
+      "post": {
+        "operationId": "ProdutosController_createProductPmcPf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductPmcPfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "PMC/PF de produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar PMC/PF de produto",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-restrictions": {
+      "post": {
+        "operationId": "ProdutosController_createProductRestriction",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductRestrictionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Restrição de produto criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar restrição de produto",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/product-sale-not-allowed": {
+      "post": {
+        "operationId": "ProdutosController_createProductSaleNotAllowed",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductSaleNotAllowedDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Restrição de venda criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar restrição de venda de produto",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/client-documents": {
+      "post": {
+        "operationId": "ProdutosController_createClientDocument",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Documento de cliente criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar documento de cliente",
+        "tags": [
+          "Produtos"
+        ]
+      }
+    },
+    "/api/v1/orders": {
+      "post": {
+        "operationId": "PedidosController_createOrder",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderHeaderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo pedido (order header)",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/order-items": {
+      "post": {
+        "operationId": "PedidosController_createOrderItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo item de pedido",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/order-returned-items": {
+      "post": {
+        "operationId": "PedidosController_createOrderReturnedItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderReturnedItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item devolvido criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar item devolvido de pedido",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/orders-distributor": {
+      "post": {
+        "operationId": "PedidosController_createOrderDistributor",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderDistributorHeaderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido de distribuidor criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar pedido de distribuidor (header)",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/order-distributor-items": {
+      "post": {
+        "operationId": "PedidosController_createOrderDistributorItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderDistributorItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item de pedido de distribuidor criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar item de pedido de distribuidor",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/sales": {
+      "post": {
+        "operationId": "PedidosController_createSale",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSaleHeaderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Venda criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova venda (sale header)",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/sale-items": {
+      "post": {
+        "operationId": "PedidosController_createSaleItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSaleItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item de venda criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar item de venda",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/sale-clients": {
+      "post": {
+        "operationId": "PedidosController_createSaleClient",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSaleClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente de venda criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar registro de cliente em venda",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/sale-sellers": {
+      "post": {
+        "operationId": "PedidosController_createSaleSeller",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSaleSellerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vendedor de venda criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar registro de vendedor em venda",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/invoices": {
+      "post": {
+        "operationId": "PedidosController_createInvoice",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Nota fiscal criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nota fiscal",
+        "tags": [
+          "Pedidos e Vendas"
+        ]
+      }
+    },
+    "/api/v1/sales-goals": {
+      "post": {
+        "operationId": "ImpostosController_createSalesGoal",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSalesGoalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Meta criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova meta de vendas",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-margin-determinations": {
+      "post": {
+        "operationId": "ImpostosController_createGenericMarginDetermination",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericMarginDeterminationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Determinação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova determinação de margem",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-margins": {
+      "post": {
+        "operationId": "ImpostosController_createGenericMargin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericMarginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Margem criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova margem genérica",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-taxes-determinations": {
+      "post": {
+        "operationId": "ImpostosController_createGenericTaxesDetermination",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericTaxesDeterminationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Determinação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova determinação de impostos",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-taxes": {
+      "post": {
+        "operationId": "ImpostosController_createGenericTaxes",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericTaxesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Imposto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo imposto genérico",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-taxes-base-calc-st": {
+      "post": {
+        "operationId": "ImpostosController_createGenericTaxesBaseCalcSt",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericTaxesBaseCalcStDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Base de cálculo criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova base de cálculo ST",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/generic-extra-info": {
+      "post": {
+        "operationId": "ImpostosController_createGenericExtraInfo",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenericExtraInfoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Informação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova informação extra genérica",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/combos": {
+      "post": {
+        "operationId": "ImpostosController_createComboHeader",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComboHeaderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Combo criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo combo (header)",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/combo-items": {
+      "post": {
+        "operationId": "ImpostosController_createComboItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComboItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar novo item de combo",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/combo-clients": {
+      "post": {
+        "operationId": "ImpostosController_createComboClient",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComboClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Associação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Associar combo a cliente",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/combo-sellers": {
+      "post": {
+        "operationId": "ImpostosController_createComboSeller",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComboSellerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Associação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing JWT token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Associar combo a vendedor",
+        "tags": [
+          "Impostos, Margens e Combos"
+        ]
+      }
+    },
+    "/api/v1/audit-log": {
+      "get": {
+        "description": "Retorna histórico paginado de registros de auditoria do cliente autenticado. Permite filtrar por período, status e modelo. Inclui isolamento automático por client_id do JWT.",
+        "operationId": "AuditLogController_queryAuditLog",
+        "parameters": [
+          {
+            "name": "date_from",
+            "required": false,
+            "in": "query",
+            "description": "Data inicial no formato ISO 8601",
+            "schema": {
+              "example": "2025-11-01T00:00:00Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "date_to",
+            "required": false,
+            "in": "query",
+            "description": "Data final no formato ISO 8601",
+            "schema": {
+              "example": "2025-11-05T23:59:59Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar por status",
+            "schema": {
+              "enum": [
+                "received",
+                "processed",
+                "failed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar por modelo (client, product, order, etc.)",
+            "schema": {
+              "example": "client",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Número da página (mínimo: 1)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Itens por página (máximo: 100)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada de registros de auditoria retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedAuditLogResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros de query inválidos (ex: date_from > date_to)"
+          },
+          "401": {
+            "description": "JWT inválido ou expirado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar histórico de envios",
+        "tags": [
+          "Audit Log"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Nexfar Integration API",
+    "description": "\n        API REST para ingestão síncrona de dados - 34 modelos de dados.\n\n        **Autenticação:**\n        Todos os endpoints requerem JWT Bearer token no header:\n        `Authorization: Bearer {seu-token-jwt}`\n\n        Entre em contato com suporte@nexfar.com.br para obter credenciais de Sandbox.\n      ",
+    "version": "1.0",
+    "contact": {
+      "name": "Nexfar Support",
+      "url": "https://nexfar.com.br",
+      "email": "suporte@nexfar.com.br"
+    }
+  },
+  "tags": [
+    {
+      "name": "Cadastros",
+      "description": "Endpoints de cadastros básicos (clientes, vendedores, condições)"
+    },
+    {
+      "name": "Produtos",
+      "description": "Endpoints de produtos, preços e restrições"
+    },
+    {
+      "name": "Pedidos",
+      "description": "Endpoints de pedidos e vendas"
+    },
+    {
+      "name": "Impostos",
+      "description": "Endpoints de impostos, margens e combos"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://nf-nest-integration-staging.up.railway.app",
+      "description": "Staging (Sandbox) - Use este servidor para testes"
+    },
+    {
+      "url": "https://api.nexfar.com.br",
+      "description": "Production - Requer credenciais de produção"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "FileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "StatusDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test1@example.com"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "photo": {
+            "$ref": "#/components/schemas/FileDto"
+          },
+          "role": {
+            "$ref": "#/components/schemas/RoleDto"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusDto"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "firstName",
+          "lastName"
+        ]
+      },
+      "FileType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae"
+          },
+          "path": {
+            "type": "string",
+            "example": "https://example.com/path/to/file.jpg"
+          }
+        },
+        "required": [
+          "id",
+          "path"
+        ]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "example": "admin"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "example": "active"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "provider": {
+            "type": "string",
+            "example": "email"
+          },
+          "socialId": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "photo": {
+            "$ref": "#/components/schemas/FileType"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deletedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "provider",
+          "socialId",
+          "firstName",
+          "lastName",
+          "photo",
+          "role",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "InfinityPaginationUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "data",
+          "hasNextPage"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test1@example.com"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "photo": {
+            "$ref": "#/components/schemas/FileDto"
+          },
+          "role": {
+            "$ref": "#/components/schemas/RoleDto"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusDto"
+          }
+        }
+      },
+      "FileResponseDto": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "$ref": "#/components/schemas/FileType"
+          }
+        },
+        "required": [
+          "file"
+        ]
+      },
+      "AuthEmailLoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test1@example.com"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "tokenExpires": {
+            "type": "number"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "token",
+          "refreshToken",
+          "tokenExpires",
+          "user"
+        ]
+      },
+      "AuthRegisterLoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test1@example.com"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "firstName",
+          "lastName"
+        ]
+      },
+      "AuthConfirmEmailDto": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "hash"
+        ]
+      },
+      "AuthForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test1@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "AuthResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "hash"
+        ]
+      },
+      "RefreshResponseDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "tokenExpires": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "token",
+          "refreshToken",
+          "tokenExpires"
+        ]
+      },
+      "AuthUpdateDto": {
+        "type": "object",
+        "properties": {
+          "photo": {
+            "$ref": "#/components/schemas/FileDto"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "new.email@example.com"
+          },
+          "password": {
+            "type": "string"
+          },
+          "oldPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateClientDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "cnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente (11 ou 14 dígitos)",
+            "example": "12345678000190",
+            "maxLength": 14
+          },
+          "razao_social": {
+            "type": "string",
+            "description": "Razão social do cliente",
+            "example": "Empresa LTDA",
+            "maxLength": 200
+          },
+          "nome_fantasia": {
+            "type": "string",
+            "description": "Nome fantasia do cliente",
+            "example": "Empresa",
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "description": "Email do cliente",
+            "example": "contato@empresa.com",
+            "maxLength": 100
+          },
+          "telefone": {
+            "type": "string",
+            "description": "Telefone do cliente (10-11 dígitos)",
+            "example": "11987654321",
+            "maxLength": 20
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do cliente",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "cnpj",
+          "razao_social",
+          "email",
+          "status"
+        ]
+      },
+      "IngestionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único do registro criado",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Data de criação do registro",
+            "example": "2025-11-03T10:30:00.000Z"
+          },
+          "model": {
+            "type": "string",
+            "description": "Tipo do modelo criado",
+            "example": "client"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de confirmação",
+            "example": "Data received and persisted successfully"
+          },
+          "correlation_id": {
+            "type": "string",
+            "description": "ID de correlação para rastreamento",
+            "example": "abc123-def456"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "model",
+          "message",
+          "correlation_id"
+        ]
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "message": {
+            "example": [
+              "CNPJ inválido. Deve conter 11 ou 14 dígitos"
+            ],
+            "description": "Lista de mensagens de erro",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request",
+            "description": "Tipo de erro HTTP"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2025-11-03T10:30:45.123Z",
+            "description": "Timestamp do erro"
+          },
+          "path": {
+            "type": "string",
+            "example": "/api/v1/clients",
+            "description": "Path do endpoint que gerou o erro"
+          },
+          "correlationId": {
+            "type": "string",
+            "example": "uuid-correlation-id",
+            "description": "ID de correlação para rastreamento"
+          },
+          "validation_errors": {
+            "type": "array",
+            "example": [
+              {
+                "field": "cnpj",
+                "constraints": {
+                  "isCNPJ": "CNPJ inválido. Deve conter 11 ou 14 dígitos"
+                },
+                "value": "123"
+              }
+            ],
+            "description": "Detalhes dos erros de validação por campo",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "constraints": {
+                  "type": "object"
+                },
+                "value": {}
+              }
+            }
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "error",
+          "timestamp",
+          "path",
+          "correlationId",
+          "validation_errors"
+        ]
+      },
+      "UnauthorizedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 401,
+            "description": "HTTP status code"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unauthorized",
+            "description": "Mensagem de erro"
+          },
+          "error": {
+            "type": "string",
+            "example": "Invalid or expired JWT token",
+            "description": "Detalhes do erro de autenticação"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "error"
+        ]
+      },
+      "RateLimitErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 429,
+            "description": "HTTP status code"
+          },
+          "message": {
+            "type": "string",
+            "example": "Too Many Requests",
+            "description": "Mensagem de erro"
+          },
+          "retryAfter": {
+            "type": "string",
+            "example": "60",
+            "description": "Segundos até o limite resetar"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "retryAfter"
+        ]
+      },
+      "CreateSellerDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF do vendedor (11 dígitos)",
+            "example": "12345678901",
+            "maxLength": 11
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do vendedor",
+            "example": "João Silva",
+            "maxLength": 200
+          },
+          "email": {
+            "type": "string",
+            "description": "Email do vendedor",
+            "example": "joao@empresa.com",
+            "maxLength": 100
+          },
+          "telefone": {
+            "type": "string",
+            "description": "Telefone do vendedor (10-11 dígitos)",
+            "example": "11987654321",
+            "maxLength": 20
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do vendedor",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "cpf",
+          "nome",
+          "email",
+          "status"
+        ]
+      },
+      "CreatePaymentConditionDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo": {
+            "type": "string",
+            "description": "Código da condição de pagamento",
+            "example": "CP001",
+            "maxLength": 50
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição da condição de pagamento",
+            "example": "À vista",
+            "maxLength": 200
+          },
+          "dias_prazo": {
+            "type": "number",
+            "description": "Dias de prazo para pagamento",
+            "example": 30,
+            "minimum": 0
+          },
+          "percentual_desconto": {
+            "type": "number",
+            "description": "Percentual de desconto",
+            "example": 5.5,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "codigo",
+          "descricao",
+          "dias_prazo"
+        ]
+      },
+      "CreatePriceGroupDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo": {
+            "type": "string",
+            "description": "Código do grupo de preço",
+            "example": "GP001",
+            "maxLength": 50
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição do grupo de preço",
+            "example": "Varejo",
+            "maxLength": 200
+          },
+          "percentual_markup": {
+            "type": "number",
+            "description": "Percentual de markup",
+            "example": 15.5
+          }
+        },
+        "required": [
+          "codigo",
+          "descricao"
+        ]
+      },
+      "CreateClientBranchDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "client_cnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente (11 ou 14 dígitos)",
+            "example": "12345678000190",
+            "maxLength": 14
+          },
+          "branch_codigo": {
+            "type": "string",
+            "description": "Código da filial",
+            "example": "FIL001",
+            "maxLength": 50
+          },
+          "branch_nome": {
+            "type": "string",
+            "description": "Nome da filial",
+            "example": "Filial Centro",
+            "maxLength": 200
+          },
+          "endereco": {
+            "type": "string",
+            "description": "Endereço da filial",
+            "example": "Rua Principal, 123",
+            "maxLength": 300
+          },
+          "cidade": {
+            "type": "string",
+            "description": "Cidade da filial",
+            "example": "São Paulo",
+            "maxLength": 100
+          },
+          "uf": {
+            "type": "string",
+            "description": "UF da filial",
+            "example": "SP",
+            "maxLength": 2
+          }
+        },
+        "required": [
+          "client_cnpj",
+          "branch_codigo",
+          "branch_nome"
+        ]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição do produto",
+            "example": "Produto de Exemplo",
+            "maxLength": 200
+          },
+          "codigo_ean": {
+            "type": "string",
+            "description": "Código EAN-13 (13 dígitos) ou EAN-14 (14 dígitos) do produto",
+            "example": "7891234567890",
+            "minLength": 13,
+            "maxLength": 14
+          },
+          "unidade_medida": {
+            "type": "string",
+            "description": "Unidade de medida do produto",
+            "enum": [
+              "UN",
+              "CX",
+              "KG",
+              "L",
+              "M",
+              "MT",
+              "PC"
+            ],
+            "example": "UN"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do produto",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "descricao",
+          "unidade_medida",
+          "status"
+        ]
+      },
+      "CreateProductBranchDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "codigo_filial": {
+            "type": "string",
+            "description": "Código da filial",
+            "example": "FILIAL-001",
+            "maxLength": 50
+          },
+          "estoque_disponivel": {
+            "type": "number",
+            "description": "Estoque disponível na filial (deve ser não-negativo)",
+            "example": 100,
+            "minimum": 0
+          },
+          "preco_venda": {
+            "type": "number",
+            "description": "Preço de venda na filial (deve ser não-negativo)",
+            "example": 99.99,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "codigo_filial",
+          "estoque_disponivel",
+          "preco_venda"
+        ]
+      },
+      "CreateProductWarehouseDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "codigo_armazem": {
+            "type": "string",
+            "description": "Código do armazém",
+            "example": "ARM-001",
+            "maxLength": 50
+          },
+          "quantidade_estoque": {
+            "type": "number",
+            "description": "Quantidade em estoque no armazém (deve ser não-negativo)",
+            "example": 500,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "codigo_armazem",
+          "quantidade_estoque"
+        ]
+      },
+      "CreateProductPriceDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "codigo_tabela_preco": {
+            "type": "string",
+            "description": "Código da tabela de preço",
+            "example": "TABELA-01",
+            "maxLength": 50
+          },
+          "preco_unitario": {
+            "type": "number",
+            "description": "Preço unitário do produto (deve ser não-negativo, zero é válido)",
+            "example": 100.5,
+            "minimum": 0
+          },
+          "data_vigencia": {
+            "type": "string",
+            "description": "Data de vigência do preço (formato ISO 8601)",
+            "example": "2025-11-01"
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "codigo_tabela_preco",
+          "preco_unitario",
+          "data_vigencia"
+        ]
+      },
+      "CreateProductPmcPfDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "pmc": {
+            "type": "number",
+            "description": "Preço Máximo ao Consumidor - PMC (deve ser não-negativo, zero é válido)",
+            "example": 150,
+            "minimum": 0
+          },
+          "pf": {
+            "type": "number",
+            "description": "Preço de Fábrica - PF (deve ser não-negativo, zero é válido)",
+            "example": 80,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "pmc",
+          "pf"
+        ]
+      },
+      "CreateProductRestrictionDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "tipo_restricao": {
+            "type": "string",
+            "description": "Tipo de restrição aplicada ao produto",
+            "enum": [
+              "VENDA_PROIBIDA",
+              "LIMITE_QUANTIDADE",
+              "REGIAO_RESTRITA",
+              "PRESCRICAO_MEDICA",
+              "CONTROLE_ESPECIAL"
+            ],
+            "example": "VENDA_PROIBIDA"
+          },
+          "descricao_restricao": {
+            "type": "string",
+            "description": "Descrição detalhada da restrição",
+            "example": "Produto não pode ser vendido para menores de 18 anos",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "tipo_restricao"
+        ]
+      },
+      "CreateProductSaleNotAllowedDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001",
+            "maxLength": 50
+          },
+          "codigo_cliente": {
+            "type": "string",
+            "description": "Código do cliente para o qual a venda não é permitida",
+            "example": "CLI-001",
+            "maxLength": 50
+          },
+          "motivo": {
+            "type": "string",
+            "description": "Motivo pelo qual a venda não é permitida",
+            "example": "Cliente inadimplente",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "codigo_produto",
+          "codigo_cliente",
+          "motivo"
+        ]
+      },
+      "CreateClientDocumentDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "client_cnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente (11 ou 14 dígitos)",
+            "example": "12345678000190",
+            "maxLength": 14
+          },
+          "tipo_documento": {
+            "type": "string",
+            "description": "Tipo de documento",
+            "enum": [
+              "RG",
+              "PASSAPORTE",
+              "HABILITACAO",
+              "OUTRO"
+            ],
+            "example": "RG"
+          },
+          "numero_documento": {
+            "type": "string",
+            "description": "Número do documento",
+            "example": "123456789",
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "client_cnpj",
+          "tipo_documento",
+          "numero_documento"
+        ]
+      },
+      "CreateOrderHeaderDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_pedido": {
+            "type": "string",
+            "example": "PED-001",
+            "description": "Número único do pedido",
+            "maxLength": 50
+          },
+          "data_pedido": {
+            "type": "string",
+            "example": "2025-11-03",
+            "description": "Data do pedido (formato ISO 8601)"
+          },
+          "codigo_cliente": {
+            "type": "string",
+            "example": "CLI-001",
+            "description": "Código do cliente",
+            "maxLength": 50
+          },
+          "status_pedido": {
+            "type": "string",
+            "example": "CONFIRMED",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "PROCESSING",
+              "SHIPPED",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "description": "Status do pedido"
+          },
+          "valor_total": {
+            "type": "number",
+            "example": 1000.5,
+            "description": "Valor total do pedido (mínimo 0)"
+          }
+        },
+        "required": [
+          "numero_pedido",
+          "data_pedido",
+          "codigo_cliente",
+          "status_pedido",
+          "valor_total"
+        ]
+      },
+      "CreateOrderItemDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_pedido": {
+            "type": "string",
+            "example": "PED-001",
+            "description": "Número do pedido (referência ao header)",
+            "maxLength": 50
+          },
+          "numero_item": {
+            "type": "number",
+            "example": 1,
+            "description": "Número sequencial do item"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "example": "PROD-001",
+            "description": "Código do produto",
+            "maxLength": 50
+          },
+          "quantidade": {
+            "type": "number",
+            "example": 10.5,
+            "description": "Quantidade (mínimo 0.01)"
+          },
+          "preco_unitario": {
+            "type": "number",
+            "example": 100,
+            "description": "Preço unitário (mínimo 0)"
+          },
+          "valor_total_item": {
+            "type": "number",
+            "example": 1000,
+            "description": "Valor total do item (mínimo 0)"
+          }
+        },
+        "required": [
+          "numero_pedido",
+          "numero_item",
+          "codigo_produto",
+          "quantidade",
+          "preco_unitario",
+          "valor_total_item"
+        ]
+      },
+      "CreateOrderReturnedItemDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_pedido": {
+            "type": "string",
+            "example": "PED-001",
+            "description": "Número do pedido",
+            "maxLength": 50
+          },
+          "numero_item": {
+            "type": "number",
+            "example": 1,
+            "description": "Número do item devolvido"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "example": "PROD-001",
+            "description": "Código do produto devolvido",
+            "maxLength": 50
+          },
+          "quantidade_devolvida": {
+            "type": "number",
+            "example": 2.5,
+            "description": "Quantidade devolvida (mínimo 0.01)"
+          },
+          "motivo_devolucao": {
+            "type": "string",
+            "example": "Produto com defeito",
+            "description": "Motivo da devolução",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "numero_pedido",
+          "numero_item",
+          "codigo_produto",
+          "quantidade_devolvida"
+        ]
+      },
+      "CreateOrderDistributorHeaderDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_pedido_distribuidor": {
+            "type": "string",
+            "example": "PED-DIST-001",
+            "description": "Número único do pedido de distribuidor",
+            "maxLength": 50
+          },
+          "data_pedido": {
+            "type": "string",
+            "example": "2025-11-03",
+            "description": "Data do pedido (formato ISO 8601)"
+          },
+          "codigo_distribuidor": {
+            "type": "string",
+            "example": "DIST-001",
+            "description": "Código do distribuidor",
+            "maxLength": 50
+          },
+          "status": {
+            "type": "string",
+            "example": "CONFIRMED",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "PROCESSING",
+              "SHIPPED",
+              "DELIVERED",
+              "CANCELLED"
+            ],
+            "description": "Status do pedido do distribuidor"
+          },
+          "valor_total": {
+            "type": "number",
+            "example": 5000,
+            "description": "Valor total do pedido (mínimo 0)"
+          }
+        },
+        "required": [
+          "numero_pedido_distribuidor",
+          "data_pedido",
+          "codigo_distribuidor",
+          "status",
+          "valor_total"
+        ]
+      },
+      "CreateOrderDistributorItemDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_pedido_distribuidor": {
+            "type": "string",
+            "example": "PED-DIST-001",
+            "description": "Número do pedido de distribuidor (referência ao header)",
+            "maxLength": 50
+          },
+          "numero_item": {
+            "type": "number",
+            "example": 1,
+            "description": "Número sequencial do item"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "example": "PROD-001",
+            "description": "Código do produto",
+            "maxLength": 50
+          },
+          "quantidade": {
+            "type": "number",
+            "example": 50,
+            "description": "Quantidade (mínimo 0.01)"
+          },
+          "preco_unitario": {
+            "type": "number",
+            "example": 80,
+            "description": "Preço unitário (mínimo 0)"
+          }
+        },
+        "required": [
+          "numero_pedido_distribuidor",
+          "numero_item",
+          "codigo_produto",
+          "quantidade",
+          "preco_unitario"
+        ]
+      },
+      "CreateSaleHeaderDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_venda": {
+            "type": "string",
+            "example": "VENDA-001",
+            "description": "Número único da venda",
+            "maxLength": 50
+          },
+          "data_venda": {
+            "type": "string",
+            "example": "2025-11-03",
+            "description": "Data da venda (formato ISO 8601)"
+          },
+          "codigo_cliente": {
+            "type": "string",
+            "example": "CLI-001",
+            "description": "Código do cliente",
+            "maxLength": 50
+          },
+          "valor_total": {
+            "type": "number",
+            "example": 1500,
+            "description": "Valor total da venda (mínimo 0)"
+          },
+          "status": {
+            "type": "string",
+            "example": "OPEN",
+            "enum": [
+              "OPEN",
+              "CLOSED",
+              "CANCELLED"
+            ],
+            "description": "Status da venda"
+          }
+        },
+        "required": [
+          "numero_venda",
+          "data_venda",
+          "codigo_cliente",
+          "valor_total",
+          "status"
+        ]
+      },
+      "CreateSaleItemDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_venda": {
+            "type": "string",
+            "example": "VENDA-001",
+            "description": "Número da venda (referência ao header)",
+            "maxLength": 50
+          },
+          "numero_item": {
+            "type": "number",
+            "example": 1,
+            "description": "Número sequencial do item"
+          },
+          "codigo_produto": {
+            "type": "string",
+            "example": "PROD-001",
+            "description": "Código do produto",
+            "maxLength": 50
+          },
+          "quantidade": {
+            "type": "number",
+            "example": 10.5,
+            "description": "Quantidade vendida (mínimo 0.01)"
+          },
+          "preco_unitario": {
+            "type": "number",
+            "example": 100,
+            "description": "Preço unitário (mínimo 0)"
+          },
+          "desconto": {
+            "type": "number",
+            "example": 10,
+            "description": "Desconto percentual (0-100)"
+          }
+        },
+        "required": [
+          "numero_venda",
+          "numero_item",
+          "codigo_produto",
+          "quantidade",
+          "preco_unitario"
+        ]
+      },
+      "CreateSaleClientDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_venda": {
+            "type": "string",
+            "example": "VENDA-001",
+            "description": "Número da venda (referência ao header)",
+            "maxLength": 50
+          },
+          "codigo_cliente": {
+            "type": "string",
+            "example": "CLI-001",
+            "description": "Código do cliente",
+            "maxLength": 50
+          },
+          "cnpj": {
+            "type": "string",
+            "example": "12345678901234",
+            "description": "CNPJ ou CPF do cliente (opcional)"
+          }
+        },
+        "required": [
+          "numero_venda",
+          "codigo_cliente"
+        ]
+      },
+      "CreateSaleSellerDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_venda": {
+            "type": "string",
+            "example": "VENDA-001",
+            "description": "Número da venda (referência ao header)",
+            "maxLength": 50
+          },
+          "codigo_vendedor": {
+            "type": "string",
+            "example": "VEND-001",
+            "description": "Código do vendedor",
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "numero_venda",
+          "codigo_vendedor"
+        ]
+      },
+      "CreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_nota_fiscal": {
+            "type": "string",
+            "example": "NF-001",
+            "description": "Número da nota fiscal",
+            "maxLength": 50
+          },
+          "numero_pedido": {
+            "type": "string",
+            "example": "PED-001",
+            "description": "Número do pedido (referência)",
+            "maxLength": 50
+          },
+          "data_emissao": {
+            "type": "string",
+            "example": "2025-11-03",
+            "description": "Data de emissão da nota fiscal (formato ISO 8601)"
+          },
+          "valor_total": {
+            "type": "number",
+            "example": 1000.5,
+            "description": "Valor total da nota fiscal (mínimo 0)"
+          },
+          "chave_acesso": {
+            "type": "string",
+            "example": "35201201234567890123450010000123451234567890",
+            "description": "Chave de acesso da NF-e (44 caracteres)"
+          },
+          "status": {
+            "type": "string",
+            "example": "EMITIDA",
+            "enum": [
+              "EMITIDA",
+              "CANCELADA",
+              "DENEGADA"
+            ],
+            "description": "Status da nota fiscal"
+          }
+        },
+        "required": [
+          "numero_nota_fiscal",
+          "numero_pedido",
+          "data_emissao",
+          "valor_total",
+          "status"
+        ]
+      },
+      "CreateSalesGoalDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_meta": {
+            "type": "string",
+            "description": "Código da meta de vendas",
+            "example": "META-Q1-2025",
+            "maxLength": 50
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição da meta de vendas",
+            "example": "Meta de vendas do primeiro trimestre de 2025",
+            "maxLength": 200
+          },
+          "valor_meta": {
+            "type": "number",
+            "description": "Valor da meta em reais",
+            "example": 100000
+          },
+          "periodo_inicio": {
+            "type": "string",
+            "description": "Data de início do período da meta (formato ISO 8601)",
+            "example": "2025-01-01"
+          },
+          "periodo_fim": {
+            "type": "string",
+            "description": "Data de fim do período da meta (formato ISO 8601)",
+            "example": "2025-03-31"
+          }
+        },
+        "required": [
+          "codigo_meta",
+          "descricao",
+          "valor_meta",
+          "periodo_inicio",
+          "periodo_fim"
+        ]
+      },
+      "CreateGenericMarginDeterminationDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_determinacao": {
+            "type": "string",
+            "description": "Código da determinação de margem",
+            "example": "DET-MARGEM-001"
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição da determinação de margem",
+            "example": "Determinação de margem para produtos categoria A",
+            "maxLength": 500
+          },
+          "tipo_margem": {
+            "type": "string",
+            "description": "Tipo de margem",
+            "example": "LUCRO_BRUTO"
+          },
+          "data_vigencia": {
+            "type": "string",
+            "description": "Data de vigência da determinação (formato ISO 8601)",
+            "example": "2025-01-01"
+          }
+        },
+        "required": [
+          "codigo_determinacao"
+        ]
+      },
+      "CreateGenericMarginDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_margem": {
+            "type": "string",
+            "description": "Código da margem",
+            "example": "MARGEM-001"
+          },
+          "percentual_margem": {
+            "type": "number",
+            "description": "Percentual de margem (0-100)",
+            "example": 25.5
+          },
+          "aplicacao": {
+            "type": "string",
+            "description": "Aplicação da margem",
+            "example": "CATEGORIA_A"
+          }
+        },
+        "required": [
+          "codigo_margem",
+          "percentual_margem"
+        ]
+      },
+      "CreateGenericTaxesDeterminationDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_determinacao": {
+            "type": "string",
+            "description": "Código da determinação de impostos",
+            "example": "DET-IMP-001"
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição da determinação de impostos",
+            "example": "Determinação ICMS para produtos eletrônicos",
+            "maxLength": 500
+          },
+          "tipo_imposto": {
+            "type": "string",
+            "description": "Tipo de imposto",
+            "example": "ICMS"
+          },
+          "uf": {
+            "type": "string",
+            "description": "Unidade Federativa (sigla de 2 caracteres)",
+            "example": "SP",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "data_vigencia": {
+            "type": "string",
+            "description": "Data de vigência da determinação (formato ISO 8601)",
+            "example": "2025-01-01"
+          }
+        },
+        "required": [
+          "codigo_determinacao"
+        ]
+      },
+      "CreateGenericTaxesDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_imposto": {
+            "type": "string",
+            "description": "Código do imposto",
+            "example": "IMP-001"
+          },
+          "aliquota": {
+            "type": "number",
+            "description": "Alíquota do imposto (0-100%)",
+            "example": 18.5
+          },
+          "tipo_calculo": {
+            "type": "string",
+            "description": "Tipo de cálculo do imposto",
+            "enum": [
+              "PERCENTUAL",
+              "VALOR_FIXO"
+            ],
+            "example": "PERCENTUAL"
+          },
+          "base_calculo": {
+            "type": "number",
+            "description": "Base de cálculo do imposto",
+            "example": 1000
+          }
+        },
+        "required": [
+          "codigo_imposto",
+          "aliquota",
+          "tipo_calculo",
+          "base_calculo"
+        ]
+      },
+      "CreateGenericTaxesBaseCalcStDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_base_st": {
+            "type": "string",
+            "description": "Código da base de cálculo ST",
+            "example": "BASE-ST-001"
+          },
+          "percentual_reducao": {
+            "type": "number",
+            "description": "Percentual de redução da base de cálculo (0-100%)",
+            "example": 10.5
+          },
+          "percentual_mva": {
+            "type": "number",
+            "description": "Percentual de MVA (Margem de Valor Agregado)",
+            "example": 30
+          },
+          "valor_agregado": {
+            "type": "number",
+            "description": "Valor agregado",
+            "example": 500
+          }
+        },
+        "required": [
+          "codigo_base_st",
+          "percentual_reducao",
+          "percentual_mva",
+          "valor_agregado"
+        ]
+      },
+      "CreateGenericExtraInfoDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "codigo_info": {
+            "type": "string",
+            "description": "Código da informação extra",
+            "example": "INFO-001"
+          },
+          "chave": {
+            "type": "string",
+            "description": "Chave da informação extra",
+            "example": "desconto_especial",
+            "maxLength": 100
+          },
+          "valor": {
+            "type": "string",
+            "description": "Valor da informação extra",
+            "example": "15",
+            "maxLength": 1000
+          },
+          "tipo_dado": {
+            "type": "string",
+            "description": "Tipo de dado da informação extra",
+            "enum": [
+              "STRING",
+              "NUMBER",
+              "BOOLEAN",
+              "DATE"
+            ],
+            "example": "NUMBER"
+          }
+        },
+        "required": [
+          "codigo_info",
+          "chave",
+          "valor",
+          "tipo_dado"
+        ]
+      },
+      "CreateComboHeaderDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_combo": {
+            "type": "string",
+            "description": "Número do combo",
+            "example": "COMBO-001",
+            "maxLength": 50
+          },
+          "descricao": {
+            "type": "string",
+            "description": "Descrição do combo",
+            "example": "Combo promocional de verão",
+            "maxLength": 200
+          },
+          "data_inicio": {
+            "type": "string",
+            "description": "Data de início do combo (formato ISO 8601)",
+            "example": "2025-01-01"
+          },
+          "data_fim": {
+            "type": "string",
+            "description": "Data de fim do combo (formato ISO 8601)",
+            "example": "2025-03-31"
+          },
+          "desconto_combo": {
+            "type": "number",
+            "description": "Desconto do combo em percentual (0-100%)",
+            "example": 15
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do combo",
+            "enum": [
+              "ATIVO",
+              "INATIVO",
+              "EXPIRADO"
+            ],
+            "example": "ATIVO"
+          }
+        },
+        "required": [
+          "numero_combo",
+          "descricao",
+          "data_inicio",
+          "data_fim",
+          "desconto_combo",
+          "status"
+        ]
+      },
+      "CreateComboItemDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_combo": {
+            "type": "string",
+            "description": "Número do combo (referência ao combo header)",
+            "example": "COMBO-001"
+          },
+          "numero_item": {
+            "type": "number",
+            "description": "Número do item no combo",
+            "example": 1
+          },
+          "codigo_produto": {
+            "type": "string",
+            "description": "Código do produto",
+            "example": "PROD-001"
+          },
+          "quantidade_minima": {
+            "type": "number",
+            "description": "Quantidade mínima do produto no combo",
+            "example": 5
+          },
+          "desconto_item": {
+            "type": "number",
+            "description": "Desconto do item em percentual (0-100%)",
+            "example": 10
+          }
+        },
+        "required": [
+          "numero_combo",
+          "numero_item",
+          "codigo_produto",
+          "quantidade_minima",
+          "desconto_item"
+        ]
+      },
+      "CreateComboClientDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_combo": {
+            "type": "string",
+            "description": "Número do combo (referência ao combo header)",
+            "example": "COMBO-001"
+          },
+          "codigo_cliente": {
+            "type": "string",
+            "description": "Código do cliente",
+            "example": "CLI-001"
+          }
+        },
+        "required": [
+          "numero_combo",
+          "codigo_cliente"
+        ]
+      },
+      "CreateComboSellerDto": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "example": "client_123"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Ambiente extraído do JWT (injetado automaticamente, não enviar no payload)",
+            "enum": [
+              "sandbox",
+              "production"
+            ],
+            "example": "sandbox"
+          },
+          "numero_combo": {
+            "type": "string",
+            "description": "Número do combo (referência ao combo header)",
+            "example": "COMBO-001"
+          },
+          "codigo_vendedor": {
+            "type": "string",
+            "description": "Código do vendedor",
+            "example": "VEND-001"
+          }
+        },
+        "required": [
+          "numero_combo",
+          "codigo_vendedor"
+        ]
+      },
+      "AuditLogResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único do registro de auditoria",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp do registro no formato ISO 8601",
+            "example": "2025-11-05T10:30:00Z"
+          },
+          "model": {
+            "type": "string",
+            "description": "Modelo da entidade (client, product, order, etc.)",
+            "example": "client"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Endpoint que recebeu a requisição",
+            "example": "/api/v1/clients"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do processamento",
+            "enum": [
+              "received",
+              "processed",
+              "failed"
+            ],
+            "example": "processed"
+          },
+          "payload_hash": {
+            "type": "string",
+            "description": "Hash SHA-256 do payload (para validação)",
+            "example": "a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4"
+          },
+          "correlation_id": {
+            "type": "string",
+            "description": "ID de correlação para rastreamento end-to-end",
+            "example": "770e9511-f30c-52e5-b827-557766551111"
+          }
+        },
+        "required": [
+          "id",
+          "timestamp",
+          "model",
+          "endpoint",
+          "status",
+          "payload_hash",
+          "correlation_id"
+        ]
+      },
+      "PaginationMetadataDto": {
+        "type": "object",
+        "properties": {
+          "total_records": {
+            "type": "number",
+            "description": "Total de registros encontrados",
+            "example": 150
+          },
+          "total_pages": {
+            "type": "number",
+            "description": "Total de páginas disponíveis",
+            "example": 8
+          },
+          "current_page": {
+            "type": "number",
+            "description": "Página atual",
+            "example": 1
+          },
+          "page_size": {
+            "type": "number",
+            "description": "Itens por página",
+            "example": 20
+          }
+        },
+        "required": [
+          "total_records",
+          "total_pages",
+          "current_page",
+          "page_size"
+        ]
+      },
+      "PaginatedAuditLogResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "Lista de registros de auditoria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditLogResponseDto"
+            }
+          },
+          "metadata": {
+            "description": "Metadados de paginação",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadataDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "metadata"
+        ]
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Documentação Completa",
+    "url": "https://docs.nexfar.com.br/integration"
+  }
+}
