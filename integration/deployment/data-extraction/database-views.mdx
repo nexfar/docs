@@ -9,14 +9,56 @@ O acesso via banco de dados permite que a Nexfar extraia dados do seu ERP atrav�
 
 ## Requisitos Técnicos
 
-### IPs para Liberação
+### Método 1: Conexão via VPN (Recomendado) ⭐
 
-Para que a Nexfar possa acessar seu banco de dados, é necessário liberar os seguintes endereços IP:
+A Nexfar utiliza **Tailscale** (VPN site-to-site) para criar conexões seguras com bancos de dados dos clientes.
+
+**Vantagens:**
+- ✅ **Segurança aprimorada**: Criptografia end-to-end automática
+- ✅ **Instalação simples**: Comando de uma linha (one-line install)
+- ✅ **Flexibilidade**: Funciona de qualquer localização, sem necessidade de IP fixo
+- ✅ **Gerenciamento fácil**: Controle de acesso centralizado via ACLs
+- ✅ **Sem exposição pública**: Banco de dados não fica exposto na internet
+
+**Instalação Rápida:**
+
+<CodeGroup>
+```bash Linux/Unix
+curl -fsSL https://raw.githubusercontent.com/nexfar/vpn/main/install.sh | sudo bash
+```
+
+```bash Linux/Unix (wget)
+wget -qO- https://raw.githubusercontent.com/nexfar/vpn/main/install.sh | sudo bash
+```
+
+```powershell Windows (PowerShell)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/nexfar/vpn/main/install.ps1" -OutFile "$env:TEMP\install.ps1"
+& "$env:TEMP\install.ps1"
+```
+</CodeGroup>
+
+**Informações Necessárias:**
+- **Auth Key**: Fornecido pela equipe Nexfar
+- **Porta do banco de dados**: Ex: 5432 (PostgreSQL), 3306 (MySQL), 1521 (Oracle)
+- **Tipo do banco**: postgres, mysql, oracle, sqlserver, mongodb, etc.
+
+<Tip>
+  **Documentação completa da VPN:** [github.com/nexfar/vpn](https://github.com/nexfar/vpn)
+</Tip>
+
+---
+
+### Método 2: Liberação de IPs (Alternativo)
+
+Se sua organização preferir conexão direta sem VPN, libere os seguintes IPs no firewall:
 
 <Warning>
   **IPs que devem ser liberados no firewall:**
   - `189.28.42.170`
   - `170.84.19.69`
+
+  ⚠️ **Nota:** Este método requer IP fixo e expõe o banco de dados publicamente. Recomendamos usar VPN para maior segurança.
 </Warning>
 
 ### Nomenclatura das VIEWs
@@ -82,11 +124,21 @@ As VIEWs estão organizadas por categoria para facilitar a implementação:
 
 ## Próximos Passos
 
-1. Escolha a opção de implementação mais adequada (VIEW direta, banco intermediário ou API)
-2. Revise as VIEWs necessárias para sua integração
-3. Implemente as VIEWs seguindo as especificações de cada categoria
-4. Libere os IPs da Nexfar no firewall
-5. Entre em contato para validação da integração
+1. **Escolha o método de conexão**:
+   - **VPN (Recomendado)**: Instale o cliente Tailscale usando os comandos acima
+   - **Liberação de IPs**: Configure firewall para permitir acesso dos IPs da Nexfar
+
+2. Escolha a opção de implementação mais adequada (VIEW direta ou banco intermediário)
+
+3. Revise as VIEWs necessárias para sua integração
+
+4. Implemente as VIEWs seguindo as especificações de cada categoria
+
+5. **Configure o acesso**:
+   - Se usar VPN: Forneça as informações de conexão (porta, tipo de banco)
+   - Se usar IPs: Confirme liberação no firewall
+
+6. Entre em contato para validação da integração
 
 <Tip>
   Recomendamos começar pelas VIEWs de **Cadastros Básicos** (Cliente e Condições de Pagamento) e depois expandir para as demais categorias.
