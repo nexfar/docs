@@ -137,7 +137,8 @@
           "group": "API de Ingestão",
           "pages": [
             "integration/api-ingestion/overview",
-            "integration/api-ingestion/quickstart"
+            "integration/api-ingestion/quickstart",
+            "integration/api-ingestion/authentication"
           ]
         },
         {

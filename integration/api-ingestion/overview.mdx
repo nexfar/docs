@@ -1,0 +1,262 @@
+---
+title: 'Visão Geral - API de Ingestão'
+description: 'Entenda rapidamente como a API de Ingestão Nexfar funciona e como começar a integração em menos de 10 minutos'
+icon: 'book-open'
+---
+
+# API de Ingestão Nexfar
+
+## O que é a API de Ingestão?
+
+A **API de Ingestão Nexfar** permite que distribuidoras e indústrias farmacêuticas enviem dados ativamente (modelo **push**) para a plataforma Nexfar via REST ou GraphQL. Este modelo inverte a integração tradicional, eliminando a necessidade de acesso direto ao banco de dados do cliente.
+
+**Benefício Principal:** Redução drástica do ciclo de onboarding de **90+ dias para semanas**, removendo barreiras de segurança e políticas institucionais que atrasam liberação de credenciais de banco.
+
+---
+
+## REST ou GraphQL?
+
+A API de Ingestão suporta **ambos os protocolos** para os mesmos 34 modelos de dados. Escolha o que melhor se adapta ao seu stack tecnológico:
+
+<Tabs>
+  <Tab title="REST API">
+    **Ideal para integrações tradicionais**
+
+    - Endpoints específicos por modelo (`POST /api/v1/clients`, `POST /api/v1/products`)
+    - Simples e direto - perfeito se você já está familiarizado com APIs REST
+    - Documentação interativa completa com exemplos de requisição/resposta
+    - Autenticação via JWT Bearer token no header `Authorization`
+
+    **Quando usar:** Integrações straightforward, um modelo por vez, compatibilidade máxima
+  </Tab>
+
+  <Tab title="GraphQL API">
+    **Ideal para cenários flexíveis**
+
+    - Queries e mutations personalizadas para buscar exatamente o que você precisa
+    - Menos requisições HTTP - envie múltiplos modelos em uma única mutation
+    - Schema fortemente tipado com validação automática
+    - Introspection completa para descobrir APIs disponíveis
+
+    **Quando usar:** Integrações complexas, múltiplos modelos, otimização de rede
+  </Tab>
+</Tabs>
+
+<Tip>
+  **Recomendação:** Se você já está familiarizado com REST, comece por ele. GraphQL oferece mais flexibilidade mas requer curva de aprendizado inicial.
+</Tip>
+
+---
+
+## API vs Database Views: Qual Escolher?
+
+<CardGroup cols={2}>
+  <Card title="API de Ingestão (Push)" icon="cloud-arrow-up">
+    **Vantagens:**
+    - ✅ Sem acesso ao banco de dados do cliente
+    - ✅ Onboarding em semanas (vs 90+ dias)
+    - ✅ Auditoria e rastreabilidade completa de todos os envios
+    - ✅ Ambiente Sandbox isolado para testes sem risco
+
+    **Desvantagens:**
+    - ⚠️ Requer desenvolvimento de integração
+    - ⚠️ Cliente deve enviar dados ativamente (não é automático)
+  </Card>
+
+  <Card title="Acesso via Database Views (Pull)" icon="database">
+    **Vantagens:**
+    - ✅ Sem desenvolvimento necessário pelo cliente
+    - ✅ Zero esforço operacional - Nexfar extrai automaticamente
+    - ✅ Sincronização contínua e transparente
+
+    **Desvantagens:**
+    - ⚠️ Ciclo longo de liberação (90+ dias)
+    - ⚠️ Questões de segurança e políticas de acesso
+    - ⚠️ Dependência de credenciais de banco de dados
+  </Card>
+</CardGroup>
+
+<Note>
+  **Ambos os modelos coexistem.** Escolha o mais adequado para sua empresa. Muitos clientes usam API de Ingestão para onboarding rápido e migram para Database Views posteriormente.
+</Note>
+
+---
+
+## Modelos de Dados Suportados
+
+A API de Ingestão suporta **34 modelos de dados** organizados em 4 categorias. Todos os modelos são mapeados 1:1 das Database Views existentes.
+
+<AccordionGroup>
+  <Accordion title="Cadastros Básicos (5 modelos)" icon="address-book">
+    - **CLIENT** - Dados de clientes (distribuidoras, farmácias, hospitais)
+    - **SELLER** - Vendedores e representantes comerciais
+    - **PAYMENT_CONDITION** - Condições de pagamento negociadas
+    - **PRICE_GROUP** - Grupos de preço para segmentação
+    - **CLIENT_BRANCH** - Filiais e pontos de venda de clientes
+  </Accordion>
+
+  <Accordion title="Produtos (8 modelos)" icon="pills">
+    - **PRODUCT** - Catálogo completo de produtos farmacêuticos
+    - **PRODUCT_BRANCH** - Produtos disponíveis por filial
+    - **PRODUCT_WAREHOUSE** - Estoque de produtos por depósito/armazém
+    - **PRODUCT_PRICE** - Tabelas de preço por produto e cliente
+    - **PRODUCT_PMC_PF** - PMC (Preço Máximo ao Consumidor) e Preço Fábrica
+    - **PRODUCT_RESTRICTION** - Restrições regulatórias de venda
+    - **PRODUCT_SALE_NOT_ALLOWED** - Bloqueios temporários de venda
+    - **CLIENT_DOCUMENT** - Documentos e certificações de clientes
+  </Accordion>
+
+  <Accordion title="Pedidos e Vendas (10 modelos)" icon="cart-shopping">
+    - **ORDER_HEADER** - Cabeçalhos de pedidos (dados gerais do pedido)
+    - **ORDER_ITEM** - Itens individuais de pedidos
+    - **ORDER_RETURNED_ITEM** - Itens devolvidos e trocas
+    - **ORDER_DISTRIBUTOR_HEADER** - Pedidos de distribuidor para indústria
+    - **ORDER_DISTRIBUTOR_ITEM** - Itens de pedidos de distribuidor
+    - **SALE_HEADER** - Cabeçalhos de vendas efetivadas
+    - **SALE_ITEM** - Itens de vendas por produto
+    - **SALE_CLIENT** - Vendas agregadas por cliente
+    - **SALE_SELLER** - Vendas agregadas por vendedor
+    - **INVOICE** - Notas fiscais emitidas
+  </Accordion>
+
+  <Accordion title="Impostos, Margens e Combos (11 modelos)" icon="percent">
+    - **SALES_GOAL** - Metas de vendas por período e vendedor
+    - **GENERIC_MARGIN_DETERMINATION** - Regras de determinação de margens
+    - **GENERIC_MARGIN** - Margens comerciais aplicadas
+    - **GENERIC_TAXES_DETERMINATION** - Regras de cálculo de impostos
+    - **GENERIC_TAXES** - Impostos e tributos aplicados
+    - **GENERIC_TAXES_BASE_CALC_ST** - Base de cálculo de Substituição Tributária
+    - **GENERIC_EXTRA_INFO** - Informações extras e metadados
+    - **COMBO_HEADER** - Cabeçalhos de combos e kits promocionais
+    - **COMBO_ITEM** - Itens componentes de combos
+    - **COMBO_CLIENT** - Combos disponíveis por cliente
+    - **COMBO_SELLER** - Combos gerenciados por vendedor
+  </Accordion>
+</AccordionGroup>
+
+<Info>
+  **Schemas detalhados:** Explore a estrutura completa de cada modelo na [API Reference](/integration/api-reference) interativa ou na [documentação GraphQL](/integration/api-ingestion/graphql).
+</Info>
+
+---
+
+## Como Começar: Onboarding em 5 Passos
+
+<Warning>
+  **⚠️ Ambiente Sandbox é Obrigatório**
+
+  Todos os clientes devem testar completamente sua integração no ambiente Sandbox antes de receber credenciais de Produção. Dados no Sandbox são automaticamente deletados após 30 dias.
+
+  [Saiba mais sobre ambientes →](/integration/api-ingestion/environments)
+</Warning>
+
+<Steps>
+  <Step title="Receber Credenciais JWT">
+    Você receberá um email da Nexfar com seu **token JWT para ambiente Sandbox** e link para esta documentação. O token será algo como:
+
+    ```
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6ImNsaWVudGVfMTIzIiw...
+    ```
+
+    Guarde este token com segurança - ele será usado em todas as requisições.
+  </Step>
+
+  <Step title="Explorar Documentação">
+    Acesse a [API Reference](/integration/api-reference) interativa ou documentação [GraphQL](/integration/api-ingestion/graphql).
+
+    - **REST:** Explore endpoints organizados por categoria, teste requisições diretamente no navegador
+    - **GraphQL:** Use o GraphQL Playground para testar queries e mutations com autocomplete
+
+    Escolha REST ou GraphQL conforme sua preferência - ambos suportam os mesmos 34 modelos.
+  </Step>
+
+  <Step title="Testar no Sandbox">
+    Faça sua primeira requisição usando Postman, curl ou código. Exemplo rápido com curl:
+
+    ```bash
+    curl -X POST https://api-sandbox.nexfar.com.br/api/v1/clients \
+      -H "Authorization: Bearer SEU_TOKEN_JWT" \
+      -H "Content-Type: application/json" \
+      -d '{"clientId": "123", "name": "Farmácia Teste", ...}'
+    ```
+
+    Consulte o [Quick Start](/integration/api-ingestion/quickstart) para exemplos completos passo a passo.
+  </Step>
+
+  <Step title="Implementar Integração">
+    Desenvolva sua integração usando nossos [exemplos de código](/integration/api-ingestion/code-examples) em:
+
+    - Python (requests, httpx)
+    - Java (Spring RestTemplate, OkHttp)
+    - Node.js (axios, fetch)
+    - C# (.NET HttpClient)
+    - PHP (Guzzle, cURL)
+
+    Configure retry logic, tratamento de erros e logging conforme [boas práticas](/integration/api-ingestion/best-practices).
+  </Step>
+
+  <Step title="Promover para Produção">
+    Após validação completa no Sandbox:
+
+    1. Valide que todos os 34 modelos necessários foram testados
+    2. Confirme que tratamento de erros está implementado
+    3. Solicite credenciais de Produção à Nexfar via suporte
+    4. Receba novo token JWT para ambiente de Produção
+    5. Atualize configurações e inicie envio de dados reais
+
+    [Leia sobre diferenças entre ambientes →](/integration/api-ingestion/environments)
+  </Step>
+</Steps>
+
+<Tip>
+  **Tempo estimado:** Você estará enviando dados em **menos de 10 minutos** seguindo nosso [Quick Start Guide](/integration/api-ingestion/quickstart).
+</Tip>
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/integration/api-ingestion/quickstart">
+    Faça sua primeira requisição em menos de 10 minutos com exemplos práticos de código
+  </Card>
+
+  <Card title="Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+    Entenda como configurar tokens JWT nas requisições e renovar credenciais
+  </Card>
+
+  <Card title="REST API Reference" icon="code" href="/integration/api-reference">
+    Explore todos os 34 endpoints REST interativamente com exemplos de request/response
+  </Card>
+
+  <Card title="GraphQL Docs" icon="brackets-curly" href="/integration/api-ingestion/graphql">
+    Queries e mutations GraphQL com schema completo e exemplos práticos
+  </Card>
+</CardGroup>
+
+<CardGroup cols={2}>
+  <Card title="Ambientes (Sandbox vs Produção)" icon="flask" href="/integration/api-ingestion/environments">
+    Diferenças entre ambientes, políticas de retenção de dados e processo de promoção
+  </Card>
+
+  <Card title="Rastreabilidade e Audit Log" icon="clock-rotate-left" href="/integration/api-ingestion/audit-log">
+    Como consultar histórico completo de envios e troubleshooting de falhas
+  </Card>
+
+  <Card title="Troubleshooting Guide" icon="life-ring" href="/integration/api-ingestion/troubleshooting">
+    Erros comuns, códigos de status HTTP, retry strategies e debugging
+  </Card>
+
+  <Card title="Exemplos de Código" icon="file-code" href="/integration/api-ingestion/code-examples">
+    Snippets prontos em Python, Java, Node.js, C# e PHP para copiar e colar
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+  **Precisa de Ajuda?** Entre em contato com nosso time de suporte:
+  - Email: suporte@nexfar.com.br
+  - Slack: #api-integration (para parceiros com acesso)
+  - Documentação: Consulte este portal primeiro para autonomia máxima
+</Note>

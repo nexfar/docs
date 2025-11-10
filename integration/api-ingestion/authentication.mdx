@@ -1,0 +1,678 @@
+---
+title: "Autenticação JWT"
+description: "Guia completo de autenticação JWT para API de Ingestão Nexfar: estrutura de tokens, claims, headers HTTP e troubleshooting"
+icon: "shield"
+---
+
+## Introdução
+
+A API de Ingestão Nexfar utiliza **JSON Web Tokens (JWT)** para autenticar todas as requisições. Este token garante que apenas clientes autorizados possam enviar dados e acessar recursos da plataforma.
+
+<Note>
+**📝 O que é JWT?** JSON Web Token é um padrão aberto (RFC 7519) que define uma maneira compacta e segura de transmitir informações entre partes como um objeto JSON. O token é assinado digitalmente, garantindo sua autenticidade.
+</Note>
+
+---
+
+## Como Funciona a Autenticação
+
+<Steps>
+  <Step title="Receber Token JWT">
+    Você receberá um email da Nexfar com seu token JWT para ambiente **Sandbox** ou **Production**.
+
+    **O que está incluído:**
+    - Token JWT completo (string longa codificada em Base64)
+    - Client ID (`client_id`)
+    - Environment (`"sandbox"` ou `"production"`)
+    - URL da API correspondente
+  </Step>
+
+  <Step title="Armazenar Token Seguramente">
+    Salve o token em variável de ambiente (**NUNCA** em código):
+
+    ```bash
+    # Linux/macOS
+    export NEXFAR_JWT="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    # Windows PowerShell
+    $env:NEXFAR_JWT="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ```
+
+    <Warning>
+      **🔒 Segurança:** NUNCA exponha tokens JWT em código público, logs ou repositórios Git.
+    </Warning>
+  </Step>
+
+  <Step title="Incluir Token em Requisições">
+    Adicione header `Authorization` em **TODAS** as requisições:
+
+    ```
+    Authorization: Bearer {seu_token_jwt_aqui}
+    ```
+
+    **Formato obrigatório:**
+    - Palavra `"Bearer"` (B maiúsculo)
+    - Um espaço
+    - Token JWT completo (sem quebras de linha)
+  </Step>
+
+  <Step title="API Valida Token">
+    A API Nexfar valida automaticamente:
+    - ✅ Assinatura do token (garante autenticidade)
+    - ✅ Expiração (`exp` claim) - token não expirado
+    - ✅ Claims obrigatórios (`client_id`, `environment`, `scopes`)
+
+    **Se válido** → Requisição processada
+    **Se inválido** → Erro 401 Unauthorized
+  </Step>
+</Steps>
+
+---
+
+## Estrutura do Token JWT
+
+Um token JWT é composto por três partes separadas por pontos (`.`):
+
+```
+header.payload.signature
+```
+
+Cada parte é codificada em **Base64URL**. Exemplo de token real:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJjbGlfYWJjMTIzIiwiZW52aXJvbm1lbnQiOiJzYW5kYm94Iiwic2NvcGVzIjpbImluZ2VzdGlvbjp3cml0ZSIsImF1ZGl0OnJlYWQiXSwiaWF0IjoxNjk5NDU5MjAwLCJleHAiOjE3MDczMjE2MDB9.signature_hash_here
+```
+
+### Claims do Payload
+
+O payload do JWT contém informações (claims) sobre o cliente e suas permissões:
+
+| Claim | Tipo | Descrição |
+|-------|------|-----------|
+| `client_id` | string | Identificador único do cliente (obrigatório) |
+| `environment` | string | Ambiente: `"sandbox"` ou `"production"` |
+| `scopes` | array | Permissões (ex: `["ingestion:write", "audit:read"]`) |
+| `iat` | number | Issued At - timestamp Unix de emissão |
+| `exp` | number | Expiration - timestamp Unix de expiração |
+
+<Note>
+**📝 Claims Obrigatórios:** Todos os 5 claims acima devem estar presentes no token. A ausência de qualquer um resultará em erro 401.
+</Note>
+
+**Exemplo de Payload Decodificado:**
+
+```json
+{
+  "client_id": "cli_abc123xyz789",
+  "environment": "sandbox",
+  "scopes": ["ingestion:write", "audit:read"],
+  "iat": 1699459200,
+  "exp": 1707321600
+}
+```
+
+---
+
+## Enviando Requisições Autenticadas
+
+### REST API
+
+Use o header `Authorization` com prefixo `Bearer` em todas as requisições REST:
+
+<CodeGroup>
+
+```bash cURL
+# REST API - Criar Cliente
+curl -X POST https://api-sandbox.nexfar.com.br/api/v1/clients \
+  -H "Authorization: Bearer $NEXFAR_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "cnpj": "12.345.678/0001-90",
+    "razao_social": "Farmácia Exemplo LTDA",
+    "email": "contato@exemplo.com.br",
+    "status": "ACTIVE"
+  }'
+```
+
+```python Python
+import requests
+import os
+
+# Configuração
+API_URL = "https://api-sandbox.nexfar.com.br"
+JWT_TOKEN = os.getenv("NEXFAR_JWT")  # Token da variável de ambiente
+
+# Headers de autenticação
+headers = {
+    "Authorization": f"Bearer {JWT_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+# Dados do cliente
+client_data = {
+    "cnpj": "12.345.678/0001-90",
+    "razao_social": "Farmácia Exemplo LTDA",
+    "email": "contato@exemplo.com.br",
+    "status": "ACTIVE"
+}
+
+# REST API
+response = requests.post(
+    f"{API_URL}/api/v1/clients",
+    json=client_data,
+    headers=headers
+)
+
+print(response.json())
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+// Configuração
+const API_URL = 'https://api-sandbox.nexfar.com.br';
+const JWT_TOKEN = process.env.NEXFAR_JWT;  // Token da variável de ambiente
+
+// Headers de autenticação
+const headers = {
+    'Authorization': `Bearer ${JWT_TOKEN}`,
+    'Content-Type': 'application/json'
+};
+
+// Dados do cliente
+const clientData = {
+    cnpj: '12.345.678/0001-90',
+    razao_social: 'Farmácia Exemplo LTDA',
+    email: 'contato@exemplo.com.br',
+    status: 'ACTIVE'
+};
+
+// REST API
+const response = await axios.post(
+    `${API_URL}/api/v1/clients`,
+    clientData,
+    { headers }
+);
+
+console.log(response.data);
+```
+
+```java Java
+import java.net.http.*;
+import java.net.URI;
+
+// Configuração
+String apiUrl = "https://api-sandbox.nexfar.com.br";
+String jwtToken = System.getenv("NEXFAR_JWT");  // Token da variável de ambiente
+
+// JSON payload
+String jsonData = """
+{
+  "cnpj": "12.345.678/0001-90",
+  "razao_social": "Farmácia Exemplo LTDA",
+  "email": "contato@exemplo.com.br",
+  "status": "ACTIVE"
+}
+""";
+
+// REST API
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create(apiUrl + "/api/v1/clients"))
+    .header("Authorization", "Bearer " + jwtToken)
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(jsonData))
+    .build();
+
+HttpResponse<String> response = HttpClient.newHttpClient()
+    .send(request, HttpResponse.BodyHandlers.ofString());
+
+System.out.println(response.body());
+```
+
+```csharp C#
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
+// Configuração
+var apiUrl = "https://api-sandbox.nexfar.com.br";
+var jwtToken = Environment.GetEnvironmentVariable("NEXFAR_JWT");
+
+// Cliente HTTP
+var client = new HttpClient();
+client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwtToken}");
+
+// Dados do cliente
+var clientData = new
+{
+    cnpj = "12.345.678/0001-90",
+    razao_social = "Farmácia Exemplo LTDA",
+    email = "contato@exemplo.com.br",
+    status = "ACTIVE"
+};
+
+var jsonData = JsonSerializer.Serialize(clientData);
+var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+// REST API
+var response = await client.PostAsync($"{apiUrl}/api/v1/clients", content);
+var result = await response.Content.ReadAsStringAsync();
+
+Console.WriteLine(result);
+```
+
+</CodeGroup>
+
+---
+
+### GraphQL API
+
+A autenticação GraphQL usa **exatamente o mesmo header** `Authorization` das requisições REST:
+
+<CodeGroup>
+
+```bash cURL GraphQL
+curl -X POST https://api-sandbox.nexfar.com.br/graphql \
+  -H "Authorization: Bearer $NEXFAR_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation { createClient(input: { cnpj: \"12.345.678/0001-90\", razaoSocial: \"Farmácia Exemplo LTDA\", email: \"contato@exemplo.com.br\", status: ACTIVE }) { id cnpj razaoSocial } }"
+  }'
+```
+
+```javascript JavaScript (fetch)
+const JWT_TOKEN = process.env.NEXFAR_JWT;
+
+const query = `
+  mutation CreateClient($input: CreateClientInput!) {
+    createClient(input: $input) {
+      id
+      cnpj
+      razaoSocial
+      email
+    }
+  }
+`;
+
+const variables = {
+  input: {
+    cnpj: "12.345.678/0001-90",
+    razaoSocial: "Farmácia Exemplo LTDA",
+    email: "contato@exemplo.com.br",
+    status: "ACTIVE"
+  }
+};
+
+const response = await fetch('https://api-sandbox.nexfar.com.br/graphql', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${JWT_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ query, variables })
+});
+
+const result = await response.json();
+console.log(result.data);
+```
+
+```python Python (requests)
+import requests
+import os
+
+JWT_TOKEN = os.getenv("NEXFAR_JWT")
+
+query = """
+mutation CreateClient($input: CreateClientInput!) {
+  createClient(input: $input) {
+    id
+    cnpj
+    razaoSocial
+    email
+  }
+}
+"""
+
+variables = {
+    "input": {
+        "cnpj": "12.345.678/0001-90",
+        "razaoSocial": "Farmácia Exemplo LTDA",
+        "email": "contato@exemplo.com.br",
+        "status": "ACTIVE"
+    }
+}
+
+headers = {
+    "Authorization": f"Bearer {JWT_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(
+    "https://api-sandbox.nexfar.com.br/graphql",
+    json={"query": query, "variables": variables},
+    headers=headers
+)
+
+print(response.json())
+```
+
+</CodeGroup>
+
+<Tip>
+**💡 Dica:** A autenticação GraphQL e REST é idêntica. Use o mesmo token JWT para ambas as APIs.
+</Tip>
+
+---
+
+## Tokens para Sandbox vs Produção
+
+A Nexfar fornece **dois tipos de tokens** com isolamento completo de dados:
+
+| Aspecto | Token Sandbox | Token Production |
+|---------|--------------|------------------|
+| **Claim `environment`** | `"sandbox"` | `"production"` |
+| **URL Base** | `api-sandbox.nexfar.com.br` | `api.nexfar.com.br` |
+| **Dados** | Isolados, deletados após 30 dias | Persistentes, produção |
+| **Solicitação** | Email inicial de onboarding | Após validação completa em Sandbox |
+| **Validade Típica** | 90 dias (renovável) | Configurada individualmente |
+| **Finalidade** | Testes, desenvolvimento, integração | Uso em produção, dados reais |
+
+<Warning>
+**⚠️ IMPORTANTE:**
+- **NUNCA** use token de produção em ambiente de teste
+- Dados enviados com token **Sandbox** são automaticamente **deletados após 30 dias**
+- Use **SEMPRE** Sandbox para desenvolvimento e testes iniciais
+</Warning>
+
+<Tip>
+**💡 Boas Práticas:**
+- Teste completamente no Sandbox antes de solicitar token Production
+- Mantenha tokens Sandbox e Production em variáveis de ambiente **separadas**
+- Documente qual token usar em cada ambiente (staging, QA, produção)
+</Tip>
+
+---
+
+## Expiração de Tokens
+
+### Validando Expiração
+
+Todo token JWT possui um claim `exp` (expiration) que indica quando o token expira (timestamp Unix):
+
+```python
+import time
+import jwt
+
+# Decodificar token (sem validação - apenas visualizar)
+decoded = jwt.decode(token, options={"verify_signature": False})
+exp_timestamp = decoded['exp']
+current_timestamp = int(time.time())
+
+if current_timestamp > exp_timestamp:
+    print("Token expirado!")
+else:
+    tempo_restante = exp_timestamp - current_timestamp
+    print(f"Token válido por mais {tempo_restante // 3600} horas")
+```
+
+<Warning>
+**⚠️ Tokens Expirados:** Tokens expirados retornam erro **401 Unauthorized**. Monitore a expiração proativamente.
+</Warning>
+
+### Como Renovar Token
+
+Quando seu token expirar, siga estes passos:
+
+1. **Detectar erro 401** em sua aplicação
+2. **Contatar Nexfar** via email: [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br)
+3. **Solicitar renovação de token** (informar `client_id`)
+4. **Novo token será enviado por email**
+
+<Note>
+**📝 Validade de Tokens:**
+- Tokens de **Sandbox** geralmente têm validade de **90 dias**
+- Tokens de **Production** têm validade configurada individualmente
+- **Future enhancement:** API de refresh token (não disponível no MVP)
+</Note>
+
+---
+
+## Inspecionando Seu Token (JWT.io)
+
+Para visualizar o conteúdo do seu token JWT sem validar assinatura, use a ferramenta [jwt.io](https://jwt.io):
+
+### Passo a Passo:
+
+1. Acesse [https://jwt.io](https://jwt.io)
+2. Cole seu token no campo **"Encoded"** (lado esquerdo)
+3. Verifique claims no **payload** (lado direito, seção "Payload")
+4. Valide os seguintes claims:
+   - `client_id`: Seu identificador único
+   - `environment`: `"sandbox"` ou `"production"`
+   - `scopes`: Permissões disponíveis
+   - `exp`: Timestamp de expiração (verifique se está no futuro)
+
+<Warning>
+**⚠️ Segurança com JWT.io:**
+- **NUNCA** cole tokens de produção em serviços online públicos
+- jwt.io executa JavaScript **localmente no browser** (sem enviar dados para servidor)
+- Para tokens sensíveis, use bibliotecas locais:
+  - **Python:** `pyjwt`
+  - **Node.js:** `jsonwebtoken`
+  - **Java:** `jjwt`
+</Warning>
+
+---
+
+## Troubleshooting - Erros de Autenticação
+
+<AccordionGroup>
+
+<Accordion title="❌ 401 Unauthorized - Token Inválido ou Expirado">
+  **Causas Comuns:**
+  - Token malformado (copiado incorretamente)
+  - Assinatura inválida (token não emitido pela Nexfar)
+  - Token expirado (claim `exp` no passado)
+  - Token de ambiente errado (Sandbox token em URL Production)
+
+  **Soluções:**
+  1. **Verificar cópia do token:** Certifique-se de que copiou o token completo (sem espaços extras ou quebras de linha)
+  2. **Validar em jwt.io:** Cole o token em [https://jwt.io](https://jwt.io) e verifique:
+     - Claims `client_id`, `environment`, `scopes` estão presentes
+     - Claim `exp` (expiration) está no futuro
+  3. **Verificar URL:** Sandbox token deve usar `api-sandbox.nexfar.com.br`, Production token deve usar `api.nexfar.com.br`
+  4. **Solicitar novo token:** Se expirado, contate [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br)
+
+  **Exemplo de Erro:**
+  ```json
+  {
+    "statusCode": 401,
+    "message": "Unauthorized",
+    "error": "Invalid or expired JWT token"
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ 401 Unauthorized - Header de Autenticação Ausente">
+  **Causa:** Header `Authorization` não foi incluído na requisição.
+
+  **Solução:** Adicione header `Authorization: Bearer {token}` em **TODAS** as requisições.
+
+  **Exemplo Correto (cURL):**
+  ```bash
+  curl -H "Authorization: Bearer eyJhbGciOiJIUzI1..." \
+       https://api-sandbox.nexfar.com.br/api/v1/clients
+  ```
+
+  **Exemplo Incorreto:**
+  ```bash
+  # ❌ Sem header Authorization
+  curl https://api-sandbox.nexfar.com.br/api/v1/clients
+  ```
+
+  **Exemplo de Erro:**
+  ```json
+  {
+    "statusCode": 401,
+    "message": "Unauthorized",
+    "error": "Authorization header missing"
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ 403 Forbidden - Permissões Insuficientes">
+  **Causa:** Token válido mas sem **scopes** (permissões) necessários para operação.
+
+  **Exemplo:** Tentativa de enviar dados (POST) mas token só tem scope `audit:read` (sem `ingestion:write`).
+
+  **Soluções:**
+  1. Verifique scopes do seu token em [jwt.io](https://jwt.io)
+  2. Confirme que token tem scope `ingestion:write` para enviar dados
+  3. Se scope ausente, contate [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br) e solicite atualização de permissões
+
+  **Exemplo de Erro:**
+  ```json
+  {
+    "statusCode": 403,
+    "message": "Forbidden",
+    "error": "Insufficient scopes. Required: ingestion:write"
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ Token Funciona no Postman mas Não no Código">
+  **Causas Comuns:**
+  - Espaço extra no header: `"Bearer  {token}"` (dois espaços ao invés de um)
+  - Token armazenado em variável errada ou não carregado
+  - Encoding UTF-8 incorreto
+  - Token com quebras de linha (`\n`)
+
+  **Soluções:**
+  1. **Logar header completo no código:**
+     ```python
+     print(f"Authorization: {headers['Authorization']}")
+     ```
+  2. **Comparar com formato correto:** `"Bearer {token}"` (um espaço apenas, sem quebras)
+  3. **Testar com token hardcoded temporariamente** (apenas para debug, remover depois)
+  4. **Verificar se variável de ambiente foi carregada:**
+     ```python
+     import os
+     token = os.getenv("NEXFAR_JWT")
+     if not token:
+         print("Erro: NEXFAR_JWT não configurado!")
+     ```
+</Accordion>
+
+<Accordion title="✅ Token Válido mas Dados Não Aparecem">
+  **Validação:** Confirme que token tem claim `environment` correto para o ambiente esperado.
+
+  **Cenário Comum:**
+  - Token **Sandbox** → dados em ambiente **Sandbox** (isolado de Production)
+  - Token **Production** → dados em ambiente **Production**
+  - Se enviou com token Sandbox mas esperava ver em Production: são ambientes **separados**!
+
+  **Solução:**
+  1. Verifique claim `environment` em [jwt.io](https://jwt.io)
+  2. Se token Sandbox mas precisa Production: solicite token Production via [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br)
+  3. Consulte dados no ambiente correto: [Ambientes](/integration/api-ingestion/environments)
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Boas Práticas de Segurança
+
+<Warning>
+**🔒 Tokens JWT têm o mesmo poder que uma senha - proteja-os adequadamente**
+</Warning>
+
+### 1. Armazenar tokens em variáveis de ambiente
+
+✅ **Correto:** Usar variáveis de ambiente
+```python
+# Python
+import os
+JWT_TOKEN = os.getenv("NEXFAR_JWT")
+```
+
+```javascript
+// Node.js
+const JWT_TOKEN = process.env.NEXFAR_JWT;
+```
+
+❌ **Incorreto:** Hardcode tokens no código
+```python
+# ❌ NUNCA faça isso!
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 2. Nunca commitar tokens em Git
+
+- Adicione `.env` ao `.gitignore`
+- Use secrets managers (AWS Secrets Manager, Azure Key Vault, GitHub Secrets)
+- Revise commits antes de push para garantir que não há tokens expostos
+
+---
+
+### 3. Renovar tokens antes da expiração
+
+- Implemente lógica de verificação de `exp`
+- Alertar equipe **7 dias antes** de expirar
+- Automatize monitoramento de expiração
+
+---
+
+### 4. Não compartilhar tokens entre ambientes
+
+- **Sandbox token** → apenas testes e desenvolvimento
+- **Production token** → apenas aplicação em produção
+- Mantenha tokens em variáveis de ambiente **separadas**
+
+---
+
+### 5. Limitar acesso aos tokens
+
+- Apenas desenvolvedores **autorizados** têm acesso
+- Rotacionar tokens se houver suspeita de vazamento
+- Não compartilhar tokens via email, Slack, ou outros canais inseguros
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+
+<Card title="Testar no Sandbox" icon="flask" href="/integration/api-ingestion/quickstart">
+  Use token Sandbox para enviar primeira requisição seguindo o Quick Start Guide.
+</Card>
+
+<Card title="Entender Ambientes" icon="layer-group" href="/integration/api-ingestion/environments">
+  Aprenda a diferença entre Sandbox e Production e quando usar cada um.
+</Card>
+
+<Card title="Explorar API Reference" icon="book" href="/integration/api-reference">
+  Teste endpoints REST e GraphQL com JWT configurado.
+</Card>
+
+<Card title="Code Examples Avançados" icon="code" href="/integration/api-ingestion/code-examples">
+  Exemplos completos de integração em 5 linguagens de programação.
+</Card>
+
+</CardGroup>
+
+---
+
+<Tip>
+**💡 Dicas Finais:**
+- Salve seu JWT token em **variável de ambiente** para segurança
+- Use [jwt.io](https://jwt.io) para inspecionar claims e verificar expiração
+- **Sempre** teste autenticação no Sandbox antes de Production
+- Mantenha tokens seguros e nunca exponha em código público
+</Tip>
+
+<Note>
+**📝 Token Stateless:** Tokens JWT são stateless - a API valida assinatura **sem consultar banco de dados**. Isso garante performance e escalabilidade.
+</Note>
