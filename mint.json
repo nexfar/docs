@@ -138,7 +138,9 @@
           "pages": [
             "integration/api-ingestion/overview",
             "integration/api-ingestion/quickstart",
-            "integration/api-ingestion/authentication"
+            "integration/api-ingestion/authentication",
+            "integration/api-ingestion/environments",
+            "integration/api-ingestion/graphql"
           ]
         },
         {

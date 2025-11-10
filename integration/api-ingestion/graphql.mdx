@@ -1,0 +1,554 @@
+---
+title: "GraphQL - Schema e Exemplos"
+description: "Documentação completa do GraphQL API da Nexfar: schema SDL, mutations para todos os 34 modelos, autenticação JWT, e exemplos práticos. Use GraphQL para queries flexíveis e tipagem forte."
+icon: "graphql"
+---
+
+## Introdução
+
+A API de Ingestão da Nexfar está disponível em duas interfaces complementares: **REST** e **GraphQL**. Ambas compartilham a mesma autenticação JWT, os mesmos ambientes (Sandbox/Produção), e os mesmos 34 modelos de dados.
+
+GraphQL oferece uma alternativa poderosa para desenvolvedores que preferem queries flexíveis, tipagem forte, e exploração interativa do schema. Esta página documenta o GraphQL API completo, incluindo mutations para todos os 34 modelos, configuração de autenticação, e exemplos práticos.
+
+## Por que usar GraphQL?
+
+GraphQL e REST não são mutuamente exclusivos - você pode usar ambos no mesmo projeto. Escolha baseado nas necessidades específicas de cada caso de uso.
+
+| Aspecto | REST | GraphQL |
+|---------|------|---------|
+| **Queries** | Endpoints fixos, retorna todos os campos | Query flexível, retorna apenas campos solicitados |
+| **Múltiplos Recursos** | Múltiplas requisições (N+1 problem) | Uma requisição, múltiplos recursos |
+| **Tipagem** | Documentação separada (OpenAPI) | Schema SDL com tipos introspectáveis |
+| **Exploração** | Swagger UI, leitura de docs | GraphQL Playground com autocompletar |
+| **Versionamento** | URLs versionadas (/api/v1, /api/v2) | Schema evolui sem breaking changes |
+| **Overhead** | Simples, menos metadados | Mais verboso, mas mais flexível |
+| **Cache HTTP** | Nativo (GET requests) | Requer Apollo Cache ou similar |
+| **Uploads** | Multipart/form-data nativo | Requer extensão (graphql-upload) |
+
+<Note>
+**📝 Ambos REST e GraphQL estão disponíveis** - escolha baseado nas necessidades do seu projeto. REST é ótimo para operações CRUD simples, GraphQL brilha quando você precisa de flexibilidade.
+</Note>
+
+<Tip>
+**💡 GraphQL é especialmente útil** para desenvolvedores que preferem tipagem forte e autocompletar no IDE (TypeScript/Codegen)
+</Tip>
+
+## GraphQL Playground Interativo
+
+O **GraphQL Playground** é uma interface web interativa para explorar o schema e testar mutations em tempo real. Ele oferece autocompletar, documentação integrada, e validação de tipos automática.
+
+**URLs do Playground:**
+
+- **Sandbox:** `https://api-sandbox.nexfar.com.br/graphql`
+- **Staging:** `https://nf-nest-integration-staging.up.railway.app/graphql`
+
+<Warning>
+⚠️ **GraphQL Playground está habilitado apenas em Sandbox e Staging**. Em Produção, use cliente GraphQL programático (Apollo Client, urql, etc.)
+</Warning>
+
+### Como configurar autenticação no Playground
+
+<Steps>
+  <Step title="Abrir GraphQL Playground">
+    Acesse: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
+  </Step>
+
+  <Step title="Configurar Header JWT">
+    Clique na aba **"HTTP HEADERS"** (canto inferior esquerdo) e adicione:
+
+    ```json
+    {
+      "Authorization": "Bearer SEU_TOKEN_JWT_AQUI"
+    }
+    ```
+  </Step>
+
+  <Step title="Executar Mutation de Teste">
+    Execute uma mutation simples (ex: `createClient`) para validar autenticação.
+  </Step>
+
+  <Step title="Validar Resposta">
+    - ✅ Se autenticado: resposta `201 Created` com `correlation_id`
+    - ❌ Se token inválido: erro `401 Unauthorized`
+  </Step>
+</Steps>
+
+<Tip>
+💡 **Use a aba 'HTTP HEADERS' no canto inferior esquerdo** do Playground para adicionar o token JWT
+</Tip>
+
+## Modelos Disponíveis (34 Types)
+
+Todos os 34 modelos de dados possuem mutations GraphQL correspondentes. Abaixo estão os modelos organizados por categoria:
+
+<AccordionGroup>
+
+<Accordion title="Cadastros Básicos (5 modelos)">
+  - **Client** (Cliente)
+  - **Seller** (Vendedor)
+  - **PaymentCondition** (Condição de Pagamento)
+  - **PriceGroup** (Grupo de Preço)
+  - **ClientBranch** (Filial de Cliente)
+
+  **📝 Todos os types possuem mutations correspondentes:** `createClient`, `createSeller`, `createPaymentCondition`, `createPriceGroup`, `createClientBranch`
+</Accordion>
+
+<Accordion title="Produtos (8 modelos)">
+  - **Product** (Produto)
+  - **ProductBranch** (Produto por Filial)
+  - **ProductWarehouse** (Produto por Armazém)
+  - **ProductPrice** (Preço de Produto)
+  - **ProductPmcPf** (PMC/PF de Produto)
+  - **ProductRestriction** (Restrição de Produto)
+  - **ProductSaleNotAllowed** (Venda Não Permitida)
+  - **ClientDocument** (Documento de Cliente)
+
+  **📝 Mutations:** `createProduct`, `createProductBranch`, `createProductWarehouse`, `createProductPrice`, `createProductPmcPf`, `createProductRestriction`, `createProductSaleNotAllowed`, `createClientDocument`
+</Accordion>
+
+<Accordion title="Pedidos e Vendas (10 modelos)">
+  - **Invoice** (Nota Fiscal)
+  - **OrderHeader** (Cabeçalho de Pedido)
+  - **OrderItem** (Item de Pedido)
+  - **OrderReturnedItem** (Item Devolvido)
+  - **OrderDistributorHeader** (Cabeçalho Pedido Distribuidor)
+  - **OrderDistributorItem** (Item Pedido Distribuidor)
+  - **SaleHeader** (Cabeçalho de Venda)
+  - **SaleItem** (Item de Venda)
+  - **SaleClient** (Venda por Cliente)
+  - **SaleSeller** (Venda por Vendedor)
+
+  **📝 Mutations:** `createInvoice`, `createOrderHeader`, `createOrderItem`, `createOrderReturnedItem`, `createOrderDistributorHeader`, `createOrderDistributorItem`, `createSaleHeader`, `createSaleItem`, `createSaleClient`, `createSaleSeller`
+</Accordion>
+
+<Accordion title="Impostos, Margens e Metas (7 modelos)">
+  - **SalesGoal** (Meta de Vendas)
+  - **GenericMarginDetermination** (Determinação de Margem)
+  - **GenericMargin** (Margem Genérica)
+  - **GenericTaxesDetermination** (Determinação de Impostos)
+  - **GenericTaxes** (Impostos Genéricos)
+  - **GenericTaxesBaseCalcSt** (Base de Cálculo ST)
+  - **GenericExtraInfo** (Informação Extra)
+
+  **📝 Mutations:** `createSalesGoal`, `createGenericMarginDetermination`, `createGenericMargin`, `createGenericTaxesDetermination`, `createGenericTaxes`, `createGenericTaxesBaseCalcSt`, `createGenericExtraInfo`
+</Accordion>
+
+<Accordion title="Combos (4 modelos)">
+  - **ComboHeader** (Cabeçalho de Combo)
+  - **ComboItem** (Item de Combo)
+  - **ComboClient** (Cliente de Combo)
+  - **ComboSeller** (Vendedor de Combo)
+
+  **📝 Mutations:** `createComboHeader`, `createComboItem`, `createComboClient`, `createComboSeller`
+</Accordion>
+
+</AccordionGroup>
+
+## Exemplos de Mutations
+
+Todas as mutations retornam o tipo `IngestionResponseType`, que contém informações sobre a ingestão criada.
+
+### Criar Cliente (`createClient`)
+
+```graphql
+mutation CreateClient {
+  createClient(input: {
+    cnpj: "12.345.678/0001-95"
+    razao_social: "Distribuidora XYZ Ltda"
+    nome_fantasia: "XYZ Farma"
+    email: "contato@xyzfarma.com.br"
+    telefone: "(11) 98765-4321"
+    status: ACTIVE
+  }) {
+    id
+    model
+    message
+    created_at
+    correlation_id
+  }
+}
+```
+
+**Resposta esperada:**
+
+```json
+{
+  "data": {
+    "createClient": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "model": "client",
+      "message": "Cliente criado com sucesso",
+      "created_at": "2025-11-10T14:30:00Z",
+      "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+```
+
+**Campos da resposta `IngestionResponseType`:**
+
+- **`id`**: ID único da ingestão (UUID)
+- **`model`**: Nome do modelo ingerido (ex: "client")
+- **`message`**: Mensagem de confirmação
+- **`created_at`**: Timestamp da criação (ISO 8601)
+- **`correlation_id`**: ID para rastreamento no Audit Log
+
+### Criar Produto (`createProduct`)
+
+```graphql
+mutation CreateProduct {
+  createProduct(input: {
+    codigo_produto: "PROD-12345"
+    descricao_produto: "Paracetamol 500mg - Caixa com 20 comprimidos"
+    categoria: "MEDICAMENTO"
+    preco_base: 15.50
+    ativo: true
+  }) {
+    id
+    model
+    message
+    created_at
+    correlation_id
+  }
+}
+```
+
+### Criar Nota Fiscal (`createInvoice`)
+
+```graphql
+mutation CreateInvoice {
+  createInvoice(input: {
+    numero_nf: "NF-2025-12345"
+    serie_nf: "001"
+    data_emissao: "2025-11-08T10:00:00Z"
+    codigo_cliente: "CLI-001"
+    valor_total: 3200.00
+    status: ISSUED
+  }) {
+    id
+    model
+    message
+    created_at
+    correlation_id
+  }
+}
+```
+
+<Tip>
+💡 **Use a aba 'Docs' no GraphQL Playground** para explorar todos os inputs disponíveis para cada mutation
+</Tip>
+
+<Tip>
+💡 **GraphQL valida tipos automaticamente** - se você enviar campo obrigatório faltando, receberá erro antes mesmo da requisição
+</Tip>
+
+## Autenticação JWT no GraphQL
+
+GraphQL usa a mesma autenticação JWT que a REST API. Para mais detalhes sobre tokens JWT e claims, veja [Autenticação JWT](/integration/api-ingestion/authentication).
+
+### Configuração no GraphQL Playground
+
+Siga os passos abaixo para configurar autenticação no Playground:
+
+<Steps>
+  <Step title="Abrir GraphQL Playground">
+    Acesse: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
+  </Step>
+
+  <Step title="Configurar Header JWT">
+    Clique na aba **"HTTP HEADERS"** (canto inferior esquerdo) e adicione:
+
+    ```json
+    {
+      "Authorization": "Bearer SEU_TOKEN_JWT_AQUI"
+    }
+    ```
+  </Step>
+
+  <Step title="Executar Mutation de Teste">
+    Execute uma mutation simples (ex: `createClient`)
+  </Step>
+
+  <Step title="Validar Resposta">
+    - ✅ Se autenticado corretamente: resposta `201 Created`
+    - ❌ Se token inválido: erro `401 Unauthorized`
+  </Step>
+</Steps>
+
+### Autenticação em Código (Apollo Client - Node.js)
+
+```typescript
+import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+
+const httpLink = new HttpLink({
+  uri: 'https://api-sandbox.nexfar.com.br/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = process.env.NEXFAR_JWT_TOKEN;
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
+
+// Exemplo de mutation
+const { data } = await client.mutate({
+  mutation: gql`
+    mutation CreateClient($input: CreateClientInput!) {
+      createClient(input: $input) {
+        id
+        model
+        message
+        correlation_id
+      }
+    }
+  `,
+  variables: {
+    input: {
+      cnpj: '12.345.678/0001-95',
+      razao_social: 'Distribuidora XYZ Ltda',
+      email: 'contato@xyzfarma.com.br',
+      status: 'ACTIVE',
+    },
+  },
+});
+
+console.log(`Ingestão criada: ${data.createClient.id}`);
+```
+
+### Autenticação em Python (gql library)
+
+```python
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
+import os
+
+transport = RequestsHTTPTransport(
+    url='https://api-sandbox.nexfar.com.br/graphql',
+    headers={'Authorization': f'Bearer {os.getenv("NEXFAR_JWT_TOKEN")}'},
+)
+
+client = Client(transport=transport, fetch_schema_from_transport=True)
+
+query = gql('''
+    mutation CreateClient($input: CreateClientInput!) {
+      createClient(input: $input) {
+        id
+        model
+        message
+        correlation_id
+      }
+    }
+''')
+
+variables = {
+    'input': {
+        'cnpj': '12.345.678/0001-95',
+        'razao_social': 'Distribuidora XYZ Ltda',
+        'email': 'contato@xyzfarma.com.br',
+        'status': 'ACTIVE',
+    }
+}
+
+result = client.execute(query, variable_values=variables)
+print(f"Ingestão criada: {result['createClient']['id']}")
+```
+
+<Warning>
+🔒 **Nunca hardcode o token JWT no código** - use variáveis de ambiente ou gerenciador de secrets
+</Warning>
+
+## Queries GraphQL (Consulta de Dados)
+
+**Status Atual:** No MVP atual, GraphQL está focado em **mutations** (envio de dados). **Queries** para consulta de dados históricos estão no roadmap.
+
+<Note>
+📝 **Para consultar histórico de envios**, use a [Audit Log API REST](/integration/api-ingestion/audit-log)
+</Note>
+
+<Note>
+📝 **Queries GraphQL** para consulta de dados estão planejadas para versão futura da API
+</Note>
+
+### Roadmap de Queries
+
+Queries planejadas para futuras versões:
+
+- `clients(filter: {cnpj: String, status: ClientStatus}): [Client!]!`
+- `products(filter: {codigo_produto: String, categoria: String}): [Product!]!`
+- `invoices(filter: {numero_nf: String, date_from: String, date_to: String}): [Invoice!]!`
+- `auditLogs(filter: {model: String, status: String, date_from: String}): [AuditLog!]!`
+
+<Tip>
+💡 **Se você precisa de queries GraphQL específicas**, entre em contato com suporte@nexfar.com.br para discutir seu caso de uso
+</Tip>
+
+## Schema SDL Completo
+
+O schema GraphQL é gerado automaticamente pelo NestJS usando abordagem **code-first**. Você pode explorar o schema completo de várias formas:
+
+### Explorar Schema no Playground
+
+1. Abra o GraphQL Playground: `https://api-sandbox.nexfar.com.br/graphql`
+2. Clique na aba **"Schema"** (lado direito)
+3. Navegue pelos types, inputs, mutations disponíveis
+
+### Gerar Schema Localmente (Introspection)
+
+Você pode usar introspection para gerar o arquivo `schema.graphql` localmente:
+
+```bash
+# Usando graphql-cli
+npm install -g graphql-cli
+graphql get-schema --endpoint https://api-sandbox.nexfar.com.br/graphql \
+  --header "Authorization: Bearer $NEXFAR_JWT_TOKEN" \
+  --output schema.graphql
+```
+
+<Note>
+📝 **Schema SDL é atualizado automaticamente** quando novos types ou mutations são adicionados
+</Note>
+
+## Quando Usar GraphQL vs REST?
+
+### Use GraphQL Quando:
+
+- ✅ Você precisa de flexibilidade para selecionar campos específicos (reduz payload)
+- ✅ Sua aplicação precisa buscar múltiplos recursos em uma requisição
+- ✅ Você usa TypeScript e quer gerar types automaticamente (GraphQL Codegen)
+- ✅ Você prefere tipagem forte e validação de schema
+- ✅ Você quer explorar API interativamente com autocompletar (Playground)
+
+### Use REST Quando:
+
+- ✅ Você prefere operações CRUD simples e diretas
+- ✅ Você quer aproveitar cache HTTP padrão (GET requests)
+- ✅ Você usa ferramentas que não suportam GraphQL (ex: Postman básico)
+- ✅ Sua equipe não está familiarizada com GraphQL
+- ✅ Você precisa de uploads de arquivos grandes (multipart/form-data)
+
+<Tip>
+💡 **Você pode usar REST e GraphQL no mesmo projeto** - não são mutuamente exclusivos
+</Tip>
+
+## Troubleshooting GraphQL
+
+<AccordionGroup>
+
+<Accordion title="❌ Erro 401 Unauthorized no GraphQL">
+  **Causas:**
+  - Token JWT ausente, inválido ou expirado
+
+  **Soluções:**
+  1. Verificar header `Authorization: Bearer {token}` está configurado corretamente
+  2. Validar token em jwt.io (verificar claim `exp` para expiração)
+  3. Confirmar que token tem scope `ingestion:write` ou `*`
+  4. Testar token em endpoint REST primeiro (ex: POST /api/v1/clients) para isolar problema
+
+  **Veja também:** [Autenticação JWT](/integration/api-ingestion/authentication) para mais detalhes
+</Accordion>
+
+<Accordion title="❌ Erro de validação de campo obrigatório">
+  **Erro típico:**
+  ```
+  Field 'cnpj' of required type 'String!' was not provided
+  ```
+
+  **Causas:**
+  - Campo obrigatório faltando ou tipo incorreto
+
+  **Soluções:**
+  1. Verificar schema na aba 'Docs' do Playground (campos com `!` são obrigatórios)
+  2. Validar tipo de dados (String vs Int vs Float vs Boolean vs Enum)
+  3. Usar autocompletar do Playground para sugerir campos
+
+  **Exemplo correto:**
+  ```graphql
+  input: {
+    cnpj: "12.345.678/0001-95"  # String, obrigatório
+    razao_social: "XYZ Ltda"      # String, obrigatório
+    status: ACTIVE                # Enum ClientStatus, obrigatório
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ GraphQL Playground não carrega">
+  **Causas:**
+  - Playground desabilitado em produção (por segurança)
+  - URL incorreta
+  - CORS bloqueando acesso
+
+  **Soluções:**
+  1. Confirmar ambiente: Playground só está disponível em Sandbox/Staging
+  2. URL correta: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
+  3. Se em produção, use cliente GraphQL programático (Apollo, urql)
+  4. Testar endpoint com curl:
+     ```bash
+     curl -X POST https://api-sandbox.nexfar.com.br/graphql \
+       -H "Authorization: Bearer $TOKEN" \
+       -H "Content-Type: application/json" \
+       -d '{"query":"{ __typename }"}'
+     ```
+</Accordion>
+
+<Accordion title="✅ Como validar que mutation foi bem-sucedida?">
+  **Verificar resposta `IngestionResponseType`:**
+  - `id`: ID único da ingestão (UUID)
+  - `correlation_id`: Use para consultar Audit Log API
+  - `message`: Confirmação de sucesso (ex: "Cliente criado com sucesso")
+
+  **Consultar Audit Log API para validar persistência:**
+  ```bash
+  curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
+    -H "Authorization: Bearer $TOKEN"
+  ```
+
+  **Veja também:** [Audit Log API](/integration/api-ingestion/audit-log) para rastreabilidade completa
+</Accordion>
+
+</AccordionGroup>
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Explorar GraphQL Playground" icon="flask" href="https://api-sandbox.nexfar.com.br/graphql">
+    Acesse o Playground interativo para testar mutations
+  </Card>
+
+  <Card title="Autenticação JWT" icon="lock" href="/integration/api-ingestion/authentication">
+    Aprenda sobre tokens JWT e claims
+  </Card>
+
+  <Card title="Rastreabilidade e Audit Log" icon="list-check" href="/integration/api-ingestion/audit-log">
+    Consulte histórico de envios via REST API
+  </Card>
+
+  <Card title="Ambientes: Sandbox vs Produção" icon="flask-vial" href="/integration/api-ingestion/environments">
+    Entenda os ambientes disponíveis
+  </Card>
+</CardGroup>
+
+## Recursos Adicionais
+
+**Aprenda GraphQL:**
+- [GraphQL Official Docs](https://graphql.org/learn/) - Aprenda GraphQL do zero
+- [Apollo Client](https://www.apollographql.com/docs/react/) - Cliente GraphQL para React/Node.js
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen) - Gere types TypeScript do schema
+- [gql Python Library](https://github.com/graphql-python/gql) - Cliente GraphQL para Python
+
+<Note>
+📝 **GraphQL e REST compartilham mesma autenticação JWT** e ambiente Sandbox/Produção
+</Note>
+
+<Note>
+📝 **Todos os dados enviados via GraphQL aparecem no Audit Log** da mesma forma que REST
+</Note>
