@@ -46,36 +46,7 @@ O **GraphQL Playground** é uma interface web interativa para explorar o schema 
 ⚠️ **GraphQL Playground está habilitado apenas em Sandbox e Staging**. Em Produção, use cliente GraphQL programático (Apollo Client, urql, etc.)
 </Warning>
 
-### Como configurar autenticação no Playground
-
-<Steps>
-  <Step title="Abrir GraphQL Playground">
-    Acesse: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
-  </Step>
-
-  <Step title="Configurar Header JWT">
-    Clique na aba **"HTTP HEADERS"** (canto inferior esquerdo) e adicione:
-
-    ```json
-    {
-      "Authorization": "Bearer SEU_TOKEN_JWT_AQUI"
-    }
-    ```
-  </Step>
-
-  <Step title="Executar Mutation de Teste">
-    Execute uma mutation simples (ex: `createClient`) para validar autenticação.
-  </Step>
-
-  <Step title="Validar Resposta">
-    - ✅ Se autenticado: resposta `201 Created` com `correlation_id`
-    - ❌ Se token inválido: erro `401 Unauthorized`
-  </Step>
-</Steps>
-
-<Tip>
-💡 **Use a aba 'HTTP HEADERS' no canto inferior esquerdo** do Playground para adicionar o token JWT
-</Tip>
+**Configuração:** Veja seção [Autenticação JWT no GraphQL](#autenticação-jwt-no-graphql) abaixo para instruções completas de configuração.
 
 ## Modelos Disponíveis (34 Types)
 
