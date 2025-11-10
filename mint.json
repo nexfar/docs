@@ -174,19 +174,7 @@
     {
       "name": "API Reference",
       "url": "api-reference",
-      "navigation": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "api-reference/introduction"
-          ]
-        },
-        {
-          "group": "REST API",
-          "pages": [],
-          "openapi": "/integration/api-reference/openapi.json"
-        }
-      ]
+      "openapi": "https://ingestion.nexfar.com.br/api/openapi.json"
     }
   ],
   "contextual": {
