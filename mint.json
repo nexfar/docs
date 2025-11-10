@@ -134,6 +134,13 @@
           ]
         },
         {
+          "group": "API de Ingestão",
+          "pages": [
+            "integration/api-ingestion/overview",
+            "integration/api-ingestion/quickstart"
+          ]
+        },
+        {
           "group": "Métodos de Extração de Dados",
           "pages": [
             "integration/deployment/data-extraction/database-views",

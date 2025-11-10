@@ -1,0 +1,404 @@
+---
+title: 'Quick Start - Primeira Requisição em 10 Minutos'
+description: 'Guia passo-a-passo para enviar sua primeira requisição à API de Ingestão Nexfar em menos de 10 minutos'
+icon: 'rocket'
+---
+
+# Quick Start - Primeira Requisição em 10 Minutos
+
+<Info>
+  ⏱️ **Tempo estimado: 10 minutos** - Você estará enviando dados em menos de 10 minutos seguindo este guia.
+</Info>
+
+Bem-vindo ao Quick Start da API de Ingestão Nexfar! Este guia vai levá-lo do zero até sua primeira requisição bem-sucedida em poucos minutos, sem precisar ler documentação completa.
+
+## Pré-requisitos
+
+Antes de começar, você precisa de:
+
+- **Token JWT para ambiente Sandbox** (recebido por email da Nexfar)
+- **Ferramenta de teste**: curl, Postman ou código (Python/Node.js)
+- **Familiaridade básica** com REST APIs e JSON
+
+<Tip>
+  Se você ainda não recebeu suas credenciais de Sandbox, entre em contato com suporte@nexfar.com.br
+</Tip>
+
+---
+
+## Passo a Passo
+
+<Steps>
+  <Step title="Receber e Validar Credenciais">
+    Você receberá um email da Nexfar com:
+    - JWT token para ambiente Sandbox
+    - URL desta documentação
+    - Client ID e informações de conta
+
+    **Salve seu token em variável de ambiente:**
+
+    ```bash
+    export NEXFAR_JWT="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ```
+
+    <Tip>
+      **Validação Opcional:** Cole seu token em [jwt.io](https://jwt.io) para inspecionar claims (`client_id`, `environment`, `scopes`).
+    </Tip>
+
+    <Warning>
+      **⚠️ Segurança:** Nunca exponha seu JWT token em código público, logs ou repositórios Git. Use sempre variáveis de ambiente.
+    </Warning>
+  </Step>
+
+  <Step title="Testar Conectividade com Health Check">
+    Antes de enviar dados, confirme que a API está acessível:
+
+    ```bash
+    curl https://api-sandbox.nexfar.com.br/api/health
+    ```
+
+    **Resposta esperada (200 OK):**
+    ```json
+    {
+      "status": "ok",
+      "uptime": 155036.28961675,
+      "environment": "sandbox",
+      "timestamp": "2025-11-10T13:29:19.109Z"
+    }
+    ```
+
+    ✅ Se recebeu resposta 200, a API está acessível! Próximo passo: autenticar e enviar dados.
+  </Step>
+
+  <Step title="Enviar Primeira Requisição (Cliente)">
+    Agora vamos enviar seu primeiro cliente via REST API:
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl -X POST https://api-sandbox.nexfar.com.br/api/v1/clients \
+      -H "Authorization: Bearer $NEXFAR_JWT" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "cnpj": "12.345.678/0001-90",
+        "razao_social": "Farmácia Quick Start LTDA",
+        "email": "contato@quickstart.com.br",
+        "status": "ACTIVE"
+      }'
+    ```
+
+    ```python Python
+    import requests
+    import os
+
+    # Configuração
+    API_URL = "https://api-sandbox.nexfar.com.br"
+    JWT_TOKEN = os.getenv("NEXFAR_JWT")  # Token do ambiente
+
+    # Headers
+    headers = {
+        "Authorization": f"Bearer {JWT_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    # Payload
+    client_data = {
+        "cnpj": "12.345.678/0001-90",
+        "razao_social": "Farmácia Quick Start LTDA",
+        "email": "contato@quickstart.com.br",
+        "status": "ACTIVE"
+    }
+
+    # Enviar requisição
+    response = requests.post(
+        f"{API_URL}/api/v1/clients",
+        json=client_data,
+        headers=headers,
+        timeout=10
+    )
+
+    # Validar resposta
+    if response.status_code == 201:
+        data = response.json()
+        print("✅ Cliente criado com sucesso!")
+        print(f"ID: {data['id']}")
+        print(f"Correlation ID: {data['correlation_id']}")
+    else:
+        print(f"❌ Erro: {response.status_code}")
+        print(response.json())
+    ```
+
+    ```javascript Node.js
+    const axios = require('axios');
+
+    // Configuração
+    const API_URL = 'https://api-sandbox.nexfar.com.br';
+    const JWT_TOKEN = process.env.NEXFAR_JWT;  // Token do ambiente
+
+    // Headers
+    const headers = {
+        'Authorization': `Bearer ${JWT_TOKEN}`,
+        'Content-Type': 'application/json'
+    };
+
+    // Payload
+    const clientData = {
+        cnpj: '12.345.678/0001-90',
+        razao_social: 'Farmácia Quick Start LTDA',
+        email: 'contato@quickstart.com.br',
+        status: 'ACTIVE'
+    };
+
+    // Enviar requisição
+    axios.post(`${API_URL}/api/v1/clients`, clientData, { headers })
+        .then(response => {
+            console.log('✅ Cliente criado com sucesso!');
+            console.log('ID:', response.data.id);
+            console.log('Correlation ID:', response.data.correlation_id);
+        })
+        .catch(error => {
+            console.error('❌ Erro:', error.response.status);
+            console.error(error.response.data);
+        });
+    ```
+
+    </CodeGroup>
+
+  </Step>
+
+  <Step title="Validar Resposta de Sucesso">
+    Se tudo deu certo, você receberá resposta **201 Created**:
+
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "model": "client",
+      "message": "Client created successfully",
+      "correlation_id": "req_abc123xyz789",
+      "created_at": "2025-11-10T14:23:45Z"
+    }
+    ```
+
+    **Campos importantes:**
+    - `id`: ID único do cliente criado
+    - `correlation_id`: Use para rastrear esta requisição (troubleshooting, suporte)
+    - `message`: Confirmação de sucesso
+
+    <Tip>
+      **Salve o correlation_id!** Ele é essencial para debugar problemas e consultar histórico.
+    </Tip>
+  </Step>
+
+  <Step title="Consultar Histórico no Audit Log">
+    Valide que seu cliente foi registrado consultando a API de Audit Log:
+
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?date_from=today" \
+      -H "Authorization: Bearer $NEXFAR_JWT"
+    ```
+
+    **Resposta (exemplo):**
+    ```json
+    {
+      "data": [
+        {
+          "id": "log_xyz789",
+          "model": "client",
+          "status": "processed",
+          "payload_hash": "sha256_abc...",
+          "created_at": "2025-11-10T14:23:45Z",
+          "correlation_id": "req_abc123xyz789"
+        }
+      ],
+      "total_records": 1,
+      "page": 1
+    }
+    ```
+
+    ✅ **Parabéns!** Você completou o Quick Start. Seu cliente foi enviado, processado e está rastreável no Audit Log.
+  </Step>
+</Steps>
+
+---
+
+## Testando com Postman
+
+Se você prefere usar Postman ao invés de linha de comando:
+
+<Steps>
+
+<Step title="Criar Nova Requisição">
+  1. Abra Postman e clique em **New → HTTP Request**
+  2. Configure método: **POST**
+  3. URL: `https://api-sandbox.nexfar.com.br/api/v1/clients`
+</Step>
+
+<Step title="Configurar Headers">
+  Vá para aba **Headers** e adicione:
+  - **Key:** `Authorization` | **Value:** `Bearer {seu_token_jwt_aqui}`
+  - **Key:** `Content-Type` | **Value:** `application/json`
+</Step>
+
+<Step title="Configurar Payload (Body)">
+  Vá para aba **Body**, selecione **raw** e **JSON**, e cole:
+
+  ```json
+  {
+    "cnpj": "12.345.678/0001-90",
+    "razao_social": "Farmácia Quick Start LTDA",
+    "email": "contato@quickstart.com.br",
+    "status": "ACTIVE"
+  }
+  ```
+</Step>
+
+<Step title="Enviar e Validar">
+  1. Clique em **Send**
+  2. Validar resposta: **201 Created**
+  3. Salvar `correlation_id` da resposta
+</Step>
+
+</Steps>
+
+<Tip>
+  **Download Postman:** [https://www.postman.com/downloads/](https://www.postman.com/downloads/) (gratuito)
+</Tip>
+
+---
+
+## Troubleshooting - Erros Comuns
+
+<AccordionGroup>
+
+<Accordion title="❌ 401 Unauthorized - Token JWT inválido">
+  **Causa:** Token JWT inválido, expirado ou header de autenticação incorreto.
+
+  **Soluções:**
+  1. Verificar que header `Authorization: Bearer {token}` está correto (sem espaços extras)
+  2. Validar token em [jwt.io](https://jwt.io) - verifique se não expirou (claim `exp`)
+  3. Confirmar que token é para ambiente **Sandbox** (claim `environment: "sandbox"`)
+  4. Se token expirou, solicite novo token à Nexfar (suporte@nexfar.com.br)
+
+  **Exemplo de erro:**
+  ```json
+  {
+    "statusCode": 401,
+    "message": "Unauthorized",
+    "error": "Invalid or expired JWT token"
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ 400 Bad Request - Payload inválido">
+  **Causa:** Payload JSON inválido ou campos obrigatórios faltando/incorretos.
+
+  **Soluções:**
+  1. Validar formato do CNPJ: 14 dígitos (com ou sem pontuação)
+  2. Verificar que todos os campos obrigatórios estão presentes
+  3. Conferir tipos de dados (strings, numbers, enums)
+  4. Consultar schema completo na [API Reference](/integration/api-reference)
+
+  **Exemplo de erro:**
+  ```json
+  {
+    "statusCode": 400,
+    "message": [
+      "cnpj must be a valid CNPJ",
+      "email must be a valid email"
+    ],
+    "error": "Bad Request"
+  }
+  ```
+
+  <Tip>
+    Use a [API Reference interativa](/integration/api-reference) para ver schema completo de cada modelo e testar payloads.
+  </Tip>
+</Accordion>
+
+<Accordion title="❌ 429 Too Many Requests - Rate limiting">
+  **Causa:** Você excedeu o limite de 100 requisições por minuto por client_id.
+
+  **Soluções:**
+  1. Aguardar período indicado no header `Retry-After` (em segundos)
+  2. Implementar retry com exponential backoff no seu código
+  3. Considerar envio em batch (múltiplos registros por requisição - futuro)
+
+  **Exemplo de erro:**
+  ```json
+  {
+    "statusCode": 429,
+    "message": "Too Many Requests",
+    "error": "Rate limit exceeded"
+  }
+  ```
+
+  **Header de resposta:**
+  ```
+  Retry-After: 45  # Aguardar 45 segundos antes de reenviar
+  ```
+</Accordion>
+
+<Accordion title="❌ 500 Internal Server Error - Erro no servidor">
+  **Causa:** Erro inesperado no servidor (bug, timeout de banco de dados, etc.).
+
+  **Soluções:**
+  1. Salvar `correlation_id` da resposta (se disponível)
+  2. Tentar novamente após alguns segundos (pode ser problema temporário)
+  3. Se problema persistir, contatar suporte Nexfar:
+     - Email: suporte@nexfar.com.br
+     - Incluir: `correlation_id`, timestamp do erro, payload enviado
+
+  **Exemplo de erro:**
+  ```json
+  {
+    "statusCode": 500,
+    "message": "Internal Server Error",
+    "correlation_id": "req_abc123xyz789"
+  }
+  ```
+</Accordion>
+
+<Accordion title="✅ Dados enviados mas não aparecem no Data Lake">
+  **Validações:**
+  1. Confirmar que recebeu resposta **201 Created** (se não, dados não foram aceitos)
+  2. Consultar Audit Log API: `GET /api/v1/audit-log?date_from=today`
+  3. Verificar que `environment` no JWT é "sandbox" (não "production")
+  4. Confirmar que `status` no Audit Log é "processed" (não "failed")
+  5. Se problema persistir após 24h, contatar suporte com `correlation_id`
+
+  <Note>
+    Dados Sandbox podem levar até 5 minutos para aparecer no Data Lake (processamento assíncrono de algumas tabelas).
+  </Note>
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+
+<Card title="Explorar Outros Modelos" icon="box" href="/integration/api-reference">
+  Teste endpoints de **produtos**, **pedidos**, **vendas** e outros 30+ modelos disponíveis.
+</Card>
+
+<Card title="Entender Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+  Aprofunde em **claims**, **scopes**, **expiração** e boas práticas de segurança.
+</Card>
+
+<Card title="Ambientes Sandbox vs Produção" icon="server" href="/integration/api-ingestion/environments">
+  Entenda diferenças entre ambientes e **como promover para produção**.
+</Card>
+
+<Card title="Code Examples Avançados" icon="code" href="/integration/api-ingestion/code-examples">
+  Exemplos em **5 linguagens** com error handling, retry logic e bulk operations.
+</Card>
+
+</CardGroup>
+
+---
+
+<Note>
+  **Dica Final:** Todos os endpoints REST seguem padrão `/api/v1/{model}` (plural). Use a [Visão Geral](/integration/api-ingestion/overview) para entender a arquitetura completa.
+</Note>
