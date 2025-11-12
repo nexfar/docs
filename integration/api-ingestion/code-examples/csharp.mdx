@@ -1,0 +1,470 @@
+---
+title: "C# - Exemplo de Integração"
+description: "Code example copy-paste ready em C# para integração com a API de Ingestão Nexfar"
+---
+
+# C# - Exemplo de Integração
+
+Este guia apresenta um exemplo completo e pronto para uso de como integrar sua aplicação C#/.NET com a API de Ingestão Nexfar.
+
+## Requisitos
+
+- **.NET 6+** ou **.NET Framework 4.7+**
+- **HttpClient nativo** (disponível no .NET, sem dependências externas)
+- **System.Text.Json** (incluído no .NET 6+) ou **Newtonsoft.Json** (alternativa)
+
+<Note>
+  Este exemplo usa HttpClient e System.Text.Json nativos do .NET, eliminando a necessidade de pacotes NuGet adicionais.
+</Note>
+
+## Instalação
+
+Nenhuma dependência externa é necessária para .NET 6+!
+
+Se você estiver usando .NET Framework ou preferir Newtonsoft.Json, instale via NuGet:
+
+```bash
+# Apenas se necessário (opcional)
+dotnet add package Newtonsoft.Json
+```
+
+## Código Completo
+
+O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a API Nexfar:
+
+```csharp
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace NexfarIntegration
+{
+    /// <summary>
+    /// Cliente de exemplo para integração com a API de Ingestão Nexfar
+    /// </summary>
+    class NexfarApiClient
+    {
+        // Configuração da API
+        private const string API_URL = "https://api-sandbox.nexfar.com.br";
+        private const string JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
+
+        static async Task Main(string[] args)
+        {
+            try
+            {
+                await SendClient();
+                Console.WriteLine("\n✓ Processo concluído com sucesso!");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"\n✗ Processo falhou: {e.Message}");
+                Environment.Exit(1);
+            }
+        }
+
+        /// <summary>
+        /// Envia dados de um cliente para a API Nexfar
+        /// </summary>
+        static async Task SendClient()
+        {
+            // Payload com dados do cliente
+            // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
+            var clientData = new
+            {
+                cnpj = "12.345.678/0001-90",  // CNPJ no formato com pontuação
+                razao_social = "Farmácia Exemplo LTDA",
+                email = "contato@exemplo.com.br",
+                status = "ACTIVE"
+            };
+
+            // Serializar para JSON usando System.Text.Json
+            string jsonPayload = JsonSerializer.Serialize(clientData, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false
+            });
+
+            // Configurar HttpClient
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(10);  // Timeout de 10 segundos
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {JWT_TOKEN}");  // Autenticação JWT
+
+            // Criar conteúdo da requisição
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            try
+            {
+                // Enviar requisição POST
+                HttpResponseMessage response = await httpClient.PostAsync(
+                    $"{API_URL}/api/v1/clients",
+                    content
+                );
+
+                // Processar resposta baseado no status code
+                if (response.IsSuccessStatusCode)
+                {
+                    // Sucesso - Cliente criado com status 201
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // Parse da resposta
+                    using JsonDocument document = JsonDocument.Parse(responseBody);
+                    string id = document.RootElement.GetProperty("id").GetString();
+                    string correlationId = document.RootElement.GetProperty("correlation_id").GetString();
+
+                    Console.WriteLine("✓ Cliente criado com sucesso!");
+                    Console.WriteLine($"  ID: {id}");
+                    Console.WriteLine($"  Correlation ID: {correlationId}");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    // Erro de validação - payload inválido
+                    string errorBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("✗ Erro de validação (400 Bad Request):");
+                    Console.WriteLine($"  {errorBody}");
+                    Console.WriteLine("\n  Verifique se todos os campos obrigatórios estão presentes");
+                    Console.WriteLine("  e se o formato do CNPJ está correto.");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // Erro de autenticação - token inválido ou expirado
+                    Console.WriteLine("✗ Erro de autenticação (401 Unauthorized):");
+                    Console.WriteLine("  Token JWT inválido ou expirado.");
+                    Console.WriteLine("\n  Verifique se o token está correto e ainda é válido.");
+                }
+                else if ((int)response.StatusCode >= 500)
+                {
+                    // Erro do servidor
+                    Console.WriteLine($"✗ Erro do servidor ({(int)response.StatusCode}):");
+                    Console.WriteLine("  O servidor está enfrentando problemas.");
+                    Console.WriteLine("  Tente novamente mais tarde.");
+                }
+                else
+                {
+                    // Outros erros HTTP
+                    string errorBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"✗ Erro HTTP {(int)response.StatusCode}:");
+                    Console.WriteLine($"  {errorBody}");
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                // Erro de rede - não foi possível conectar ao servidor
+                Console.WriteLine("✗ Erro de rede:");
+                Console.WriteLine($"  Não foi possível conectar ao servidor {API_URL}");
+                Console.WriteLine($"  Detalhes: {e.Message}");
+                Console.WriteLine("\n  Verifique sua conexão com a internet");
+                Console.WriteLine("  e se a URL está correta.");
+                throw;
+            }
+            catch (TaskCanceledException e)
+            {
+                // Timeout - servidor não respondeu a tempo
+                Console.WriteLine("✗ Erro de timeout:");
+                Console.WriteLine("  O servidor não respondeu em 10 segundos.");
+                Console.WriteLine($"  Detalhes: {e.Message}");
+                Console.WriteLine("\n  Tente novamente mais tarde ou verifique sua conexão.");
+                throw;
+            }
+        }
+    }
+}
+```
+
+## Como Executar
+
+### Opção 1: Usando .NET CLI
+
+```bash
+# Criar novo projeto console (se necessário)
+dotnet new console -n NexfarIntegration
+cd NexfarIntegration
+
+# Copiar o código para Program.cs
+
+# Executar
+dotnet run
+```
+
+### Opção 2: Usando Visual Studio
+
+1. Crie um novo projeto Console Application (.NET 6+)
+2. Copie o código para `Program.cs`
+3. Substitua o token JWT e os dados do cliente
+4. Pressione F5 para executar
+
+**Resposta esperada em caso de sucesso:**
+
+```
+✓ Cliente criado com sucesso!
+  ID: 550e8400-e29b-41d4-a716-446655440000
+  Correlation ID: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+
+✓ Processo concluído com sucesso!
+```
+
+## Explicação do Código
+
+### 1. Configuração Inicial
+
+```csharp
+private const string API_URL = "https://api-sandbox.nexfar.com.br";
+private const string JWT_TOKEN = "seu_token_jwt_aqui";
+```
+
+- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **JWT_TOKEN**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
+
+### 2. Serialização JSON
+
+```csharp
+var clientData = new
+{
+    cnpj = "12.345.678/0001-90",
+    razao_social = "Farmácia Exemplo LTDA",
+    email = "contato@exemplo.com.br",
+    status = "ACTIVE"
+};
+
+string jsonPayload = JsonSerializer.Serialize(clientData);
+```
+
+Este exemplo usa **System.Text.Json** (nativo .NET 6+) para serializar objetos em JSON. As propriedades são automaticamente convertidas para camelCase para corresponder ao formato esperado pela API.
+
+### 3. Configuração do HttpClient
+
+```csharp
+using var httpClient = new HttpClient();
+httpClient.Timeout = TimeSpan.FromSeconds(10);
+httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {JWT_TOKEN}");
+```
+
+- **using var**: Gerenciamento automático de recursos (dispose)
+- **Timeout**: Configura timeout de 10 segundos
+- **Authorization header**: Obrigatório, contém o token JWT no formato Bearer
+
+### 4. Tratamento de Resposta
+
+```csharp
+if (response.IsSuccessStatusCode) { ... }
+else if (response.StatusCode == HttpStatusCode.BadRequest) { ... }
+else if (response.StatusCode == HttpStatusCode.Unauthorized) { ... }
+```
+
+O código verifica o status code da resposta e fornece mensagens específicas para cada tipo de erro.
+
+## Usando Newtonsoft.Json (Alternativa)
+
+Se você preferir usar Newtonsoft.Json em vez de System.Text.Json:
+
+```bash
+dotnet add package Newtonsoft.Json
+```
+
+```csharp
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+// Serialização
+string jsonPayload = JsonConvert.SerializeObject(clientData);
+
+// Parse da resposta
+JObject responseJson = JObject.Parse(responseBody);
+string id = responseJson["id"]?.ToString();
+string correlationId = responseJson["correlation_id"]?.ToString();
+```
+
+## Criando Classes Tipadas (Recomendado para Produção)
+
+Para aplicações de produção, recomendamos criar classes tipadas:
+
+```csharp
+public class ClientRequest
+{
+    [JsonPropertyName("cnpj")]
+    public string Cnpj { get; set; }
+
+    [JsonPropertyName("razao_social")]
+    public string RazaoSocial { get; set; }
+
+    [JsonPropertyName("email")]
+    public string Email { get; set; }
+
+    [JsonPropertyName("status")]
+    public string Status { get; set; }
+}
+
+public class ClientResponse
+{
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
+
+    [JsonPropertyName("correlation_id")]
+    public string CorrelationId { get; set; }
+
+    [JsonPropertyName("cnpj")]
+    public string Cnpj { get; set; }
+
+    [JsonPropertyName("razao_social")]
+    public string RazaoSocial { get; set; }
+
+    [JsonPropertyName("email")]
+    public string Email { get; set; }
+
+    [JsonPropertyName("status")]
+    public string Status { get; set; }
+
+    [JsonPropertyName("created_at")]
+    public DateTime CreatedAt { get; set; }
+}
+
+// Uso
+var clientData = new ClientRequest
+{
+    Cnpj = "12.345.678/0001-90",
+    RazaoSocial = "Farmácia Exemplo LTDA",
+    Email = "contato@exemplo.com.br",
+    Status = "ACTIVE"
+};
+
+string jsonPayload = JsonSerializer.Serialize(clientData);
+
+// Parse tipado da resposta
+ClientResponse clientResponse = JsonSerializer.Deserialize<ClientResponse>(responseBody);
+Console.WriteLine($"ID: {clientResponse.Id}");
+```
+
+## Troubleshooting Comum
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized - Token Inválido">
+    **Problema:** A API retorna erro 401 Unauthorized.
+
+    **Causas Comuns:**
+    - Token JWT expirado
+    - Token JWT inválido ou malformado
+    - Token não tem permissões necessárias
+
+    **Solução:**
+    1. Verifique se o token está correto (sem espaços extras)
+    2. Confirme que o token ainda é válido (não expirou)
+    3. Entre em contato com o suporte Nexfar para renovar o token se necessário
+  </Accordion>
+
+  <Accordion title="400 Bad Request - Erro de Validação">
+    **Problema:** A API retorna erro 400 Bad Request.
+
+    **Causas Comuns:**
+    - CNPJ em formato inválido
+    - Campos obrigatórios faltando
+    - Tipos de dados incorretos
+
+    **Solução:**
+    1. Verifique se o CNPJ está no formato correto: XX.XXX.XXX/XXXX-XX
+    2. Confirme que todos os campos obrigatórios estão presentes
+    3. Valide a serialização JSON (verifique se está usando camelCase)
+    4. Revise a resposta de erro para detalhes específicos
+  </Accordion>
+
+  <Accordion title="HttpRequestException - Erro de Conexão">
+    **Problema:** `System.Net.Http.HttpRequestException: No such host is known`
+
+    **Causas Comuns:**
+    - URL incorreta (sandbox vs produção)
+    - Problema de conectividade de rede
+    - Firewall bloqueando a conexão
+
+    **Solução:**
+    1. Verifique se a URL está correta:
+       - Sandbox: `https://api-sandbox.nexfar.com.br`
+       - Produção: `https://api.nexfar.com.br`
+    2. Teste sua conexão com a internet
+    3. Verifique configurações de firewall/proxy corporativo
+  </Accordion>
+
+  <Accordion title="TaskCanceledException - Timeout">
+    **Problema:** `System.Threading.Tasks.TaskCanceledException: The operation was canceled`
+
+    **Causas Comuns:**
+    - Servidor lento ou sobrecarregado
+    - Problema de conectividade
+    - Timeout configurado muito baixo
+
+    **Solução:**
+    1. Aumente o timeout se necessário:
+       ```csharp
+       httpClient.Timeout = TimeSpan.FromSeconds(30);
+       ```
+    2. Verifique a conectividade com o servidor
+    3. Tente novamente mais tarde se o servidor estiver sobrecarregado
+  </Accordion>
+
+  <Accordion title="JsonException - Erro de Parsing">
+    **Problema:** `System.Text.Json.JsonException: The JSON value could not be converted`
+
+    **Causas Comuns:**
+    - Resposta não está em formato JSON válido
+    - Tipos de dados incompatíveis
+    - Encoding incorreto
+
+    **Solução:**
+    1. Verifique o Content-Type da resposta
+    2. Inspecione o corpo da resposta antes de fazer parse:
+       ```csharp
+       string responseBody = await response.Content.ReadAsStringAsync();
+       Console.WriteLine(responseBody);  // Debug
+       ```
+    3. Use JsonSerializerOptions para configurar comportamento de parsing
+  </Accordion>
+
+  <Accordion title="SSL/TLS Certificate Problem">
+    **Problema:** Erro de certificado SSL em ambientes corporativos
+
+    **Solução:**
+    Se você estiver em um ambiente corporativo com proxy SSL ou certificado auto-assinado:
+
+    ```csharp
+    // Opção 1: Aceitar todos os certificados (NÃO recomendado para produção)
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+            (message, cert, chain, errors) => true
+    };
+    using var httpClient = new HttpClient(handler);
+
+    // Opção 2: Especificar certificado CA específico
+    var handler = new HttpClientHandler();
+    handler.ClientCertificates.Add(new X509Certificate2("path/to/cert.pfx", "password"));
+    using var httpClient = new HttpClient(handler);
+    ```
+
+    **Atenção:** Desabilitar validação de certificado não é recomendado para ambientes de produção.
+  </Accordion>
+</AccordionGroup>
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/integration/api-ingestion/quickstart">
+    Entenda o fluxo completo de integração em 10 minutos
+  </Card>
+
+  <Card title="Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+    Aprenda como obter e gerenciar tokens JWT
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore todos os endpoints disponíveis e seus parâmetros
+  </Card>
+
+  <Card title="Troubleshooting" icon="wrench" href="/integration/api-ingestion/troubleshooting">
+    Resolva problemas comuns de integração
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+  **Dúvidas?** Entre em contato com o suporte técnico Nexfar através do e-mail: suporte@nexfar.com.br
+</Note>

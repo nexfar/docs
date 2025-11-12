@@ -1,0 +1,617 @@
+---
+title: "Troubleshooting Guide"
+description: "Guia completo de resolução de problemas da API de Ingestão Nexfar. Solucione erros 400, 401, 403, 429, 500, 503 de forma autônoma. Checklist para dados ausentes, validação CNPJ/email."
+icon: "life-ring"
+---
+
+# Troubleshooting Guide
+
+Erros são uma parte normal do processo de integração com qualquer API. A boa notícia é que **mais de 90% dos problemas comuns podem ser resolvidos de forma autônoma** com este guia.
+
+Nesta página você encontrará:
+- **Erros HTTP comuns** (400, 401, 403, 429, 500, 503) com soluções passo-a-passo
+- **Checklist investigativo** para quando dados não aparecem no Data Lake
+- **Exemplos práticos** de correção de erros de validação
+- **Informações de contato** do suporte Nexfar caso precise de ajuda
+
+<Note>
+📝 Este guia cobre os problemas mais comuns. Se seu erro não estiver listado, consulte a seção de Contato de Suporte ao final.
+</Note>
+
+<Tip>
+💡 Sempre teste correções no ambiente Sandbox antes de aplicar em Produção - isso evita impacto em dados reais.
+</Tip>
+
+---
+
+## Erros HTTP Comuns
+
+<AccordionGroup>
+
+<Accordion title="❌ 400 Bad Request - Requisição Inválida">
+
+### Causa Raiz
+
+- Payload JSON malformado (syntax error)
+- Campos obrigatórios ausentes
+- Tipos de dados incorretos (string ao invés de número)
+- Formato de dados inválido (CNPJ, email, CPF, data)
+- Valores fora do range permitido (negativos, muito longos)
+
+### Sintomas
+
+- Resposta HTTP 400
+- Body da resposta contém array de mensagens de erro detalhadas
+
+**Exemplo de resposta:**
+```json
+{
+  "statusCode": 400,
+  "message": [
+    "cnpj must be a valid CNPJ",
+    "email must be a valid email",
+    "razao_social should not be empty"
+  ],
+  "error": "Bad Request"
+}
+```
+
+### Solução Passo-a-Passo
+
+1. Ler campo `message` da resposta - contém lista de erros específicos
+2. Identificar campo problemático mencionado na mensagem
+3. Consultar [API Reference OpenAPI](/integration/api-reference) para ver formato esperado
+4. Corrigir payload localmente
+5. Testar no Sandbox antes de reenviar
+6. Validar resposta 201 Created
+
+### Exemplo de Correção - CNPJ Inválido
+
+```bash
+# ❌ Erro: CNPJ sem formatação
+{
+  "cnpj": "12345678000190",
+  "razao_social": "Farmácia XYZ"
+}
+
+# ✅ Correto: CNPJ formatado
+{
+  "cnpj": "12.345.678/0001-90",
+  "razao_social": "Farmácia XYZ"
+}
+```
+
+Veja mais exemplos na seção [Erros de Validação Comuns](#erros-de-validacao-comuns) abaixo.
+
+<Warning>
+⚠️ Valide dados localmente ANTES de enviar - isso reduz drasticamente erros 400 e acelera integração.
+</Warning>
+
+</Accordion>
+
+<Accordion title="🔒 401 Unauthorized - Autenticação Falhou">
+
+### Causa Raiz
+
+- Token JWT ausente no header Authorization
+- Token JWT expirado (campo `exp` no passado)
+- Token JWT inválido (assinatura incorreta ou corrompido)
+- Header Authorization malformado (faltando "Bearer ")
+
+### Sintomas
+
+- Resposta HTTP 401
+- Mensagem: "Unauthorized" ou "Token expired"
+- Requisição rejeitada antes de validar payload
+
+### Solução Passo-a-Passo
+
+1. Verificar header `Authorization: Bearer {token}` está presente
+2. Validar formato do token em [jwt.io](https://jwt.io) - cole token e verifique campos
+3. Verificar campo `exp` (expiration) - se timestamp < agora, token expirou
+4. Se expirado: Solicitar novo token JWT à Nexfar via email/ticket
+5. Atualizar variável de ambiente/config com novo token
+6. Reenviar requisição
+
+### Exemplo de Header Correto
+
+```bash
+# ❌ Erro: Faltando "Bearer "
+curl -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  https://api-sandbox.nexfar.com.br/api/v1/clients
+
+# ✅ Correto: Incluir "Bearer "
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  https://api-sandbox.nexfar.com.br/api/v1/clients
+```
+
+### Como Verificar Expiração do Token
+
+1. Acessar [jwt.io](https://jwt.io)
+2. Colar token no campo "Encoded"
+3. Verificar campo `exp` no JSON decodificado
+4. Comparar `exp` (Unix timestamp) com timestamp atual
+5. Se `exp` < agora → token expirado
+
+Consulte a [Documentação de Autenticação JWT](/integration/api-ingestion/authentication) para mais detalhes.
+
+<Tip>
+💡 Tokens JWT têm validade limitada (geralmente 30-90 dias). Configure alertas para renovar tokens antes da expiração.
+</Tip>
+
+</Accordion>
+
+<Accordion title="🚫 403 Forbidden - Acesso Negado">
+
+### Causa Raiz
+
+- Token JWT válido mas sem permissões (scopes) necessárias
+- Tentativa de acessar recurso de outro cliente (isolamento por client_id)
+- Tentativa de acessar dados de outro ambiente (sandbox tentando ver production)
+- IP não permitido (se houver whitelist configurada)
+
+### Sintomas
+
+- Resposta HTTP 403
+- Mensagem: "Forbidden" ou "Insufficient permissions"
+- Requisição autenticada (token válido) mas rejeitada por falta de permissão
+
+### Solução Passo-a-Passo
+
+1. Verificar claim `scopes` do JWT token em [jwt.io](https://jwt.io)
+2. Confirmar que scope necessário está presente (ex: `ingest:write`)
+3. Se scope ausente: Solicitar atualização de permissões à Nexfar
+4. Verificar claim `environment` corresponde ao endpoint usado:
+   - Token sandbox → usar `api-sandbox.nexfar.com.br`
+   - Token production → usar `api.nexfar.com.br`
+5. Confirmar que `client_id` no token corresponde aos dados que está tentando acessar
+
+### Exemplo - Ambiente Incorreto
+
+```bash
+# ❌ Erro: Token sandbox tentando acessar production
+curl -H "Authorization: Bearer TOKEN_SANDBOX" \
+  https://api.nexfar.com.br/api/v1/clients  # URL production
+
+# ✅ Correto: Token sandbox com URL sandbox
+curl -H "Authorization: Bearer TOKEN_SANDBOX" \
+  https://api-sandbox.nexfar.com.br/api/v1/clients
+```
+
+Consulte a [Documentação de Ambientes](/integration/api-ingestion/environments) para entender melhor a separação entre Sandbox e Production.
+
+<Warning>
+⚠️ Isolamento por client_id é automático - você nunca verá dados de outros clientes mesmo que tente. Isso garante segurança dos dados.
+</Warning>
+
+</Accordion>
+
+<Accordion title="⏱️ 429 Too Many Requests - Rate Limit Excedido">
+
+### Causa Raiz
+
+- Número de requisições excedeu limite configurado (100 req/min por client_id)
+- Múltiplos processos enviando dados simultaneamente sem coordenação
+- Loop infinito de retry sem backoff
+
+### Sintomas
+
+- Resposta HTTP 429
+- Header `Retry-After` indica segundos para aguardar
+- Mensagem: "Too Many Requests" ou "Rate limit exceeded"
+
+### Solução Passo-a-Passo
+
+1. Ler header `Retry-After` da resposta (indica tempo de espera em segundos)
+2. Aguardar tempo indicado antes de reenviar
+3. Implementar exponential backoff nos retries (1s, 5s, 25s)
+4. Se problema persistir: Reduzir taxa de envio ou solicitar aumento de limite à Nexfar
+5. Considerar batching de requisições (agrupar múltiplos registros)
+
+### Exemplo de Retry com Backoff (Python)
+
+```python
+import requests
+import time
+
+def enviar_com_retry(url, headers, payload, max_retries=3):
+    for tentativa in range(max_retries):
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code == 201:
+            return response.json()  # Sucesso
+
+        elif response.status_code == 429:
+            retry_after = int(response.headers.get('Retry-After', 60))
+            print(f"Rate limit excedido. Aguardando {retry_after}s...")
+            time.sleep(retry_after)
+
+        else:
+            # Erro diferente, não retenta
+            response.raise_for_status()
+
+    raise Exception("Max retries excedido")
+```
+
+<Tip>
+💡 Rate limit é por client_id, não por processo. Coordene envios entre múltiplas instâncias da sua aplicação para evitar 429.
+</Tip>
+
+<Note>
+📝 Limite padrão: 100 requisições/minuto por client_id. Para aumento de limite, contate suporte Nexfar com justificativa de volume.
+</Note>
+
+</Accordion>
+
+<Accordion title="🔧 500 Internal Server Error - Erro no Servidor">
+
+### Causa Raiz
+
+- Erro inesperado no backend da API Nexfar
+- Timeout de conexão com banco de dados
+- Bug no código do servidor (raro após MVP)
+- Payload válido mas causou erro de processamento não previsto
+
+### Sintomas
+
+- Resposta HTTP 500
+- Mensagem genérica: "Internal Server Error"
+- Corpo da resposta pode conter `correlation_id` para rastreamento
+
+### Solução Passo-a-Passo
+
+1. Salvar `correlation_id` da resposta (campo no JSON de erro)
+2. Aguardar 5-10 minutos e tentar novamente (pode ser timeout temporário)
+3. Se erro persistir com mesmo payload: NÃO é problema no seu lado
+4. Consultar [Audit Log API](/integration/api-ingestion/audit-log) com `correlation_id` para ver detalhes
+5. Contatar suporte Nexfar informando:
+   - `correlation_id`
+   - Timestamp do erro
+   - Endpoint utilizado
+   - Payload enviado (sanitizado - remover dados sensíveis)
+6. Aguardar correção da Nexfar (SLA de resposta: 24h em dias úteis)
+
+### Exemplo de Resposta 500
+
+```json
+{
+  "statusCode": 500,
+  "message": "Internal Server Error",
+  "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+Consulte a seção [Contato de Suporte](#contato-de-suporte) ao final para informações de como reportar o erro.
+
+<Warning>
+⚠️ Erros 500 NÃO são culpa do cliente - sempre indicam problema no backend. Guarde correlation_id para rastreamento.
+</Warning>
+
+<Note>
+📝 Se erro 500 ocorre consistentemente com payload específico, pode indicar bug. Reporte com correlation_id e payload para correção prioritária.
+</Note>
+
+</Accordion>
+
+<Accordion title="⚙️ 503 Service Unavailable - Serviço Temporariamente Indisponível">
+
+### Causa Raiz
+
+- Manutenção programada da API (rara, comunicada com antecedência)
+- Deploy de nova versão em andamento
+- Sobrecarga temporária do sistema
+- Falha de infraestrutura (banco de dados inacessível)
+
+### Sintomas
+
+- Resposta HTTP 503
+- Mensagem: "Service Unavailable" ou "Temporarily Unavailable"
+- Header `Retry-After` pode indicar tempo estimado de retorno
+
+### Solução Passo-a-Passo
+
+1. Verificar header `Retry-After` (tempo em segundos para retry)
+2. Aguardar tempo indicado (geralmente 1-5 minutos)
+3. Implementar retry automático com exponential backoff
+4. Se erro persistir > 10 minutos: Verificar status page da Nexfar (se existir)
+5. Contatar suporte Nexfar se indisponibilidade prolongada
+
+### Exemplo de Retry Automático (Python)
+
+```python
+import requests
+import time
+
+def enviar_com_retry_503(url, headers, payload):
+    max_retries = 5
+    backoff = [1, 5, 10, 30, 60]  # segundos
+
+    for i, wait_time in enumerate(backoff):
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code == 201:
+            return response.json()  # Sucesso
+
+        elif response.status_code == 503:
+            if i < max_retries - 1:
+                print(f"Serviço indisponível. Retry {i+1}/{max_retries} em {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                raise Exception("Serviço ainda indisponível após múltiplos retries")
+
+        else:
+            response.raise_for_status()
+```
+
+<Tip>
+💡 Erros 503 são geralmente temporários (< 5 minutos). Implemente retry automático para resiliência.
+</Tip>
+
+<Note>
+📝 Manutenções programadas são comunicadas com 48h de antecedência via email. Agende suas cargas fora desses períodos.
+</Note>
+
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## 🔍 Dados Não Aparecem no Data Lake - Checklist Investigativo
+
+Se você enviou dados, recebeu **201 Created**, mas dados não aparecem no Data Lake da Nexfar, siga este checklist:
+
+1. **✅ Confirmar resposta 201 Created**: Requisição retornou sucesso? Se 400/401/500, dados não foram aceitos.
+
+2. **✅ Verificar correlation_id**: Salve `correlation_id` da resposta e consulte [Audit Log API](/integration/api-ingestion/audit-log)
+
+3. **✅ Consultar Audit Log**: Use `?correlation_id=UUID` para ver se registro foi criado com `status=processed`
+
+4. **✅ Validar ambiente correto**: Enviou para Sandbox mas está consultando Produção (ou vice-versa)? Ambientes são isolados.
+
+5. **✅ Aguardar processamento**: Em casos raros, processamento pode levar 1-5 minutos. Aguarde e consulte novamente.
+
+6. **✅ Verificar client_id**: Token JWT corresponde ao cliente correto? Dados são isolados por client_id.
+
+7. **✅ Confirmar modelo correto**: Está consultando tabela/view correto no Data Lake? (ex: enviou `client`, consultando `clients`)
+
+8. **✅ Validar retenção Sandbox**: Se Sandbox, dados > 30 dias são deletados automaticamente ([Ambientes](/integration/api-ingestion/environments))
+
+<Warning>
+⚠️ CRÍTICO: Sandbox deleta dados após 30 dias. Se precisa dados persistentes, use ambiente Production.
+</Warning>
+
+### Se Checklist Não Resolver
+
+Contatar suporte Nexfar com:
+- `correlation_id` do envio
+- Timestamp da requisição
+- Endpoint utilizado
+- Ambiente (Sandbox/Production)
+- Screenshot do Audit Log mostrando `status=processed`
+
+Consulte o [Quick Start Guide](/integration/api-ingestion/quickstart) para validar que está seguindo o fluxo correto de integração.
+
+---
+
+## 📋 Erros de Validação Comuns - Exemplos Práticos
+
+Erros **400 Bad Request** geralmente indicam problema de validação. Veja os casos mais comuns e como corrigir:
+
+<AccordionGroup>
+
+<Accordion title="CNPJ Inválido">
+
+**Causa:** CNPJ sem formatação correta ou dígito verificador errado
+
+**Formato esperado:** `XX.XXX.XXX/XXXX-XX`
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": ["cnpj must be a valid CNPJ"],
+  "error": "Bad Request"
+}
+```
+
+**Solução:**
+```bash
+# ❌ Errado
+{ "cnpj": "12345678000190" }
+
+# ✅ Correto
+{ "cnpj": "12.345.678/0001-90" }
+```
+
+**Validador online:** [Receita Federal](https://solucoes.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp)
+
+</Accordion>
+
+<Accordion title="Email Inválido">
+
+**Causa:** Email malformado (falta @, domínio inválido)
+
+**Formato esperado:** `usuario@dominio.com`
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": ["email must be a valid email"],
+  "error": "Bad Request"
+}
+```
+
+**Solução:**
+```bash
+# ❌ Errado
+{ "email": "contato@" }
+{ "email": "contato" }
+
+# ✅ Correto
+{ "email": "contato@farmacia.com.br" }
+```
+
+</Accordion>
+
+<Accordion title="CPF Inválido">
+
+**Causa:** CPF sem formatação ou dígito verificador errado
+
+**Formato esperado:** `XXX.XXX.XXX-XX`
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": ["cpf must be a valid CPF"],
+  "error": "Bad Request"
+}
+```
+
+**Solução:**
+```bash
+# ❌ Errado
+{ "cpf": "12345678900" }
+
+# ✅ Correto
+{ "cpf": "123.456.789-00" }
+```
+
+</Accordion>
+
+<Accordion title="Campo Obrigatório Ausente">
+
+**Causa:** Campo marcado como obrigatório não foi enviado
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": [
+    "razao_social should not be empty",
+    "cnpj should not be empty"
+  ],
+  "error": "Bad Request"
+}
+```
+
+**Solução:** Consultar [API Reference](/integration/api-reference) para ver campos obrigatórios do modelo e adicionar campos faltantes ao payload.
+
+</Accordion>
+
+<Accordion title="Valor Negativo Não Permitido">
+
+**Causa:** Campo numérico (preço, quantidade) com valor negativo
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": ["price must be a positive number"],
+  "error": "Bad Request"
+}
+```
+
+**Solução:**
+```bash
+# ❌ Errado
+{ "price": -10.50 }
+
+# ✅ Correto
+{ "price": 10.50 }
+```
+
+</Accordion>
+
+<Accordion title="Tipo de Dado Incorreto">
+
+**Causa:** Enviou string ao invés de número (ou vice-versa)
+
+**Exemplo de erro:**
+```json
+{
+  "statusCode": 400,
+  "message": ["quantity must be a number conforming to the specified constraints"],
+  "error": "Bad Request"
+}
+```
+
+**Solução:**
+```bash
+# ❌ Errado (número como string)
+{ "quantity": "10" }
+
+# ✅ Correto (número)
+{ "quantity": 10 }
+```
+
+</Accordion>
+
+</AccordionGroup>
+
+<Tip>
+💡 Use biblioteca de validação localmente (ex: Python `validate_docbr`, JS `cpf-cnpj-validator`) antes de enviar para API - isso reduz 80%+ dos erros 400.
+</Tip>
+
+---
+
+## Documentação Relacionada
+
+<CardGroup cols={2}>
+
+<Card title="Quick Start" icon="rocket" href="/integration/api-ingestion/quickstart">
+  Validar fluxo correto de integração
+</Card>
+
+<Card title="Autenticação JWT" icon="lock" href="/integration/api-ingestion/authentication">
+  Resolver erros 401 e 403
+</Card>
+
+<Card title="Audit Log API" icon="clock-rotate-left" href="/integration/api-ingestion/audit-log">
+  Rastrear envios e debugar falhas
+</Card>
+
+<Card title="Ambientes" icon="server" href="/integration/api-ingestion/environments">
+  Entender Sandbox vs Production
+</Card>
+
+</CardGroup>
+
+---
+
+## 📞 Contato de Suporte Nexfar
+
+Se após seguir este guia o problema persistir, entre em contato com o suporte técnico da Nexfar:
+
+<Note>
+📝 Para agilizar atendimento, sempre inclua: `correlation_id`, timestamp do erro, endpoint utilizado, e descrição do problema.
+</Note>
+
+### Canais de Suporte
+
+- **Email:** suporte@nexfar.com.br (SLA resposta: 24h em dias úteis)
+- **Ticket:** [Portal de Suporte](https://suporte.nexfar.com.br) (requer login)
+- **Telefone:** +55 (11) XXXX-XXXX (horário: 9h-18h BRT)
+
+### Informações Necessárias ao Contatar Suporte
+
+1. Correlation ID (`correlation_id` da resposta de erro)
+2. Timestamp do erro (data/hora exato da requisição)
+3. Endpoint utilizado (ex: `POST /api/v1/clients`)
+4. Ambiente (Sandbox ou Production)
+5. Código HTTP do erro (400, 401, 500, etc)
+6. Mensagem de erro completa (campo `message` da resposta)
+7. Payload enviado (sanitizado - remover dados sensíveis como credenciais)
+8. Evidências: Screenshots do Audit Log ou logs locais
+
+<Warning>
+⚠️ NUNCA compartilhe seu token JWT completo com suporte. Se necessário validar token, compartilhe apenas últimos 8 caracteres.
+</Warning>
+
+### SLA de Atendimento
+
+- **Prioridade Alta** (Produção parada): 4h
+- **Prioridade Média** (Erros intermitentes): 24h
+- **Prioridade Baixa** (Dúvidas, melhorias): 72h

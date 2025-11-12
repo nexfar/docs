@@ -1,0 +1,417 @@
+---
+title: "Java - Exemplo de Integração"
+description: "Code example copy-paste ready em Java para integração com a API de Ingestão Nexfar"
+---
+
+# Java - Exemplo de Integração
+
+Este guia apresenta um exemplo completo e pronto para uso de como integrar sua aplicação Java com a API de Ingestão Nexfar.
+
+## Requisitos
+
+- **Java 11+** (recomendado Java 17+)
+- **HttpClient nativo** (disponível desde Java 11, sem dependências externas)
+
+<Note>
+  Este exemplo usa o HttpClient nativo do Java 11+, eliminando a necessidade de bibliotecas externas como Apache HttpClient ou OkHttp.
+</Note>
+
+## Instalação
+
+Nenhuma dependência externa é necessária! O HttpClient está incluído no JDK a partir da versão 11.
+
+Se você estiver usando Maven ou Gradle, certifique-se apenas de que seu projeto está configurado para Java 11+:
+
+```xml
+<!-- Maven: pom.xml -->
+<properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+</properties>
+```
+
+```groovy
+// Gradle: build.gradle
+sourceCompatibility = '11'
+targetCompatibility = '11'
+```
+
+## Código Completo
+
+O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a API Nexfar:
+
+```java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
+/**
+ * Cliente de exemplo para integração com a API de Ingestão Nexfar
+ */
+public class NexfarApiClient {
+
+    // Configuração da API
+    private static final String API_URL = "https://api-sandbox.nexfar.com.br";
+    private static final String JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
+
+    public static void main(String[] args) {
+        try {
+            sendClient();
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar cliente: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Envia dados de um cliente para a API Nexfar
+     */
+    public static void sendClient() throws Exception {
+        // Payload JSON com dados do cliente
+        // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
+        String jsonPayload = "{"
+            + "\"cnpj\": \"12.345.678/0001-90\","  // CNPJ no formato com pontuação
+            + "\"razao_social\": \"Farmácia Exemplo LTDA\","
+            + "\"email\": \"contato@exemplo.com.br\","
+            + "\"status\": \"ACTIVE\""
+            + "}";
+
+        // Criar requisição HTTP POST
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/api/v1/clients"))
+            .header("Authorization", "Bearer " + JWT_TOKEN)  // Autenticação JWT
+            .header("Content-Type", "application/json")      // Tipo de conteúdo JSON
+            .timeout(Duration.ofSeconds(10))                 // Timeout de 10 segundos
+            .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+            .build();
+
+        // Criar cliente HTTP
+        HttpClient client = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+
+        // Enviar requisição e obter resposta
+        HttpResponse<String> response = client.send(
+            request,
+            HttpResponse.BodyHandlers.ofString()
+        );
+
+        // Processar resposta baseado no status code
+        int statusCode = response.statusCode();
+
+        if (statusCode == 201) {
+            // Sucesso - Cliente criado
+            System.out.println("✓ Cliente criado com sucesso!");
+            System.out.println("Resposta completa:");
+            System.out.println(response.body());
+
+            // Parse simples da resposta (em produção, use uma biblioteca JSON como Jackson ou Gson)
+            String responseBody = response.body();
+            if (responseBody.contains("\"id\"")) {
+                String id = extractJsonValue(responseBody, "id");
+                String correlationId = extractJsonValue(responseBody, "correlation_id");
+                System.out.println("\nID: " + id);
+                System.out.println("Correlation ID: " + correlationId);
+            }
+
+        } else if (statusCode == 400) {
+            // Erro de validação - payload inválido
+            System.err.println("✗ Erro de validação (400 Bad Request):");
+            System.err.println(response.body());
+            System.err.println("\nVerifique se todos os campos obrigatórios estão presentes");
+            System.err.println("e se o formato do CNPJ está correto.");
+
+        } else if (statusCode == 401) {
+            // Erro de autenticação - token inválido ou expirado
+            System.err.println("✗ Erro de autenticação (401 Unauthorized):");
+            System.err.println("Token JWT inválido ou expirado.");
+            System.err.println("\nVerifique se o token está correto e ainda é válido.");
+
+        } else if (statusCode >= 500) {
+            // Erro do servidor
+            System.err.println("✗ Erro do servidor (" + statusCode + "):");
+            System.err.println(response.body());
+            System.err.println("\nO servidor está enfrentando problemas. Tente novamente mais tarde.");
+
+        } else {
+            // Outros erros HTTP
+            System.err.println("✗ Erro HTTP " + statusCode + ":");
+            System.err.println(response.body());
+        }
+    }
+
+    /**
+     * Extrai valor de um campo JSON de forma simples
+     * Em produção, use uma biblioteca JSON como Jackson ou Gson
+     */
+    private static String extractJsonValue(String json, String field) {
+        try {
+            String searchKey = "\"" + field + "\":\"";
+            int startIndex = json.indexOf(searchKey);
+            if (startIndex == -1) return "N/A";
+
+            startIndex += searchKey.length();
+            int endIndex = json.indexOf("\"", startIndex);
+            if (endIndex == -1) return "N/A";
+
+            return json.substring(startIndex, endIndex);
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+}
+```
+
+## Como Executar
+
+### Opção 1: Compilar e executar via linha de comando
+
+```bash
+# Compilar
+javac NexfarApiClient.java
+
+# Executar
+java NexfarApiClient
+```
+
+### Opção 2: Usar IDE (Eclipse, IntelliJ IDEA, VS Code)
+
+1. Crie um novo projeto Java
+2. Copie o código para um arquivo `NexfarApiClient.java`
+3. Substitua o token JWT e os dados do cliente
+4. Execute a classe diretamente pela IDE
+
+**Resposta esperada em caso de sucesso:**
+
+```
+✓ Cliente criado com sucesso!
+Resposta completa:
+{"id":"550e8400-e29b-41d4-a716-446655440000","correlation_id":"7c9e6679-7425-40de-944b-e07fc1f90ae7",...}
+
+ID: 550e8400-e29b-41d4-a716-446655440000
+Correlation ID: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+```
+
+## Explicação do Código
+
+### 1. Configuração Inicial
+
+```java
+private static final String API_URL = "https://api-sandbox.nexfar.com.br";
+private static final String JWT_TOKEN = "seu_token_jwt_aqui";
+```
+
+- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **JWT_TOKEN**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
+
+### 2. Payload JSON
+
+```java
+String jsonPayload = "{"
+    + "\"cnpj\": \"12.345.678/0001-90\","
+    + "\"razao_social\": \"Farmácia Exemplo LTDA\","
+    + "\"email\": \"contato@exemplo.com.br\","
+    + "\"status\": \"ACTIVE\""
+    + "}";
+```
+
+Este exemplo usa concatenação manual de strings para construir o JSON. Em aplicações de produção, considere usar bibliotecas como:
+- **Jackson**: `ObjectMapper mapper = new ObjectMapper(); String json = mapper.writeValueAsString(clientData);`
+- **Gson**: `Gson gson = new Gson(); String json = gson.toJson(clientData);`
+
+### 3. Criação da Requisição HTTP
+
+```java
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create(API_URL + "/api/v1/clients"))
+    .header("Authorization", "Bearer " + JWT_TOKEN)
+    .header("Content-Type", "application/json")
+    .timeout(Duration.ofSeconds(10))
+    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+    .build();
+```
+
+- **Authorization header**: Obrigatório, contém o token JWT no formato Bearer
+- **Content-Type**: Indica que o payload está em formato JSON
+- **timeout**: Configura timeout de 10 segundos para evitar bloqueios indefinidos
+
+### 4. Envio e Tratamento de Resposta
+
+```java
+HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+int statusCode = response.statusCode();
+```
+
+O código verifica o status code da resposta:
+- **201**: Sucesso - cliente criado
+- **400**: Erro de validação - payload inválido
+- **401**: Erro de autenticação - token inválido
+- **500+**: Erro do servidor
+
+## Usando Bibliotecas JSON (Opcional)
+
+Para facilitar a construção e parsing de JSON, você pode adicionar Jackson ou Gson ao seu projeto:
+
+### Opção 1: Jackson (Maven)
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.15.2</version>
+</dependency>
+```
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+
+// Criar payload usando Map
+Map<String, String> clientData = Map.of(
+    "cnpj", "12.345.678/0001-90",
+    "razao_social", "Farmácia Exemplo LTDA",
+    "email", "contato@exemplo.com.br",
+    "status", "ACTIVE"
+);
+
+ObjectMapper mapper = new ObjectMapper();
+String jsonPayload = mapper.writeValueAsString(clientData);
+
+// Parse da resposta
+Map<String, Object> responseData = mapper.readValue(response.body(), Map.class);
+String id = (String) responseData.get("id");
+```
+
+### Opção 2: Gson (Maven)
+
+```xml
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.10.1</version>
+</dependency>
+```
+
+```java
+import com.google.gson.Gson;
+import java.util.Map;
+
+Gson gson = new Gson();
+String jsonPayload = gson.toJson(clientData);
+
+// Parse da resposta
+Map<String, Object> responseData = gson.fromJson(response.body(), Map.class);
+```
+
+## Troubleshooting Comum
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized - Token Inválido">
+    **Problema:** A API retorna erro 401 Unauthorized.
+
+    **Causas Comuns:**
+    - Token JWT expirado
+    - Token JWT inválido ou malformado
+    - Token não tem permissões necessárias
+
+    **Solução:**
+    1. Verifique se o token está correto (sem espaços extras)
+    2. Confirme que o token ainda é válido (não expirou)
+    3. Entre em contato com o suporte Nexfar para renovar o token se necessário
+  </Accordion>
+
+  <Accordion title="400 Bad Request - Erro de Validação">
+    **Problema:** A API retorna erro 400 Bad Request.
+
+    **Causas Comuns:**
+    - CNPJ em formato inválido
+    - Campos obrigatórios faltando
+    - Erros de sintaxe no JSON
+
+    **Solução:**
+    1. Verifique se o CNPJ está no formato correto: XX.XXX.XXX/XXXX-XX
+    2. Confirme que todos os campos obrigatórios estão presentes
+    3. Valide a sintaxe do JSON (use um validador online se necessário)
+    4. Revise a resposta de erro para detalhes específicos
+  </Accordion>
+
+  <Accordion title="ConnectException - Erro de Conexão">
+    **Problema:** `java.net.ConnectException: Connection refused`
+
+    **Causas Comuns:**
+    - URL incorreta (sandbox vs produção)
+    - Problema de conectividade de rede
+    - Firewall bloqueando a conexão
+
+    **Solução:**
+    1. Verifique se a URL está correta:
+       - Sandbox: `https://api-sandbox.nexfar.com.br`
+       - Produção: `https://api.nexfar.com.br`
+    2. Teste sua conexão com a internet
+    3. Verifique configurações de firewall/proxy corporativo
+  </Accordion>
+
+  <Accordion title="SSLHandshakeException - Problema com Certificado SSL">
+    **Problema:** `javax.net.ssl.SSLHandshakeException`
+
+    **Solução:**
+    Se você estiver em um ambiente corporativo com proxy SSL, pode ser necessário configurar certificados:
+
+    ```java
+    // Importar certificado para o keystore Java
+    keytool -import -alias nexfar -file nexfar-cert.pem -keystore $JAVA_HOME/lib/security/cacerts
+    ```
+
+    Ou configurar trust store customizado:
+
+    ```java
+    System.setProperty("javax.net.ssl.trustStore", "/path/to/truststore.jks");
+    System.setProperty("javax.net.ssl.trustStorePassword", "password");
+    ```
+  </Accordion>
+
+  <Accordion title="HttpTimeoutException - Timeout">
+    **Problema:** `java.net.http.HttpTimeoutException`
+
+    **Causas Comuns:**
+    - Servidor lento ou sobrecarregado
+    - Problema de conectividade
+    - Timeout configurado muito baixo
+
+    **Solução:**
+    1. Aumente o timeout se necessário:
+       ```java
+       .timeout(Duration.ofSeconds(30))
+       ```
+    2. Verifique a conectividade com o servidor
+    3. Tente novamente mais tarde se o servidor estiver sobrecarregado
+  </Accordion>
+</AccordionGroup>
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/integration/api-ingestion/quickstart">
+    Entenda o fluxo completo de integração em 10 minutos
+  </Card>
+
+  <Card title="Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+    Aprenda como obter e gerenciar tokens JWT
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore todos os endpoints disponíveis e seus parâmetros
+  </Card>
+
+  <Card title="Troubleshooting" icon="wrench" href="/integration/api-ingestion/troubleshooting">
+    Resolva problemas comuns de integração
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+  **Dúvidas?** Entre em contato com o suporte técnico Nexfar através do e-mail: suporte@nexfar.com.br
+</Note>

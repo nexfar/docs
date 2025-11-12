@@ -1,0 +1,470 @@
+---
+title: 'Ambientes: Sandbox vs Produção'
+description: 'Entenda a diferença entre ambientes Sandbox e Produção da API de Ingestão Nexfar: isolamento de dados, políticas de retenção e fluxo recomendado de testes'
+icon: 'flask'
+---
+
+## Por que Sandbox e Produção?
+
+A API de Ingestão Nexfar oferece **dois ambientes completamente isolados** para garantir que você possa desenvolver e testar sua integração sem riscos antes de enviar dados reais.
+
+<Note>
+  **📝 Importante:** Todos os clientes DEVEM começar no Sandbox. Credenciais de Produção só são fornecidas após validação completa no ambiente de testes.
+</Note>
+
+A filosofia é simples: **teste sem riscos antes de enviar dados reais**. O Sandbox permite validar payloads, debugar erros e treinar sua equipe sem preocupação com corrupção de dados ou impactos em produção.
+
+## Comparação de Ambientes
+
+| Aspecto | Sandbox | Produção |
+|---------|---------|----------|
+| **URL Base** | `api-sandbox.nexfar.com.br` | `api.nexfar.com.br` |
+| **JWT Claim `environment`** | `"sandbox"` | `"production"` |
+| **Finalidade** | Testes, desenvolvimento, integração | Dados reais, uso em produção |
+| **Dados** | Isolados, fictícios ou de teste | Dados reais da operação |
+| **Retenção de Dados** | Deletados automaticamente após 30 dias | Persistentes, armazenados indefinidamente |
+| **Solicitação de Credenciais** | Fornecido automaticamente no onboarding | Após validação completa no Sandbox |
+| **Disponibilidade** | 99% (best-effort) | 99.5% (target SLA) |
+| **Rate Limiting** | 100 req/min por cliente | 100 req/min por cliente (configurável) |
+| **Suporte** | Email, documentação | Email, documentação, SLA de resposta |
+
+<Warning>
+  **🔒 Isolamento Absoluto:**
+  - Dados enviados com token Sandbox NUNCA aparecem em Produção
+  - Dados enviados com token Production NUNCA aparecem em Sandbox
+  - Particionamento lógico garante separação total
+</Warning>
+
+## Como Funciona o Isolamento
+
+### Particionamento via JWT Claim
+
+O isolamento entre Sandbox e Produção é implementado através de **particionamento lógico**. Mesma infraestrutura, mesmo banco de dados, mas dados completamente separados por claim JWT.
+
+```
+JWT Token Sandbox → Claim: environment="sandbox"
+  ↓
+API valida e extrai claim
+  ↓
+Dados salvos com tag environment="sandbox"
+  ↓
+Queries filtram: WHERE client_id=X AND environment="sandbox"
+  ↓
+Cliente vê APENAS dados Sandbox (isolamento absoluto)
+```
+
+### Como Verificar Seu Ambiente
+
+Você pode verificar qual ambiente está usando decodificando seu JWT token:
+
+1. Acesse [https://jwt.io](https://jwt.io)
+2. Cole seu token JWT no campo "Encoded"
+3. Veja o payload decodificado:
+
+```json
+{
+  "client_id": "cli_abc123",
+  "environment": "sandbox",  // ← "sandbox" ou "production"
+  "scopes": ["ingestion:write"],
+  "iat": 1707321600,
+  "exp": 1738857600
+}
+```
+
+<Warning>
+  **🔒 Isolamento Absoluto:**
+  Dados enviados com token Sandbox NUNCA aparecem em Produção e vice-versa. Particionamento lógico garante separação total mesmo usando a mesma infraestrutura.
+</Warning>
+
+## Política de Retenção de Dados no Sandbox
+
+Dados no Sandbox são **temporários** e deletados automaticamente após **30 dias** a partir da data de criação.
+
+### Processo de Limpeza Automática
+
+- **Worker automático** executa diariamente às 2:00 AM UTC
+- Identifica registros com `created_at > 30 dias` E `environment = "sandbox"`
+- Deleta automaticamente (dados não são recuperáveis)
+
+<Warning>
+  **⚠️ IMPORTANTE:**
+  - Dados no Sandbox são deletados automaticamente após 30 dias
+  - Não use Sandbox para armazenamento de dados reais ou de longo prazo
+  - Dados deletados não são recuperáveis
+</Warning>
+
+<Tip>
+  **💡 Use Sandbox para:**
+  - Validar integração e testar payloads
+  - Debugar erros e testar edge cases
+  - Treinar equipe interna antes de ir para produção
+  - Testar atualizações de API (novas versões)
+</Tip>
+
+### Ciclo de Vida dos Dados
+
+| Data | Ação | Status |
+|------|------|--------|
+| Dia 0 | Dado criado no Sandbox | ✅ Disponível |
+| Dia 1-29 | Dado consultável via API | ✅ Disponível |
+| Dia 30 | Cleanup automático executa | ❌ Deletado permanentemente |
+
+<Note>
+  **📝 Política de Retenção:**
+  Após validação completa, solicite credenciais de Produção para dados persistentes que não expiram.
+</Note>
+
+## Fluxo Recomendado de Integração
+
+<Steps>
+  <Step title="Começar no Sandbox">
+    Receba credenciais JWT Sandbox via email da Nexfar. Configure sua aplicação para apontar para `api-sandbox.nexfar.com.br`.
+
+    **O que você receberá:**
+    - Token JWT com claim `environment: "sandbox"`
+    - URL do Sandbox: `https://api-sandbox.nexfar.com.br`
+    - Link para documentação da API
+    - Client ID único
+
+    <Tip>
+      **💡 Sempre comece no Sandbox** - é impossível pular diretamente para Produção.
+    </Tip>
+  </Step>
+
+  <Step title="Implementar Integração">
+    Use o [Quick Start Guide](/integration/api-ingestion/quickstart) para enviar sua primeira requisição.
+
+    - Envie dados de teste (fictícios, anonimizados)
+    - Valide que dados são recebidos corretamente
+    - Teste todos os modelos relevantes (clientes, produtos, pedidos)
+
+    <Tip>
+      **💡 Dica:** Use CNPJs fictícios (formato válido mas inexistente: `00.000.000/0000-00`) e emails de teste (`teste@exemplo.com.br`) para evitar dados reais no Sandbox.
+    </Tip>
+  </Step>
+
+  <Step title="Validar Respostas">
+    Confirme que integração está funcionando perfeitamente:
+
+    - ✅ Códigos 201 Created para envios bem-sucedidos
+    - ✅ Mensagens de erro claras para payloads inválidos
+    - ✅ Audit Log API mostra histórico correto
+    - ✅ Taxa de sucesso > 95% para dados válidos
+
+    Consulte [Troubleshooting Guide](/integration/api-ingestion/troubleshooting) se encontrar erros.
+  </Step>
+
+  <Step title="Testar Casos de Erro">
+    Valide que sua aplicação trata erros corretamente:
+
+    - Envie payloads inválidos intencionalmente (CNPJ incorreto, campo obrigatório faltando)
+    - Confirme que mensagens de erro são capturadas
+    - Teste rate limiting (> 100 req/min)
+    - Simule timeout (payload muito grande)
+  </Step>
+
+  <Step title="Validação Completa">
+    Envie volume representativo de dados de teste:
+
+    - **Exemplo:** 100 clientes, 500 produtos, 50 pedidos
+    - Confirme taxa de sucesso de 100% para dados válidos
+    - Garanta que integração está estável por 24-48 horas
+    - Documente configuração final (URL, headers, payloads)
+  </Step>
+
+  <Step title="Solicitar Credenciais de Produção">
+    Após validação completa, solicite credenciais Production:
+
+    - Envie email para: **suporte@nexfar.com.br**
+    - Inclua: Client ID, resumo de validação, data estimada de go-live
+    - Aguarde confirmação (SLA: 24 horas)
+
+    Veja template de email na seção [Como Solicitar Credenciais de Produção](#solicitar-credenciais-de-producao).
+  </Step>
+
+  <Step title="Migrar para Produção">
+    Após receber JWT Production:
+
+    - Atualize aplicação: trocar URL (`api.nexfar.com.br`) e JWT token
+    - Envie primeiros dados reais
+    - Monitore via [Audit Log API](/integration/api-ingestion/audit-log)
+    - Confirme isolamento: dados Sandbox não aparecem em Production
+
+    <Warning>
+      **⚠️ IMPORTANTE:** Após migração para Production, continue usando Sandbox para testar novas features ou atualizações.
+    </Warning>
+  </Step>
+</Steps>
+
+<Note>
+  **📝 Tempo Estimado:**
+  - Desenvolvimento e testes no Sandbox: 1-3 dias
+  - Validação completa: 1-2 dias
+  - Aprovação de credenciais Production: até 24 horas
+  - **Total:** 3-6 dias (dependendo da complexidade da integração)
+</Note>
+
+## Quando Usar Cada Ambiente
+
+### Use Sandbox Para:
+
+- ✅ Desenvolvimento e testes de integração
+- ✅ Validar payloads e estrutura de dados
+- ✅ Debugar erros e testar edge cases
+- ✅ Treinar equipe interna antes de ir para produção
+- ✅ Testar atualizações de API (novas versões)
+- ✅ Simular cenários de erro (rate limiting, timeout)
+
+### Use Produção Para:
+
+- ✅ Enviar dados reais da operação
+- ✅ Integração contínua após go-live
+- ✅ Sincronização automática de ERP/Sistema interno
+- ✅ Dados que precisam ser persistidos indefinidamente
+
+<Warning>
+  **❌ Regras Importantes:**
+  - **NUNCA use Produção para testes** - dados reais podem ser corrompidos
+  - **NUNCA use Sandbox para dados sensíveis ou confidenciais** - dados são deletados após 30 dias
+  - **NUNCA use dados reais no Sandbox** - use dados fictícios ou anonimizados
+</Warning>
+
+## Como Solicitar Credenciais de Produção
+
+### Pré-requisitos
+
+Antes de solicitar credenciais de Produção, confirme que:
+
+- ✅ Validação completa no Sandbox (taxa de sucesso > 95%)
+- ✅ Testes de todos os modelos relevantes realizados
+- ✅ Integração estável (sem erros críticos)
+- ✅ Equipe interna treinada e familiarizada com API
+
+### Processo de Solicitação
+
+1. Enviar email para: **suporte@nexfar.com.br**
+2. Assunto: "Solicitação de Credenciais de Produção - [Nome da Empresa]"
+3. Informações necessárias no corpo do email:
+   - Client ID do Sandbox (disponível no JWT token)
+   - Nome da empresa/distribuidor
+   - Contato técnico responsável (nome, email, telefone)
+   - Resumo de validação: modelos testados, volume de dados enviado
+   - Data estimada de go-live em produção
+4. Aguardar confirmação da equipe Nexfar (SLA: 24 horas)
+5. Receber novo JWT token com claim `environment = "production"`
+
+<Note>
+  **📝 Tokens de Produção:**
+  - Validade configurável (tipicamente 365 dias)
+  - Renovação deve ser solicitada 30 dias antes da expiração
+</Note>
+
+### Template de Email
+
+```
+Para: suporte@nexfar.com.br
+Assunto: Solicitação de Credenciais de Produção - Farmácia XYZ
+
+Olá,
+
+Finalizamos a validação da integração com a API de Ingestão Nexfar no ambiente Sandbox e gostaríamos de solicitar credenciais de Produção.
+
+**Informações:**
+- Client ID (Sandbox): cli_abc123xyz789
+- Empresa: Farmácia XYZ Distribuidora LTDA
+- CNPJ: 12.345.678/0001-90
+- Contato Técnico: João Silva (joao.silva@farmaciaxyz.com.br / +55 11 98765-4321)
+
+**Resumo de Validação:**
+- Modelos testados: clients, products, orders, invoices
+- Volume enviado: 150 clientes, 800 produtos, 50 pedidos
+- Taxa de sucesso: 100%
+- Período de testes: 15/11/2025 - 20/11/2025
+
+**Data estimada de go-live:** 25/11/2025
+
+Atenciosamente,
+João Silva
+Desenvolvedor - Farmácia XYZ
+```
+
+## Boas Práticas de Uso de Ambientes
+
+### 1. Nunca use dados reais no Sandbox
+
+Use dados fictícios ou anonimizados:
+- CNPJs de teste: `00.000.000/0000-00` (formato válido mas fictício)
+- Emails de teste: `teste@exemplo.com.br`
+- Nomes: "Cliente Teste", "Produto Exemplo"
+
+### 2. Mantenha tokens separados
+
+Configure variáveis de ambiente distintas:
+- Sandbox token: `NEXFAR_JWT_SANDBOX`
+- Production token: `NEXFAR_JWT_PRODUCTION`
+- **NUNCA misture tokens entre ambientes**
+
+### 3. Configure URLs dinamicamente
+
+Use variáveis de ambiente para URL base:
+
+```python
+import os
+
+ENV = os.getenv("NEXFAR_ENV", "sandbox")  # Default: sandbox
+API_URL = (
+    "https://api-sandbox.nexfar.com.br"
+    if ENV == "sandbox"
+    else "https://api.nexfar.com.br"
+)
+JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
+```
+
+### 4. Monitore expiração de dados no Sandbox
+
+- Dados > 30 dias são deletados automaticamente
+- Se precisar retestar, reenvie dados
+- Considere script de carga de dados de teste
+
+### 5. Valide isolamento após migração
+
+- Após receber token Production, confirme que não vê dados Sandbox
+- Use Audit Log API para validar environment correto
+
+### 6. Documente configuração de ambientes
+
+- Mantenha README com instruções de como alternar entre Sandbox/Production
+- Facilita onboarding de novos desenvolvedores
+
+<Warning>
+  **🔒 Segurança Crítica:**
+  - Tokens de Produção têm mesmo nível de acesso que credenciais de banco
+  - Proteja-os adequadamente (não commitar em repositórios)
+  - Dados reais enviados com token Sandbox serão deletados após 30 dias
+</Warning>
+
+## Troubleshooting de Ambientes
+
+<AccordionGroup>
+
+<Accordion title="❌ Enviei dados no Sandbox mas não aparecem">
+  **Possíveis Causas:**
+  - Dados foram enviados há mais de 30 dias (deletados automaticamente)
+  - Token JWT tem claim `environment` incorreto
+  - Consultando com token diferente do usado para envio
+
+  **Soluções:**
+  1. Verifique claim `environment` do token em [jwt.io](https://jwt.io)
+  2. Confirme que token usado para enviar = token usado para consultar
+  3. Se dados > 30 dias, reenvie dados de teste
+  4. Consulte [Audit Log API](/integration/api-ingestion/audit-log) para ver histórico de envios
+
+  **Exemplo de Validação:**
+  ```json
+  {
+    "client_id": "cli_abc123",
+    "environment": "sandbox",  // ← Deve ser "sandbox" para dados de teste
+    "scopes": ["ingestion:write"],
+    "exp": 1707321600
+  }
+  ```
+</Accordion>
+
+<Accordion title="❌ Dados do Sandbox aparecem em Produção (ou vice-versa)">
+  **Causa:** Isso NÃO deveria acontecer - isolamento é absoluto.
+
+  **Validação Imediata:**
+  1. Confirme claim `environment` do token atual em [jwt.io](https://jwt.io)
+  2. Verifique URL usada:
+     - Sandbox: `api-sandbox.nexfar.com.br`
+     - Production: `api.nexfar.com.br`
+  3. Se problema persistir, **reporte IMEDIATAMENTE**: suporte@nexfar.com.br
+
+  <Warning>
+    **🔒 Segurança Crítica:** Violação de isolamento de ambientes é bug crítico. Reporte imediatamente.
+  </Warning>
+</Accordion>
+
+<Accordion title="✅ Como validar que estou no ambiente correto?">
+  **Passo a Passo:**
+
+  1. **Decodificar JWT token** em [https://jwt.io](https://jwt.io)
+  2. **Verificar claim `environment`:**
+     - `"sandbox"` → Você está no Sandbox
+     - `"production"` → Você está em Produção
+  3. **Confirmar URL corresponde ao environment:**
+     - Sandbox: `https://api-sandbox.nexfar.com.br`
+     - Production: `https://api.nexfar.com.br`
+  4. **Enviar requisição de teste e verificar Audit Log**
+
+  **Exemplo de Verificação (Python):**
+  ```python
+  import jwt
+  import os
+
+  token = os.getenv("NEXFAR_JWT")
+  decoded = jwt.decode(token, options={"verify_signature": False})
+
+  print(f"Environment: {decoded['environment']}")
+  # Output esperado: "sandbox" ou "production"
+
+  if decoded['environment'] == 'sandbox':
+      print("✅ Usando ambiente Sandbox (dados são temporários)")
+  else:
+      print("✅ Usando ambiente Production (dados são persistentes)")
+  ```
+</Accordion>
+
+<Accordion title="❌ Token de Produção não funciona">
+  **Possíveis Causas:**
+  - Token expirado (verificar claim `exp` em jwt.io)
+  - Token copiado incorretamente (espaços extras, quebras de linha)
+  - Usando URL de Sandbox com token de Produção
+
+  **Soluções:**
+  1. **Validar expiração do token:**
+     - Decodifique em jwt.io
+     - Verifique claim `exp` (timestamp Unix)
+     - Compare com timestamp atual: se `exp < now`, token expirado
+  2. **Recopiar token do email:**
+     - Copie token completo, sem espaços ou quebras
+     - Formato: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (string longa)
+  3. **Confirmar URL correta:**
+     - Production usa `api.nexfar.com.br` (SEM "sandbox" na URL)
+  4. **Testar com curl antes de integrar ao código:**
+     ```bash
+     curl -X POST https://api.nexfar.com.br/api/v1/clients \
+       -H "Authorization: Bearer $NEXFAR_JWT_PRODUCTION" \
+       -H "Content-Type: application/json" \
+       -d '{"cnpj": "12.345.678/0001-90", "razao_social": "Teste LTDA"}'
+     ```
+  5. Se problema persistir, contate suporte@nexfar.com.br
+</Accordion>
+
+</AccordionGroup>
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+
+<Card title="Começar no Sandbox" icon="flask" href="/integration/api-ingestion/quickstart">
+  Use Quick Start para enviar primeira requisição no ambiente de testes
+</Card>
+
+<Card title="Entender Autenticação" icon="key" href="/integration/api-ingestion/authentication">
+  Aprenda sobre JWT tokens e claims, incluindo o claim `environment`
+</Card>
+
+<Card title="Validar Dados" icon="list-check" href="/integration/api-ingestion/audit-log">
+  Use Audit Log API para consultar histórico de envios e validar environment
+</Card>
+
+<Card title="Solicitar Produção" icon="rocket">
+  Após validação completa, envie email para **suporte@nexfar.com.br**
+</Card>
+
+</CardGroup>
+
+<Tip>
+  **💡 Recomendação:** Sempre comece no Sandbox e só solicite credenciais de Produção após validação completa. Use Audit Log API para confirmar que dados estão no ambiente correto.
+</Tip>

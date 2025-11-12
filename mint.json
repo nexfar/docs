@@ -134,19 +134,45 @@
           ]
         },
         {
-          "group": "API de Ingestão",
+          "group": "Métodos de Integração",
           "pages": [
-            "integration/api-ingestion/overview",
-            "integration/api-ingestion/quickstart",
-            "integration/api-ingestion/authentication",
-            "integration/api-ingestion/environments",
-            "integration/api-ingestion/graphql"
+            {
+              "group": "Acesso via Banco de Dados (VIEWs)",
+              "pages": [
+                "integration/deployment/data-extraction/database-views"
+              ]
+            },
+            {
+              "group": "API de Ingestão",
+              "pages": [
+                "integration/api-ingestion/overview",
+                "integration/api-ingestion/quickstart",
+                "integration/api-ingestion/authentication",
+                "integration/api-ingestion/environments",
+                {
+                  "page": "REST API Reference",
+                  "openapi": "https://ingestion.nexfar.com.br/api/openapi.json"
+                },
+                "integration/api-ingestion/graphql",
+                "integration/api-ingestion/audit-log",
+                "integration/api-ingestion/troubleshooting",
+                {
+                  "group": "Exemplos de Código",
+                  "pages": [
+                    "integration/api-ingestion/code-examples/python",
+                    "integration/api-ingestion/code-examples/java",
+                    "integration/api-ingestion/code-examples/nodejs",
+                    "integration/api-ingestion/code-examples/csharp",
+                    "integration/api-ingestion/code-examples/php"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "group": "Métodos de Extração de Dados",
+          "group": "Outros Métodos de Extração",
           "pages": [
-            "integration/deployment/data-extraction/database-views",
             "integration/deployment/data-extraction/rest-api",
             "integration/deployment/data-extraction/edi",
             "integration/deployment/data-extraction/ftp"

@@ -1,0 +1,426 @@
+---
+title: 'Rastreabilidade e Audit Log'
+description: 'Documentação da Audit Log API da Nexfar: consulte histórico completo de envios, filtre por data/status/modelo, valide integridade com payload_hash. Rastreabilidade de 100% das ingestões.'
+icon: 'list-check'
+---
+
+## Introdução
+
+A Nexfar registra **100% das ingestões de dados** em um audit log imutável, proporcionando rastreabilidade completa de todas as operações realizadas através da API de Ingestão. Independentemente de você usar **REST** ou **GraphQL**, cada requisição é automaticamente registrada com timestamp, status, payload hash e correlation ID único.
+
+<Note>
+📝 **Audit Log registra todas as ingestões** independentemente de REST ou GraphQL - ambos os protocolos compartilham a mesma infraestrutura de auditoria.
+</Note>
+
+### Características do Audit Log
+
+- **Imutabilidade**: Registros são append-only e nunca podem ser alterados ou deletados
+- **Rastreabilidade Total**: Cada ingestão recebe um `correlation_id` único para rastreamento end-to-end
+- **Isolamento Automático**: Você só visualiza registros do seu próprio `client_id` (extraído do JWT)
+- **Validação de Integridade**: Hash SHA-256 do payload permite verificar que dados não foram corrompidos
+
+<Tip>
+💡 **Use o `correlation_id`** retornado na resposta de ingestão para consultar detalhes específicos no Audit Log.
+</Tip>
+
+---
+
+## Endpoint de Consulta
+
+O endpoint GET `/api/v1/audit-log` permite consultar o histórico completo de envios com suporte a filtros avançados e paginação.
+
+### Especificação do Endpoint
+
+- **Método HTTP**: `GET`
+- **URL Sandbox**: `https://api-sandbox.nexfar.com.br/api/v1/audit-log`
+- **URL Produção**: `https://api.nexfar.com.br/api/v1/audit-log`
+- **Autenticação**: Bearer token JWT (obrigatório)
+
+### Exemplo Básico
+
+```bash
+curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log" \
+  -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+```
+
+<Warning>
+🔒 **Isolamento Automático**: O endpoint filtra automaticamente por `client_id` do JWT - você só vê seus próprios registros.
+</Warning>
+
+---
+
+## Query Parameters
+
+Todos os parâmetros são opcionais. Se nenhum filtro for fornecido, retorna todos os registros do seu `client_id` ordenados por data (mais recentes primeiro).
+
+| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
+|-----------|------|-------------|-----------|---------|
+| `date_from` | string (ISO 8601) | Não | Data inicial para filtrar registros (formato: `YYYY-MM-DD` ou `YYYY-MM-DDTHH:mm:ssZ`) | `2025-11-01` ou `2025-11-01T00:00:00Z` |
+| `date_to` | string (ISO 8601) | Não | Data final para filtrar registros (formato: `YYYY-MM-DD` ou `YYYY-MM-DDTHH:mm:ssZ`) | `2025-11-10` ou `2025-11-10T23:59:59Z` |
+| `status` | string (enum) | Não | Status da ingestão: `received`, `processed`, `failed` | `failed` |
+| `model` | string | Não | Nome do modelo para filtrar (ex: `client`, `product`, `order`) | `client` |
+| `page` | integer | Não | Número da página (inicia em 1, default: 1) | `2` |
+| `page_size` | integer | Não | Tamanho da página (default: 20, máximo: 100) | `50` |
+
+<Note>
+📝 **Sem filtros?** Retorna todos os registros do seu `client_id` ordenados por data (mais recentes primeiro).
+</Note>
+
+<Tip>
+💡 **Períodos Específicos**: Use `date_from` e `date_to` para análise mensal ou semanal.
+</Tip>
+
+---
+
+## Estrutura da Resposta
+
+A resposta é paginada e inclui metadados de paginação.
+
+### Exemplo de Resposta JSON
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "timestamp": "2025-11-08T14:32:15Z",
+      "model": "client",
+      "endpoint": "/api/v1/clients",
+      "status": "processed",
+      "payload_hash": "a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4",
+      "correlation_id": "770e9511-f30c-52e5-b827-557766551111"
+    }
+  ],
+  "metadata": {
+    "total_records": 1234,
+    "total_pages": 62,
+    "current_page": 1,
+    "page_size": 20
+  }
+}
+```
+
+### Campos da Resposta
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | UUID | Identificador único da entrada no audit log |
+| `timestamp` | string (ISO 8601) | Data/hora da ingestão |
+| `model` | string | Nome do modelo ingerido (ex: `client`, `product`, `order`) |
+| `endpoint` | string | Endpoint REST ou mutation GraphQL utilizada |
+| `status` | string (enum) | Status: `received`, `processed`, `failed` |
+| `payload_hash` | string | Hash SHA-256 do payload para validação de integridade |
+| `correlation_id` | UUID | ID de correlação para rastreamento end-to-end |
+
+### Metadata de Paginação
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `total_records` | integer | Total de registros encontrados |
+| `total_pages` | integer | Total de páginas disponíveis |
+| `current_page` | integer | Página atual |
+| `page_size` | integer | Itens por página |
+
+<Info>
+ℹ️ **Campo `payload` omitido**: O payload completo não é retornado por padrão (apenas admin) - use `payload_hash` para validar integridade.
+</Info>
+
+---
+
+## Exemplos de Uso
+
+<Tabs>
+  <Tab title="Últimos 7 dias">
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-08" \
+      -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+    ```
+  </Tab>
+
+  <Tab title="Apenas falhas">
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?status=failed" \
+      -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+    ```
+  </Tab>
+
+  <Tab title="Modelo específico (clients)">
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?model=client&page=1&page_size=20" \
+      -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+    ```
+  </Tab>
+
+  <Tab title="Paginação - Página 2">
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?page=2&page_size=50" \
+      -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+    ```
+  </Tab>
+</Tabs>
+
+### Exemplo em Python
+
+```python
+import requests
+import os
+
+url = "https://api-sandbox.nexfar.com.br/api/v1/audit-log"
+headers = {
+    "Authorization": f"Bearer {os.getenv('NEXFAR_JWT_TOKEN')}"
+}
+params = {
+    "date_from": "2025-11-01",
+    "date_to": "2025-11-08",
+    "status": "failed",
+    "page": 1,
+    "page_size": 20
+}
+
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+print(f"Total de registros: {data['metadata']['total_records']}")
+for log in data['data']:
+    print(f"[{log['timestamp']}] {log['model']} - Status: {log['status']}")
+```
+
+---
+
+## Validação de Integridade com payload_hash
+
+O campo `payload_hash` contém o hash SHA-256 do payload JSON original, permitindo verificar que dados enviados não foram corrompidos ou alterados após o envio.
+
+### Como Validar Integridade
+
+```python
+import hashlib
+import json
+
+# Payload original enviado
+payload = {
+    "cnpj": "12.345.678/0001-95",
+    "razao_social": "Distribuidora XYZ Ltda",
+    "email": "contato@xyzfarma.com.br",
+    "status": "ACTIVE"
+}
+
+# Calcular hash SHA-256
+payload_json = json.dumps(payload, sort_keys=True, separators=(',', ':'))
+hash_calculado = hashlib.sha256(payload_json.encode('utf-8')).hexdigest()
+
+print(f"Hash calculado: {hash_calculado}")
+
+# Comparar com payload_hash retornado pelo Audit Log API
+# Se forem iguais, payload está íntegro
+```
+
+<Warning>
+⚠️ **Serialização Consistente**: Hash é calculado sobre JSON serializado com `sort_keys=True` - certifique-se de usar a mesma serialização ao validar.
+</Warning>
+
+<Tip>
+💡 **Compliance**: `payload_hash` é útil para auditorias - prove que dados não foram alterados após envio.
+</Tip>
+
+---
+
+## Casos de Uso
+
+<AccordionGroup>
+  <Accordion title="🔍 Debugar Falhas de Integração" icon="bug">
+    **Cenário**: Você nota que alguns dados não aparecem no Data Lake.
+
+    **Solução**:
+    1. Consultar Audit Log filtrando `status=failed`
+    2. Identificar registros com falha
+    3. Ler mensagem de erro (se disponível)
+    4. Corrigir payload e reenviar
+
+    **Exemplo**:
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?status=failed&date_from=2025-11-01" \
+      -H "Authorization: Bearer TOKEN"
+    ```
+  </Accordion>
+
+  <Accordion title="✅ Confirmar Dados Foram Enviados" icon="check">
+    **Cenário**: Você enviou dados mas quer confirmar que foram recebidos.
+
+    **Solução**:
+    1. Usar `correlation_id` retornado na resposta da ingestão
+    2. Consultar Audit Log filtrando por modelo e período
+    3. Verificar `status=processed`
+
+    **Exemplo**:
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?model=client&date_from=2025-11-08" \
+      -H "Authorization: Bearer TOKEN"
+    ```
+  </Accordion>
+
+  <Accordion title="🔐 Validar Integridade de Dados" icon="shield">
+    **Cenário**: Auditoria interna requer prova de que dados não foram alterados.
+
+    **Solução**:
+    1. Calcular hash SHA-256 do payload original
+    2. Consultar Audit Log e comparar com `payload_hash`
+    3. Se hashes forem iguais, dados estão íntegros
+
+    Ver seção **"Validação de Integridade com payload_hash"** acima.
+  </Accordion>
+
+  <Accordion title="📊 Auditar Envios Mensais" icon="chart-simple">
+    **Cenário**: Gerar relatório mensal de ingestões para compliance.
+
+    **Solução**:
+    1. Consultar Audit Log com `date_from` e `date_to` do mês
+    2. Iterar por todas as páginas (`page=1, 2, 3...`)
+    3. Exportar para CSV ou JSON
+    4. Analisar total de envios, taxa de falha, modelos mais enviados
+
+    **Exemplo**:
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-30&page_size=100" \
+      -H "Authorization: Bearer TOKEN"
+    ```
+  </Accordion>
+
+  <Accordion title="📈 Rastrear Envios GraphQL vs REST" icon="code-compare">
+    **Cenário**: Comparar uso de GraphQL vs REST pela sua equipe.
+
+    **Solução**:
+    1. Consultar Audit Log sem filtros
+    2. Analisar campo `endpoint`:
+       - Endpoints iniciando com `/api/v1/` → REST
+       - Endpoints `/graphql` → GraphQL
+    3. Agrupar por endpoint e contar
+
+    **Exemplo Python**:
+    ```python
+    logs = response.json()['data']
+    rest_count = sum(1 for log in logs if log['endpoint'].startswith('/api/v1/'))
+    graphql_count = sum(1 for log in logs if log['endpoint'] == '/graphql')
+    print(f"REST: {rest_count}, GraphQL: {graphql_count}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="❌ Erro 401 Unauthorized" icon="lock">
+    **Causas**:
+    - Token JWT ausente ou inválido
+    - Token expirado
+
+    **Soluções**:
+    1. Verificar header `Authorization: Bearer {token}`
+    2. Validar token em [jwt.io](https://jwt.io) (verificar campo `exp`)
+    3. Solicitar novo token se expirado
+
+    **Documentação**: [Autenticação JWT](/integration/api-ingestion/authentication)
+  </Accordion>
+
+  <Accordion title="❌ Erro 400 Bad Request - Query parameter inválido" icon="triangle-exclamation">
+    **Erro Comum**: `date_from deve ser anterior a date_to`
+
+    **Causas**:
+    - Formato de data incorreto
+    - Parâmetro com valor inválido
+    - `date_from` maior que `date_to`
+
+    **Soluções**:
+    1. Usar formato ISO 8601: `YYYY-MM-DD` ou `YYYY-MM-DDTHH:mm:ssZ`
+    2. Validar valores de enum (status: `received`/`processed`/`failed`)
+    3. Conferir tabela de query parameters acima
+  </Accordion>
+
+  <Accordion title="❌ Resposta vazia (data: [])" icon="inbox">
+    **Causas**:
+    - Nenhum registro corresponde aos filtros
+    - Período de data sem ingestões
+    - `client_id` do JWT não tem registros
+
+    **Soluções**:
+    1. Ampliar período: remover `date_from` e `date_to`
+    2. Remover filtros `status` e `model`
+    3. Verificar se enviou dados recentemente
+    4. Confirmar ambiente correto (sandbox vs production)
+  </Accordion>
+
+  <Accordion title="✅ Como paginar corretamente?" icon="book">
+    **Uso de paginação**:
+    1. Primeira requisição: `?page=1&page_size=50`
+    2. Verificar `metadata.current_page` e `metadata.total_pages` na resposta
+    3. Se `current_page < total_pages`, fazer próxima requisição: `?page=2`
+    4. Repetir até `current_page == total_pages`
+
+    **Exemplo Python**:
+    ```python
+    page = 1
+    all_logs = []
+    while True:
+        response = requests.get(url, headers=headers, params={"page": page, "page_size": 50})
+        data = response.json()
+        all_logs.extend(data['data'])
+
+        if data['metadata']['current_page'] >= data['metadata']['total_pages']:
+            break
+        page += 1
+
+    print(f"Total de logs recuperados: {len(all_logs)}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Ambientes: Sandbox vs Production
+
+| Aspecto | Sandbox | Production |
+|---------|---------|------------|
+| **URL** | `https://api-sandbox.nexfar.com.br/api/v1/audit-log` | `https://api.nexfar.com.br/api/v1/audit-log` |
+| **Dados** | Dados de teste, podem ser deletados após 30 dias | Dados reais, armazenados permanentemente |
+| **Retenção** | 30 dias (limpeza automática) | Permanente (conforme política de retenção) |
+| **Isolamento** | Isolado logicamente via JWT claim `environment=sandbox` | Isolado via JWT claim `environment=production` |
+
+<Warning>
+⚠️ **Logs do Sandbox são deletados automaticamente após 30 dias** - exporte dados importantes antes da expiração.
+</Warning>
+
+<Note>
+📝 **Mesmo JWT token funciona em ambos os ambientes** - isolamento é automático via claim `environment`.
+</Note>
+
+**Documentação**: [Ambientes: Sandbox vs Production](/integration/api-ingestion/environments)
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/integration/api-ingestion/quickstart">
+    Começar a enviar dados rapidamente
+  </Card>
+
+  <Card title="Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+    Entenda tokens JWT e claims
+  </Card>
+
+  <Card title="GraphQL" icon="diagram-project" href="/integration/api-ingestion/graphql">
+    Consulte histórico de mutations GraphQL
+  </Card>
+
+  <Card title="Troubleshooting" icon="wrench" href="/integration/api-ingestion/troubleshooting">
+    Resolva problemas comuns
+  </Card>
+</CardGroup>
+
+### Recursos Adicionais
+
+- [API Reference OpenAPI](/integration/api-reference) - Documentação completa REST API
+- [Ambientes: Sandbox vs Production](/integration/api-ingestion/environments) - Diferenças entre ambientes
+- [Visão Geral da API](/integration/api-ingestion/overview) - Conceitos fundamentais

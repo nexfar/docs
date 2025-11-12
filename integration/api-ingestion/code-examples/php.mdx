@@ -1,0 +1,514 @@
+---
+title: "PHP - Exemplo de Integração"
+description: "Code example copy-paste ready em PHP para integração com a API de Ingestão Nexfar"
+---
+
+# PHP - Exemplo de Integração
+
+Este guia apresenta um exemplo completo e pronto para uso de como integrar sua aplicação PHP com a API de Ingestão Nexfar.
+
+## Requisitos
+
+- **PHP 7.4+** (recomendado PHP 8.0+)
+- **Extensão cURL habilitada** (disponível por padrão na maioria das instalações PHP)
+- **Extensão JSON habilitada** (padrão desde PHP 5.2)
+
+<Note>
+  Este exemplo usa cURL nativo do PHP, sem necessidade de bibliotecas externas. Uma alternativa usando Guzzle HTTP também é apresentada ao final.
+</Note>
+
+## Verificar Requisitos
+
+Antes de começar, verifique se as extensões necessárias estão habilitadas:
+
+```bash
+# Verificar versão do PHP
+php -v
+
+# Verificar se cURL está habilitado
+php -m | grep curl
+
+# Verificar se JSON está habilitado
+php -m | grep json
+```
+
+## Código Completo
+
+O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a API Nexfar:
+
+```php
+<?php
+
+// Configuração da API
+$apiUrl = "https://api-sandbox.nexfar.com.br";
+$jwtToken = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido pela Nexfar
+
+// Payload com dados do cliente
+// IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
+$clientData = [
+    'cnpj' => '12.345.678/0001-90',  // CNPJ no formato com pontuação
+    'razao_social' => 'Farmácia Exemplo LTDA',
+    'email' => 'contato@exemplo.com.br',
+    'status' => 'ACTIVE'
+];
+
+/**
+ * Envia dados de um cliente para a API Nexfar
+ */
+function sendClient($apiUrl, $jwtToken, $clientData) {
+    // Converter payload para JSON
+    $jsonPayload = json_encode($clientData);
+
+    // Verificar se encoding JSON foi bem-sucedido
+    if ($jsonPayload === false) {
+        echo "✗ Erro ao codificar JSON: " . json_last_error_msg() . "\n";
+        return false;
+    }
+
+    // Inicializar cURL
+    $ch = curl_init();
+
+    // Configurar opções do cURL
+    curl_setopt($ch, CURLOPT_URL, $apiUrl . '/api/v1/clients');
+    curl_setopt($ch, CURLOPT_POST, true);  // Método POST
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);  // Corpo da requisição
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $jwtToken,  // Autenticação JWT
+        'Content-Type: application/json'       // Tipo de conteúdo JSON
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Retornar resposta como string
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // Timeout de 10 segundos
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);  // Timeout de conexão
+
+    // Configurações adicionais para debug (opcional - remover em produção)
+    // curl_setopt($ch, CURLOPT_VERBOSE, true);
+
+    // Executar requisição
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_errno($ch);
+    $curlErrorMsg = curl_error($ch);
+
+    // Verificar erros de cURL (problemas de rede/conexão)
+    if ($curlError) {
+        echo "✗ Erro de rede (cURL erro {$curlError}):\n";
+        echo "  {$curlErrorMsg}\n";
+        echo "\n  Verifique sua conexão com a internet";
+        echo "\n  e se a URL está correta.\n";
+        curl_close($ch);
+        return false;
+    }
+
+    // Fechar conexão cURL
+    curl_close($ch);
+
+    // Processar resposta baseado no status code HTTP
+    if ($httpCode == 201) {
+        // Sucesso - Cliente criado
+        $data = json_decode($response, true);
+
+        if ($data === null) {
+            echo "✗ Erro ao decodificar resposta JSON\n";
+            return false;
+        }
+
+        echo "✓ Cliente criado com sucesso!\n";
+        echo "  ID: " . ($data['id'] ?? 'N/A') . "\n";
+        echo "  Correlation ID: " . ($data['correlation_id'] ?? 'N/A') . "\n";
+        return true;
+
+    } elseif ($httpCode == 400) {
+        // Erro de validação - payload inválido
+        echo "✗ Erro de validação (400 Bad Request):\n";
+        echo "  {$response}\n";
+        echo "\n  Verifique se todos os campos obrigatórios estão presentes";
+        echo "\n  e se o formato do CNPJ está correto.\n";
+        return false;
+
+    } elseif ($httpCode == 401) {
+        // Erro de autenticação - token inválido ou expirado
+        echo "✗ Erro de autenticação (401 Unauthorized):\n";
+        echo "  Token JWT inválido ou expirado.\n";
+        echo "\n  Verifique se o token está correto e ainda é válido.\n";
+        return false;
+
+    } elseif ($httpCode >= 500) {
+        // Erro do servidor
+        echo "✗ Erro do servidor ({$httpCode}):\n";
+        echo "  O servidor está enfrentando problemas.\n";
+        echo "  Tente novamente mais tarde.\n";
+        return false;
+
+    } else {
+        // Outros erros HTTP
+        echo "✗ Erro HTTP {$httpCode}:\n";
+        echo "  {$response}\n";
+        return false;
+    }
+}
+
+// Executar função
+$success = sendClient($apiUrl, $jwtToken, $clientData);
+
+if ($success) {
+    echo "\n✓ Processo concluído com sucesso!\n";
+    exit(0);
+} else {
+    echo "\n✗ Processo falhou.\n";
+    exit(1);
+}
+
+?>
+```
+
+## Como Executar
+
+Após substituir o token JWT e os dados do cliente, execute o script:
+
+```bash
+php sendClient.php
+```
+
+**Resposta esperada em caso de sucesso:**
+
+```
+✓ Cliente criado com sucesso!
+  ID: 550e8400-e29b-41d4-a716-446655440000
+  Correlation ID: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+
+✓ Processo concluído com sucesso!
+```
+
+## Explicação do Código
+
+### 1. Configuração Inicial
+
+```php
+$apiUrl = "https://api-sandbox.nexfar.com.br";
+$jwtToken = "seu_token_jwt_aqui";
+```
+
+- **$apiUrl**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **$jwtToken**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
+
+### 2. Payload do Cliente
+
+```php
+$clientData = [
+    'cnpj' => '12.345.678/0001-90',
+    'razao_social' => 'Farmácia Exemplo LTDA',
+    'email' => 'contato@exemplo.com.br',
+    'status' => 'ACTIVE'
+];
+```
+
+Array associativo com os dados do cliente. O `json_encode()` converte automaticamente para o formato JSON esperado pela API.
+
+### 3. Configuração do cURL
+
+```php
+curl_setopt($ch, CURLOPT_URL, $apiUrl . '/api/v1/clients');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer ' . $jwtToken,
+    'Content-Type: application/json'
+]);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+```
+
+Principais opções:
+- **CURLOPT_POST**: Define método HTTP como POST
+- **CURLOPT_POSTFIELDS**: Corpo da requisição (JSON)
+- **CURLOPT_HTTPHEADER**: Headers de autenticação e content-type
+- **CURLOPT_TIMEOUT**: Timeout de 10 segundos
+- **CURLOPT_RETURNTRANSFER**: Retornar resposta como string
+
+### 4. Tratamento de Erros em 2 Níveis
+
+1. **Erros de cURL** (`curl_errno`): Problemas de rede/conexão
+2. **Erros HTTP** (status code): Problemas de validação/autenticação
+
+Cada tipo de erro recebe uma mensagem específica com orientações de resolução.
+
+## Alternativa: Usando Guzzle HTTP
+
+Se você preferir usar a biblioteca Guzzle (recomendado para projetos maiores):
+
+### Instalação
+
+```bash
+composer require guzzlehttp/guzzle
+```
+
+### Código com Guzzle
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ConnectException;
+
+// Configuração
+$apiUrl = "https://api-sandbox.nexfar.com.br";
+$jwtToken = "seu_token_jwt_aqui";
+
+$clientData = [
+    'cnpj' => '12.345.678/0001-90',
+    'razao_social' => 'Farmácia Exemplo LTDA',
+    'email' => 'contato@exemplo.com.br',
+    'status' => 'ACTIVE'
+];
+
+// Criar cliente Guzzle
+$client = new Client([
+    'base_uri' => $apiUrl,
+    'timeout'  => 10.0,
+]);
+
+try {
+    // Enviar requisição POST
+    $response = $client->post('/api/v1/clients', [
+        'json' => $clientData,  // Automaticamente serializa para JSON
+        'headers' => [
+            'Authorization' => 'Bearer ' . $jwtToken,
+            'Accept' => 'application/json',
+        ]
+    ]);
+
+    // Sucesso
+    $data = json_decode($response->getBody(), true);
+    echo "✓ Cliente criado com sucesso!\n";
+    echo "  ID: {$data['id']}\n";
+    echo "  Correlation ID: {$data['correlation_id']}\n";
+
+} catch (RequestException $e) {
+    // Erro HTTP (4xx, 5xx)
+    if ($e->hasResponse()) {
+        $statusCode = $e->getResponse()->getStatusCode();
+        $body = $e->getResponse()->getBody();
+
+        echo "✗ Erro HTTP {$statusCode}:\n";
+        echo "  {$body}\n";
+    } else {
+        echo "✗ Erro de requisição: {$e->getMessage()}\n";
+    }
+
+} catch (ConnectException $e) {
+    // Erro de conexão
+    echo "✗ Erro de conexão: {$e->getMessage()}\n";
+    echo "  Verifique sua conexão e a URL da API.\n";
+}
+
+?>
+```
+
+**Vantagens do Guzzle:**
+- Código mais limpo e orientado a objetos
+- Melhor tratamento de erros
+- Suporte a middlewares e plugins
+- Pool de conexões HTTP/2
+
+## Integração em Framework (Laravel)
+
+Se você está usando Laravel, pode usar o HTTP Client nativo:
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Http;
+
+$apiUrl = "https://api-sandbox.nexfar.com.br";
+$jwtToken = "seu_token_jwt_aqui";
+
+$response = Http::timeout(10)
+    ->withToken($jwtToken)
+    ->post("{$apiUrl}/api/v1/clients", [
+        'cnpj' => '12.345.678/0001-90',
+        'razao_social' => 'Farmácia Exemplo LTDA',
+        'email' => 'contato@exemplo.com.br',
+        'status' => 'ACTIVE'
+    ]);
+
+if ($response->successful()) {
+    $data = $response->json();
+    echo "✓ Cliente criado: {$data['id']}\n";
+} elseif ($response->status() === 400) {
+    echo "✗ Erro de validação: {$response->body()}\n";
+} elseif ($response->status() === 401) {
+    echo "✗ Erro de autenticação\n";
+} else {
+    echo "✗ Erro HTTP {$response->status()}\n";
+}
+```
+
+## Troubleshooting Comum
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized - Token Inválido">
+    **Problema:** A API retorna erro 401 Unauthorized.
+
+    **Causas Comuns:**
+    - Token JWT expirado
+    - Token JWT inválido ou malformado
+    - Token não tem permissões necessárias
+
+    **Solução:**
+    1. Verifique se o token está correto (sem espaços extras)
+    2. Confirme que o token ainda é válido (não expirou)
+    3. Entre em contato com o suporte Nexfar para renovar o token se necessário
+  </Accordion>
+
+  <Accordion title="400 Bad Request - Erro de Validação">
+    **Problema:** A API retorna erro 400 Bad Request.
+
+    **Causas Comuns:**
+    - CNPJ em formato inválido
+    - Campos obrigatórios faltando
+    - Encoding JSON incorreto
+
+    **Solução:**
+    1. Verifique se o CNPJ está no formato correto: XX.XXX.XXX/XXXX-XX
+    2. Confirme que todos os campos obrigatórios estão presentes
+    3. Valide o JSON antes de enviar:
+       ```php
+       $json = json_encode($clientData);
+       if ($json === false) {
+           echo "Erro JSON: " . json_last_error_msg();
+       }
+       ```
+    4. Revise a resposta de erro para detalhes específicos
+  </Accordion>
+
+  <Accordion title="CURLE_COULDNT_CONNECT - Erro de Conexão">
+    **Problema:** `cURL error 7: Failed to connect`
+
+    **Causas Comuns:**
+    - URL incorreta (sandbox vs produção)
+    - Problema de conectividade de rede
+    - Firewall bloqueando a conexão
+
+    **Solução:**
+    1. Verifique se a URL está correta:
+       - Sandbox: `https://api-sandbox.nexfar.com.br`
+       - Produção: `https://api.nexfar.com.br`
+    2. Teste conectividade:
+       ```bash
+       ping api-sandbox.nexfar.com.br
+       curl -I https://api-sandbox.nexfar.com.br
+       ```
+    3. Verifique configurações de firewall/proxy
+  </Accordion>
+
+  <Accordion title="CURLE_OPERATION_TIMEDOUT - Timeout">
+    **Problema:** `cURL error 28: Operation timed out`
+
+    **Causas Comuns:**
+    - Servidor lento ou sobrecarregado
+    - Problema de conectividade
+    - Timeout configurado muito baixo
+
+    **Solução:**
+    1. Aumente o timeout se necessário:
+       ```php
+       curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+       ```
+    2. Verifique a conectividade com o servidor
+    3. Tente novamente mais tarde se o servidor estiver sobrecarregado
+  </Accordion>
+
+  <Accordion title="SSL Certificate Problem">
+    **Problema:** `cURL error 60: SSL certificate problem`
+
+    **Causas Comuns:**
+    - Certificado CA bundle desatualizado
+    - Ambiente corporativo com proxy SSL
+    - PHP compilado sem suporte SSL adequado
+
+    **Solução:**
+
+    **Opção 1: Atualizar CA bundle (recomendado)**
+    ```php
+    // Download cacert.pem de https://curl.se/ca/cacert.pem
+    curl_setopt($ch, CURLOPT_CAINFO, '/path/to/cacert.pem');
+    ```
+
+    **Opção 2: Desabilitar verificação SSL (NÃO recomendado para produção)**
+    ```php
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    ```
+
+    **Atenção:** Desabilitar verificação SSL não é recomendado para ambientes de produção.
+  </Accordion>
+
+  <Accordion title="JSON Encoding Error">
+    **Problema:** `json_encode` retorna `false`
+
+    **Causas Comuns:**
+    - Caracteres UTF-8 inválidos
+    - Estrutura de dados não serializável
+    - Recursão infinita
+
+    **Solução:**
+    ```php
+    // Verificar encoding
+    $json = json_encode($clientData);
+    if ($json === false) {
+        $error = json_last_error_msg();
+        echo "Erro ao codificar JSON: {$error}\n";
+
+        // Tentar com flags específicas
+        $json = json_encode($clientData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="PHP Warning: Extension Not Loaded">
+    **Problema:** `PHP Warning: Function curl_init() not found`
+
+    **Solução:**
+    1. Verificar se cURL está instalado:
+       ```bash
+       php -m | grep curl
+       ```
+    2. Instalar extensão cURL (Ubuntu/Debian):
+       ```bash
+       sudo apt-get install php-curl
+       sudo service apache2 restart
+       ```
+    3. Habilitar em php.ini (Windows/XAMPP):
+       ```ini
+       extension=curl
+       ```
+  </Accordion>
+</AccordionGroup>
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Quick Start Guide" icon="rocket" href="/integration/api-ingestion/quickstart">
+    Entenda o fluxo completo de integração em 10 minutos
+  </Card>
+
+  <Card title="Autenticação JWT" icon="key" href="/integration/api-ingestion/authentication">
+    Aprenda como obter e gerenciar tokens JWT
+  </Card>
+
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore todos os endpoints disponíveis e seus parâmetros
+  </Card>
+
+  <Card title="Troubleshooting" icon="wrench" href="/integration/api-ingestion/troubleshooting">
+    Resolva problemas comuns de integração
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+  **Dúvidas?** Entre em contato com o suporte técnico Nexfar através do e-mail: suporte@nexfar.com.br
+</Note>
