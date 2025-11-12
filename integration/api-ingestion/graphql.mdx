@@ -35,18 +35,122 @@ GraphQL e REST não são mutuamente exclusivos - você pode usar ambos no mesmo 
 
 ## GraphQL Playground Interativo
 
-O **GraphQL Playground** é uma interface web interativa para explorar o schema e testar mutations em tempo real. Ele oferece autocompletar, documentação integrada, e validação de tipos automática.
+O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar que permite explorar o schema GraphQL e testar mutations em tempo real sem escrever código. Com tema dark mode, exemplos pré-carregados, e documentação integrada, o Playground é a forma mais rápida de testar a API GraphQL.
 
-**URLs do Playground:**
+<Card title="🎮 GraphQL Playground - Sandbox" icon="play" href="https://api-sandbox.nexfar.com.br/graphql">
+  Acesse o playground interativo no ambiente Sandbox para testar mutations sem impacto em produção.
+</Card>
 
-- **Sandbox:** `https://api-sandbox.nexfar.com.br/graphql`
-- **Staging:** `https://nf-nest-integration-staging.up.railway.app/graphql`
+### Principais Recursos
+
+- ✨ **Exemplos Pré-carregados**: Mutations prontas para executar (apenas cole seu JWT token)
+- 🎨 **Tema Dark Mode**: Interface otimizada para desenvolvedores
+- 📚 **Documentação Integrada**: Explore schema completo na tab "Docs" com autocompletar
+- 🕒 **Histórico de Queries**: Tab "History" persiste queries executadas anteriormente
+- ⚡ **Validação em Tempo Real**: Erros de tipagem são detectados antes de enviar requisição
+- 🔍 **Introspection Automático**: Schema sempre atualizado sem necessidade de documentação manual
+
+### URLs do Playground
+
+| Ambiente | URL | Status |
+|----------|-----|--------|
+| **Sandbox** | `https://api-sandbox.nexfar.com.br/graphql` | ✅ Disponível |
+| **Staging** | `https://nf-nest-integration-staging.up.railway.app/graphql` | ✅ Disponível |
+| **Produção** | `https://api.nexfar.com.br/graphql` | ❌ Desabilitado (segurança) |
 
 <Warning>
-⚠️ **GraphQL Playground está habilitado apenas em Sandbox e Staging**. Em Produção, use cliente GraphQL programático (Apollo Client, urql, etc.)
+⚠️ **GraphQL Playground está habilitado apenas em Sandbox e Staging** por motivos de segurança. Em Produção, use cliente GraphQL programático como Apollo Client, urql, ou Postman.
 </Warning>
 
-**Configuração:** Veja seção [Autenticação JWT no GraphQL](#autenticação-jwt-no-graphql) abaixo para instruções completas de configuração.
+### Como Usar o Playground
+
+<Steps>
+  <Step title="Acessar Playground">
+    Clique no card acima ou acesse diretamente: `https://api-sandbox.nexfar.com.br/graphql`
+
+    O Playground abre com uma tab pré-carregada chamada **"Exemplos - API Nexfar"** contendo mutations de exemplo.
+  </Step>
+
+  <Step title="Configurar Autenticação JWT">
+    O Playground já vem com header `Authorization` pré-configurado. Você só precisa substituir o placeholder:
+
+    1. Localize o header no canto superior (HTTP Headers)
+    2. Substitua `YOUR_JWT_TOKEN_HERE` pelo seu token JWT real
+    3. O token JWT deve ter scope `ingestion:write` ou `*`
+
+    **Exemplo:**
+    ```json
+    {
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
+
+    <Tip>
+    💡 **Onde obter token JWT?** Veja [Autenticação JWT](/integration/api-ingestion/authentication) para instruções de como gerar tokens
+    </Tip>
+  </Step>
+
+  <Step title="Executar Mutation de Exemplo">
+    O Playground vem com mutation `CreateClient` pré-carregada e pronta para executar:
+
+    1. Verifique que o JWT token está configurado
+    2. Clique no botão **"Play"** (▶️) no centro do editor
+    3. Aguarde resposta no painel da direita
+
+    **Resposta esperada:**
+    ```json
+    {
+      "data": {
+        "createClient": {
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "model": "client",
+          "message": "Cliente criado com sucesso",
+          "created_at": "2025-11-10T14:30:00Z",
+          "correlation_id": "550e8400-e29b-41d4-a716-446655440000"
+        }
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Explorar Schema e Outras Mutations">
+    Use a tab **"Docs"** (lado direito) para explorar todas as mutations disponíveis:
+
+    1. Clique em "Docs" → "Mutation"
+    2. Navegue pelos 34 modelos disponíveis
+    3. Clique em qualquer mutation para ver inputs obrigatórios
+    4. Use autocompletar (Ctrl+Space) para sugerir campos
+
+    **Mutations disponíveis:**
+    - `createClient`, `createSeller`, `createPaymentCondition` (Cadastros)
+    - `createProduct`, `createProductPrice` (Produtos)
+    - `createOrderHeader`, `createInvoice` (Pedidos)
+    - E mais 27 mutations para os outros modelos...
+  </Step>
+
+  <Step title="Validar Histórico de Envios">
+    Após executar uma mutation com sucesso, use o `correlation_id` retornado para validar no Audit Log:
+
+    ```bash
+    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
+      -H "Authorization: Bearer $TOKEN"
+    ```
+
+    **Veja também:** [Audit Log API](/integration/api-ingestion/audit-log)
+  </Step>
+</Steps>
+
+### Screenshot do Playground
+
+Abaixo está um exemplo de como o GraphQL Playground aparece quando aberto, mostrando a interface completa com mutation de exemplo, header JWT configurado, e resposta de sucesso:
+
+<img
+  src="/integration/api-ingestion/assets/graphql-playground-screenshot.png"
+  alt="GraphQL Playground da Nexfar mostrando mutation CreateClient com resposta de sucesso"
+  style={{ borderRadius: '8px', border: '1px solid #333' }}
+/>
+
+*Interface do GraphQL Playground com tema dark mode, mutation de exemplo pré-carregada, e tab "Docs" mostrando schema completo.*
 
 ## Modelos Disponíveis (34 Types)
 
