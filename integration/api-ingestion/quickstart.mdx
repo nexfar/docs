@@ -42,7 +42,7 @@ Antes de começar, você precisa de:
     ```
 
     <Tip>
-      **Validação Opcional:** Cole seu token em [jwt.io](https://jwt.io) para inspecionar claims (`client_id`, `environment`, `scopes`).
+      **Validação Opcional:** Cole seu token em [jwt.io](https://jwt.io) para inspecionar claims (`tenant_id`, `environment`, `scopes`).
     </Tip>
 
     <Warning>
@@ -316,7 +316,7 @@ Se você prefere usar Postman ao invés de linha de comando:
 </Accordion>
 
 <Accordion title="❌ 429 Too Many Requests - Rate limiting">
-  **Causa:** Você excedeu o limite de 100 requisições por minuto por client_id.
+  **Causa:** Você excedeu o limite de 100 requisições por minuto por tenant_id.
 
   **Soluções:**
   1. Aguardar período indicado no header `Retry-After` (em segundos)

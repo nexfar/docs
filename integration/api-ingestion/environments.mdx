@@ -48,7 +48,7 @@ API valida e extrai claim
   ↓
 Dados salvos com tag environment="sandbox"
   ↓
-Queries filtram: WHERE client_id=X AND environment="sandbox"
+Queries filtram: WHERE tenant_id=X AND environment="sandbox"
   ↓
 Cliente vê APENAS dados Sandbox (isolamento absoluto)
 ```
@@ -63,7 +63,7 @@ Você pode verificar qual ambiente está usando decodificando seu JWT token:
 
 ```json
 {
-  "client_id": "cli_abc123",
+  "tenant_id": "cli_abc123",
   "environment": "sandbox",  // ← "sandbox" ou "production"
   "scopes": ["ingestion:write"],
   "iat": 1707321600,
@@ -362,7 +362,7 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
   **Exemplo de Validação:**
   ```json
   {
-    "client_id": "cli_abc123",
+    "tenant_id": "cli_abc123",
     "environment": "sandbox",  // ← Deve ser "sandbox" para dados de teste
     "scopes": ["ingestion:write"],
     "exp": 1707321600

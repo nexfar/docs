@@ -22,7 +22,7 @@ A API de Ingestão Nexfar utiliza **JSON Web Tokens (JWT)** para autenticar toda
 
     **O que está incluído:**
     - Token JWT completo (string longa codificada em Base64)
-    - Client ID (`client_id`)
+    - Client ID (`tenant_id`)
     - Environment (`"sandbox"` ou `"production"`)
     - URL da API correspondente
   </Step>
@@ -60,7 +60,7 @@ A API de Ingestão Nexfar utiliza **JSON Web Tokens (JWT)** para autenticar toda
     A API Nexfar valida automaticamente:
     - ✅ Assinatura do token (garante autenticidade)
     - ✅ Expiração (`exp` claim) - token não expirado
-    - ✅ Claims obrigatórios (`client_id`, `environment`, `scopes`)
+    - ✅ Claims obrigatórios (`tenant_id`, `environment`, `scopes`)
 
     **Se válido** → Requisição processada
     **Se inválido** → Erro 401 Unauthorized
@@ -89,7 +89,7 @@ O payload do JWT contém informações (claims) sobre o cliente e suas permissõ
 
 | Claim | Tipo | Descrição |
 |-------|------|-----------|
-| `client_id` | string | Identificador único do cliente (obrigatório) |
+| `tenant_id` | string | Identificador único do cliente (obrigatório) |
 | `environment` | string | Ambiente: `"sandbox"` ou `"production"` |
 | `scopes` | array | Permissões (ex: `["ingestion:write", "audit:read"]`) |
 | `iat` | number | Issued At - timestamp Unix de emissão |
@@ -103,7 +103,7 @@ O payload do JWT contém informações (claims) sobre o cliente e suas permissõ
 
 ```json
 {
-  "client_id": "cli_abc123xyz789",
+  "tenant_id": "cli_abc123xyz789",
   "environment": "sandbox",
   "scopes": ["ingestion:write", "audit:read"],
   "iat": 1699459200,
@@ -425,7 +425,7 @@ Quando seu token expirar, siga estes passos:
 
 1. **Detectar erro 401** em sua aplicação
 2. **Contatar Nexfar** via email: [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br)
-3. **Solicitar renovação de token** (informar `client_id`)
+3. **Solicitar renovação de token** (informar `tenant_id`)
 4. **Novo token será enviado por email**
 
 <Note>
@@ -447,7 +447,7 @@ Para visualizar o conteúdo do seu token JWT sem validar assinatura, use a ferra
 2. Cole seu token no campo **"Encoded"** (lado esquerdo)
 3. Verifique claims no **payload** (lado direito, seção "Payload")
 4. Valide os seguintes claims:
-   - `client_id`: Seu identificador único
+   - `tenant_id`: Seu identificador único
    - `environment`: `"sandbox"` ou `"production"`
    - `scopes`: Permissões disponíveis
    - `exp`: Timestamp de expiração (verifique se está no futuro)
@@ -478,7 +478,7 @@ Para visualizar o conteúdo do seu token JWT sem validar assinatura, use a ferra
   **Soluções:**
   1. **Verificar cópia do token:** Certifique-se de que copiou o token completo (sem espaços extras ou quebras de linha)
   2. **Validar em jwt.io:** Cole o token em [https://jwt.io](https://jwt.io) e verifique:
-     - Claims `client_id`, `environment`, `scopes` estão presentes
+     - Claims `tenant_id`, `environment`, `scopes` estão presentes
      - Claim `exp` (expiration) está no futuro
   3. **Verificar URL:** Sandbox token deve usar `api.nexfar.com.br`, Production token deve usar `api.nexfar.com.br`
   4. **Solicitar novo token:** Se expirado, contate [suporte@nexfar.com.br](mailto:suporte@nexfar.com.br)

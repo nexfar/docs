@@ -19,7 +19,7 @@ A API Nexfar utiliza dois tipos distintos de tokens JWT:
 | Aspecto | Token de Admin | Token de Cliente (API de Ingestão) |
 |---------|----------------|-------------------------------------|
 | **Finalidade** | Gerenciar usuários, visualizar logs, configurar sistema | Enviar dados de ingestão (clientes, produtos, pedidos) |
-| **Payload** | `id`, `role`, `sessionId` | `client_id`, `environment`, `scopes`, `iat`, `exp` |
+| **Payload** | `id`, `role`, `sessionId` | `tenant_id`, `environment`, `scopes`, `iat`, `exp` |
 | **Geração** | Via API `/auth/email/login` ou banco de dados | Manualmente pela equipe Nexfar (este guia) |
 | **Validade** | 24 horas (renovável com refresh token) | Configurável (90-365 dias) |
 | **Renovação** | Automática via refresh token | Manual (solicitar à equipe Nexfar) |
@@ -37,12 +37,12 @@ A API Nexfar utiliza dois tipos distintos de tokens JWT:
 
 ```typescript
 export interface JwtPayload {
-  client_id: string;                  // Identificador único do cliente Nexfar
+  tenant_id: string;                  // Identificador único do cliente Nexfar
   environment: 'sandbox' | 'production'; // Ambiente alvo
   scopes: string[];                   // Permissões ['ingest:write', 'audit:read']
   iat: number;                        // Issued at (Unix timestamp)
   exp: number;                        // Expiration (Unix timestamp)
-  sub?: string;                       // Subject (opcional - geralmente = client_id)
+  sub?: string;                       // Subject (opcional - geralmente = tenant_id)
 }
 ```
 
@@ -55,7 +55,7 @@ export interface JwtPayload {
     "typ": "JWT"
   },
   "payload": {
-    "client_id": "cli_abc123xyz789",
+    "tenant_id": "cli_abc123xyz789",
     "environment": "sandbox",
     "scopes": ["ingest:write", "audit:read"],
     "iat": 1699459200,
@@ -123,7 +123,7 @@ const now = Math.floor(Date.now() / 1000); // Timestamp Unix atual
 const expirationTimestamp = now + (VALIDITY_DAYS * 24 * 60 * 60);
 
 const payload = {
-  client_id: CLIENT_ID,
+  tenant_id: CLIENT_ID,
   environment: ENVIRONMENT,
   scopes: SCOPES,
   iat: now,
@@ -221,7 +221,7 @@ now = int(time.time())  # Timestamp Unix atual
 expiration = now + (VALIDITY_DAYS * 24 * 60 * 60)
 
 payload = {
-    'client_id': CLIENT_ID,
+    'tenant_id': CLIENT_ID,
     'environment': ENVIRONMENT,
     'scopes': SCOPES,
     'iat': now,
@@ -282,7 +282,7 @@ Visite [https://jwt.io](https://jwt.io)
 
 ```json
 {
-  "client_id": "cli_sandbox_test_123",
+  "tenant_id": "cli_sandbox_test_123",
   "environment": "sandbox",
   "scopes": ["ingest:write", "audit:read"],
   "iat": 1699459200,
@@ -313,7 +313,7 @@ Copie o token gerado no campo "Encoded" (lado esquerdo).
 
 ### 1. Client ID Único
 
-Sempre gere um `client_id` único para cada cliente:
+Sempre gere um `tenant_id` único para cada cliente:
 
 ```javascript
 // Formato recomendado: cli_ + 16 caracteres aleatórios
@@ -381,7 +381,7 @@ Mantenha registro de tokens gerados:
 
 ```json
 {
-  "client_id": "cli_abc123xyz789",
+  "tenant_id": "cli_abc123xyz789",
   "client_name": "Farmácia XYZ Distribuidora",
   "environment": "production",
   "scopes": ["ingest:write", "audit:read"],
@@ -473,7 +473,7 @@ Após gerar o token, valide que está correto:
 1. Acesse [https://jwt.io](https://jwt.io)
 2. Cole o token no campo "Encoded"
 3. Verifique payload no lado direito:
-   - ✅ `client_id` correto
+   - ✅ `tenant_id` correto
    - ✅ `environment` correto (`sandbox` ou `production`)
    - ✅ `scopes` corretos
    - ✅ `exp` no futuro (não expirado)
@@ -542,14 +542,14 @@ curl -X GET https://api.nexfar.com.br/health \
 </Accordion>
 
 <Accordion title="❌ Client ID Não Reconhecido">
-  **Causa:** `client_id` no token não existe no sistema ou está incorreto.
+  **Causa:** `tenant_id` no token não existe no sistema ou está incorreto.
 
   **Solução:**
-  1. Verifique que `client_id` segue formato: `cli_XXXXXXXXX`
+  1. Verifique que `tenant_id` segue formato: `cli_XXXXXXXXX`
   2. Confirme que Client ID foi registrado corretamente
   3. Use Client ID consistente em todos os tokens desse cliente
 
-  **Nota:** `client_id` é usado para particionar dados - deve ser único por cliente.
+  **Nota:** `tenant_id` é usado para particionar dados - deve ser único por cliente.
 </Accordion>
 
 <Accordion title="❌ Scopes Insuficientes: Forbidden">
@@ -614,7 +614,7 @@ Mantenha registro de todos os tokens emitidos:
 
 | Campo | Descrição | Exemplo |
 |-------|-----------|---------|
-| `client_id` | Identificador do cliente | `cli_abc123xyz789` |
+| `tenant_id` | Identificador do cliente | `cli_abc123xyz789` |
 | `client_name` | Nome da empresa | Farmácia XYZ |
 | `environment` | Ambiente do token | `sandbox` ou `production` |
 | `scopes` | Permissões | `["ingest:write", "audit:read"]` |
@@ -701,7 +701,7 @@ async function generateToken() {
   const exp = now + (validityDays * 24 * 60 * 60);
 
   const payload = {
-    client_id: clientId,
+    tenant_id: clientId,
     environment,
     scopes,
     iat: now,

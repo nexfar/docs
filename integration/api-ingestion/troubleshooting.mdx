@@ -146,7 +146,7 @@ Consulte a [Documentação de Autenticação JWT](/integration/api-ingestion/aut
 ### Causa Raiz
 
 - Token JWT válido mas sem permissões (scopes) necessárias
-- Tentativa de acessar recurso de outro cliente (isolamento por client_id)
+- Tentativa de acessar recurso de outro cliente (isolamento por tenant_id)
 - Tentativa de acessar dados de outro ambiente (sandbox tentando ver production)
 - IP não permitido (se houver whitelist configurada)
 
@@ -164,7 +164,7 @@ Consulte a [Documentação de Autenticação JWT](/integration/api-ingestion/aut
 4. Verificar claim `environment` corresponde ao endpoint usado:
    - Token sandbox → usar `api.nexfar.com.br`
    - Token production → usar `api.nexfar.com.br`
-5. Confirmar que `client_id` no token corresponde aos dados que está tentando acessar
+5. Confirmar que `tenant_id` no token corresponde aos dados que está tentando acessar
 
 ### Exemplo - Ambiente Incorreto
 
@@ -181,7 +181,7 @@ curl -H "Authorization: Bearer TOKEN_SANDBOX" \
 Consulte a [Documentação de Ambientes](/integration/api-ingestion/environments) para entender melhor a separação entre Sandbox e Production.
 
 <Warning>
-⚠️ Isolamento por client_id é automático - você nunca verá dados de outros clientes mesmo que tente. Isso garante segurança dos dados.
+⚠️ Isolamento por tenant_id é automático - você nunca verá dados de outros clientes mesmo que tente. Isso garante segurança dos dados.
 </Warning>
 
 </Accordion>
@@ -190,7 +190,7 @@ Consulte a [Documentação de Ambientes](/integration/api-ingestion/environments
 
 ### Causa Raiz
 
-- Número de requisições excedeu limite configurado (100 req/min por client_id)
+- Número de requisições excedeu limite configurado (100 req/min por tenant_id)
 - Múltiplos processos enviando dados simultaneamente sem coordenação
 - Loop infinito de retry sem backoff
 
@@ -234,11 +234,11 @@ def enviar_com_retry(url, headers, payload, max_retries=3):
 ```
 
 <Tip>
-💡 Rate limit é por client_id, não por processo. Coordene envios entre múltiplas instâncias da sua aplicação para evitar 429.
+💡 Rate limit é por tenant_id, não por processo. Coordene envios entre múltiplas instâncias da sua aplicação para evitar 429.
 </Tip>
 
 <Note>
-📝 Limite padrão: 100 requisições/minuto por client_id. Para aumento de limite, contate suporte Nexfar com justificativa de volume.
+📝 Limite padrão: 100 requisições/minuto por tenant_id. Para aumento de limite, contate suporte Nexfar com justificativa de volume.
 </Note>
 
 </Accordion>
@@ -371,7 +371,7 @@ Se você enviou dados, recebeu **201 Created**, mas dados não aparecem no Data 
 
 5. **✅ Aguardar processamento**: Em casos raros, processamento pode levar 1-5 minutos. Aguarde e consulte novamente.
 
-6. **✅ Verificar client_id**: Token JWT corresponde ao cliente correto? Dados são isolados por client_id.
+6. **✅ Verificar tenant_id**: Token JWT corresponde ao cliente correto? Dados são isolados por tenant_id.
 
 7. **✅ Confirmar modelo correto**: Está consultando tabela/view correto no Data Lake? (ex: enviou `client`, consultando `clients`)
 

@@ -16,7 +16,7 @@ A Nexfar registra **100% das ingestões de dados** em um audit log imutável, pr
 
 - **Imutabilidade**: Registros são append-only e nunca podem ser alterados ou deletados
 - **Rastreabilidade Total**: Cada ingestão recebe um `correlation_id` único para rastreamento end-to-end
-- **Isolamento Automático**: Você só visualiza registros do seu próprio `client_id` (extraído do JWT)
+- **Isolamento Automático**: Você só visualiza registros do seu próprio `tenant_id` (extraído do JWT)
 - **Validação de Integridade**: Hash SHA-256 do payload permite verificar que dados não foram corrompidos
 
 <Tip>
@@ -44,14 +44,14 @@ curl -X GET "https://api.nexfar.com.br/api/v1/audit-log" \
 ```
 
 <Warning>
-🔒 **Isolamento Automático**: O endpoint filtra automaticamente por `client_id` do JWT - você só vê seus próprios registros.
+🔒 **Isolamento Automático**: O endpoint filtra automaticamente por `tenant_id` do JWT - você só vê seus próprios registros.
 </Warning>
 
 ---
 
 ## Query Parameters
 
-Todos os parâmetros são opcionais. Se nenhum filtro for fornecido, retorna todos os registros do seu `client_id` ordenados por data (mais recentes primeiro).
+Todos os parâmetros são opcionais. Se nenhum filtro for fornecido, retorna todos os registros do seu `tenant_id` ordenados por data (mais recentes primeiro).
 
 | Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
 |-----------|------|-------------|-----------|---------|
@@ -63,7 +63,7 @@ Todos os parâmetros são opcionais. Se nenhum filtro for fornecido, retorna tod
 | `page_size` | integer | Não | Tamanho da página (default: 20, máximo: 100) | `50` |
 
 <Note>
-📝 **Sem filtros?** Retorna todos os registros do seu `client_id` ordenados por data (mais recentes primeiro).
+📝 **Sem filtros?** Retorna todos os registros do seu `tenant_id` ordenados por data (mais recentes primeiro).
 </Note>
 
 <Tip>
@@ -342,7 +342,7 @@ print(f"Hash calculado: {hash_calculado}")
     **Causas**:
     - Nenhum registro corresponde aos filtros
     - Período de data sem ingestões
-    - `client_id` do JWT não tem registros
+    - `tenant_id` do JWT não tem registros
 
     **Soluções**:
     1. Ampliar período: remover `date_from` e `date_to`
