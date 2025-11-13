@@ -1,0 +1,95 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Nexfar",
+  "colors": {
+    "primary": "#6633FF",
+    "light": "#FFA500",
+    "dark": "#5229CC"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentação",
+        "groups": [
+          {
+            "group": "Documentação",
+            "pages": [
+              "index"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Integração",
+        "groups": [
+          {
+            "group": "Integração de Dados",
+            "pages": [
+              "integration/index",
+              {
+                "group": "API Nexfar",
+                "pages": [
+                  "integration/api-ingestion/overview",
+                  "integration/api-ingestion/quickstart",
+                  "integration/api-ingestion/authentication",
+                  "integration/api-ingestion/environments",
+                  "integration/api-ingestion/graphql",
+                  "integration/api-ingestion/audit-log",
+                  "integration/api-ingestion/troubleshooting",
+                  {
+                    "group": "Exemplos de Código",
+                    "pages": [
+                      "integration/api-ingestion/code-examples/python",
+                      "integration/api-ingestion/code-examples/java",
+                      "integration/api-ingestion/code-examples/nodejs",
+                      "integration/api-ingestion/code-examples/csharp",
+                      "integration/api-ingestion/code-examples/php"
+                    ]
+                  },
+                  {
+                    "group": "Referência da API",
+                    "openapi": "https://ingestion.nexfar.com.br/api/openapi.json"
+                  }
+                ]
+              },
+              {
+                "group": "Banco de Dados",
+                "pages": [
+                  "integration/deployment/data-extraction/database-views"
+                ]
+              },
+              {
+                "group": "ERPs"
+              },
+              {
+                "group": "EDI/FTP/SFTP",
+                "pages": [
+                  "integration/deployment/data-extraction/ftp"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
+    "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Acessar Plataforma",
+      "href": "https://app.nexfar.com.br"
+    }
+  },
+  "footer": {
+    "socials": {
+      "website": "https://nexfar.com.br",
+      "linkedin": "https://www.linkedin.com/company/nexfar"
+    }
+  }
+}

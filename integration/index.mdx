@@ -1,24 +1,18 @@
 ---
-title: "Documentação de Implantação"
-description: "Guia completo para integração e extração de dados do ERP com a plataforma Nexfar"
+title: "Visão Geral da Implantação"
+description: "Entenda como integrar seu ERP com a plataforma Nexfar para extração de dados"
 ---
 
-# Bem-vindo à Documentação de Implantação Nexfar
+## Objetivo
 
-Esta documentação é destinada a **parceiros técnicos** e **equipes de TI** que estão implementando a integração entre o ERP e a plataforma Nexfar.
+Esta seção documenta os métodos de integração disponíveis para que a Nexfar possa extrair dados do seu ERP. A integração permite que a plataforma Nexfar acesse informações essenciais como clientes, produtos, pedidos e condições comerciais diretamente do seu sistema.
 
-<Note>
-  **Acesso Restrito:** Esta documentação contém informações técnicas sensíveis destinadas apenas a equipes de implantação autorizadas.
-</Note>
+## Métodos de Extração de Dados
 
----
-
-## Métodos de Integração Disponíveis
-
-Escolha o método de integração mais adequado para sua infraestrutura:
+A Nexfar oferece diferentes métodos de integração para atender às necessidades e infraestrutura de cada cliente:
 
 <CardGroup cols={2}>
-  <Card title="Banco de Dados (VIEWs)" icon="database" href="/integration/deployment/data-extraction/database-views">
+  <Card title="Banco de Dados" icon="database" href="/integration/deployment/data-extraction/database-views">
     **Recomendado** - Acesso direto via VIEWs SQL padronizadas
 
     - Performance superior
@@ -51,145 +45,37 @@ Escolha o método de integração mais adequado para sua infraestrutura:
   </Card>
 </CardGroup>
 
----
+## Escolhendo o Método Ideal
 
-## Referência Rápida
+Cada método de integração possui características específicas:
 
-### IPs para Liberação
+### Banco de Dados:
+- **Melhor para**: Acesso direto e em tempo real aos dados
+- **Requisitos**: Liberação de IPs (whitelist) para acesso ao banco de dados via NAT ou via VPN Site-to-Site.
+- **Vantagens**: Performance, dados atualizados, queries customizadas
 
-<Warning>
-  **Importante:** Para integração via banco de dados, libere os seguintes IPs no firewall:
+### ERPs
+- **Melhor para**: Integração diretas com ERPs: Winthor, Result, Target, InFarma, etc.
+- **Requisitos**: Cada ERP tem requisitos individuais que devem ser observados
+- **Vantagens**: Regras já mapeadas, integração já testadas em múltiplos clientes.
 
-  - `189.28.42.170`
-  - `170.84.19.69`
-</Warning>
+### REST API Nexfar
+- **Melhor para**: Integrações modernas e flexíveis onde o distribuidor ou indústria nos envia os dados.
+- **Requisitos**: Desenvolvimento de integração com a nossa API
+- **Vantagens**: Flexibilidade, facilidade de manutenção e atualização
 
-### VIEWs Principais
-
-<AccordionGroup>
-  <Accordion title="Cadastros Básicos" icon="users">
-    - `VIEW_NEXFAR_CLIENT` - Clientes
-    - `VIEW_NEXFAR_PAYMENT_CONDITION` - Condições de pagamento
-    - `VIEW_NEXFAR_SELLER` - Vendedores
-    - `VIEW_NEXFAR_PRICE_GROUP` - Tabelas de preço
-
-    [Ver documentação completa →](/integration/deployment/data-extraction/views/cadastros-basicos)
-  </Accordion>
-
-  <Accordion title="Produtos" icon="box">
-    - `VIEW_NEXFAR_PRODUCT` - Catálogo de produtos
-    - `VIEW_NEXFAR_PRODUCT_PRICE` - Preços
-    - `VIEW_NEXFAR_PRODUCT_WAREHOUSE` - Estoque
-    - `VIEW_NEXFAR_PRODUCT_RESTRICTION` - Restrições
-
-    [Ver documentação completa →](/integration/deployment/data-extraction/views/produtos)
-  </Accordion>
-
-  <Accordion title="Pedidos" icon="file-invoice">
-    - `VIEW_NEXFAR_ORDER_HEADER` - Cabeçalho de pedidos
-    - `VIEW_NEXFAR_ORDER_ITEM` - Itens de pedidos
-    - `VIEW_NEXFAR_ORDER_DISTRIBUTOR_*` - Pedidos externos
-
-    [Ver documentação completa →](/integration/deployment/data-extraction/views/pedidos)
-  </Accordion>
-
-  <Accordion title="Ações Comerciais" icon="tag">
-    - `VIEW_NEXFAR_SALE_*` - Ofertas e promoções
-    - `VIEW_NEXFAR_COMBO_*` - Combos de produtos
-
-    [Ver documentação →](/integration/deployment/data-extraction/views/vendas)
-  </Accordion>
-</AccordionGroup>
-
----
-
-## Fluxo de Implementação
-
-<Steps>
-  <Step title="Análise e Planejamento">
-    Escolha o método de integração e revise os requisitos técnicos
-
-    [Ver métodos disponíveis →](/integration/deployment/overview)
-  </Step>
-
-  <Step title="Preparação do Ambiente">
-    Configure acessos, libere IPs e prepare infraestrutura
-
-    [Ver requisitos de VIEWs →](/integration/deployment/data-extraction/database-views)
-  </Step>
-
-  <Step title="Implementação">
-    Crie as VIEWs, endpoints ou arquivos conforme a documentação
-
-    [Ver referência de VIEWs →](/integration/deployment/data-extraction/views/cadastros-basicos)
-  </Step>
-
-  <Step title="Testes">
-    Valide a integração em ambiente de homologação
-  </Step>
-
-  <Step title="Produção">
-    Migre para produção com acompanhamento da equipe Nexfar
-  </Step>
-</Steps>
-
----
-
-## Ordem Recomendada de Implementação
-
-Para uma implantação eficiente, siga esta ordem:
-
-1. **[Cadastros Básicos](/integration/deployment/data-extraction/views/cadastros-basicos)** - Cliente, Pagamento, Vendedor (essencial)
-2. **[Produtos](/integration/deployment/data-extraction/views/produtos)** - Catálogo e preços (essencial)
-3. **[Pedidos](/integration/deployment/data-extraction/views/pedidos)** - Fluxo de pedidos (essencial)
-4. **[Documentos Fiscais](/integration/deployment/data-extraction/views/documentos-fiscais)** - NFe e documentação (recomendado)
-5. **[Vendas e Combos](/integration/deployment/data-extraction/views/vendas)** - Ações comerciais (opcional)
-6. **[Impostos e Margens](/integration/deployment/data-extraction/views/impostos-margens)** - NEXOFF (se aplicável)
-
----
-
-## Suporte Técnico
-
-<CardGroup cols={2}>
-  <Card title="Email" icon="envelope">
-    **Integração:** integracao@nexfar.com.br
-
-    **Suporte:** suporte@nexfar.com.br
-  </Card>
-
-  <Card title="Confluence" icon="book">
-    Documentação técnica interna
-
-    [Acessar Confluence →](https://nexfar.atlassian.net/)
-  </Card>
-
-  <Card title="Horário de Atendimento" icon="clock">
-    Segunda a Sexta
-
-    **9h às 18h** (Horário de Brasília)
-  </Card>
-
-  <Card title="SLA" icon="gauge">
-    Resposta em até **4 horas úteis**
-
-    (Implantações prioritárias)
-  </Card>
-</CardGroup>
-
----
+### FTP/EDI
+- **Melhor para**: Transferência de arquivos EDI e/ou arquivos em lote
+- **Requisitos**: Servidor FTP configurado
+- **Vantagens**: Simplicidade, processamento batch, baixo acoplamento
 
 ## Próximos Passos
 
-<CardGroup cols={3}>
-  <Card title="Visão Geral" icon="rocket" href="/integration/deployment/overview">
-    Entenda os métodos de integração
-  </Card>
+1. Escolha o método de integração mais adequado para sua infraestrutura
+2. Revise a documentação específica do método escolhido
+3. Prepare seu ambiente seguindo os requisitos técnicos
+4. Entre em contato com a equipe Nexfar para agendar a integração
 
-  <Card title="VIEWs de Banco" icon="database" href="/integration/deployment/data-extraction/database-views">
-    Comece com acesso via banco de dados
-  </Card>
-
-  <Card title="Referência Completa" icon="book" href="/integration/deployment/data-extraction/views/cadastros-basicos">
-    Consulte o dicionário de dados
-  </Card>
-</CardGroup>
+<Note>
+  Dúvidas sobre qual método escolher? Entre em contato com a equipe técnica da Nexfar para uma análise personalizada.
+</Note>
