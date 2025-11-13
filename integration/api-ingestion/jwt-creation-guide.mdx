@@ -1,0 +1,772 @@
+---
+title: 'Guia de Criação de Tokens JWT para Clientes'
+description: 'Guia técnico completo para geração e gerenciamento de tokens JWT para clientes da API de Ingestão Nexfar'
+icon: 'key'
+---
+
+## Visão Geral
+
+Este guia descreve como gerar e gerenciar tokens JWT para clientes da **API de Ingestão Nexfar**. Os tokens JWT são a principal forma de autenticação para permitir que clientes (distribuidores, farmácias, ERPs) enviem dados para a plataforma Nexfar.
+
+<Warning>
+  Este guia é destinado à equipe técnica Nexfar responsável por onboarding de clientes. Clientes finais **não devem** gerar seus próprios tokens - eles recebem tokens pré-configurados via email.
+</Warning>
+
+## Diferença entre Tokens de Admin e Tokens de Clientes
+
+A API Nexfar utiliza dois tipos distintos de tokens JWT:
+
+| Aspecto | Token de Admin | Token de Cliente (API de Ingestão) |
+|---------|----------------|-------------------------------------|
+| **Finalidade** | Gerenciar usuários, visualizar logs, configurar sistema | Enviar dados de ingestão (clientes, produtos, pedidos) |
+| **Payload** | `id`, `role`, `sessionId` | `client_id`, `environment`, `scopes`, `iat`, `exp` |
+| **Geração** | Via API `/auth/email/login` ou banco de dados | Manualmente pela equipe Nexfar (este guia) |
+| **Validade** | 24 horas (renovável com refresh token) | Configurável (90-365 dias) |
+| **Renovação** | Automática via refresh token | Manual (solicitar à equipe Nexfar) |
+| **Uso** | Endpoints administrativos (`/api/v1/users`, `/api/v1/audit-logs`) | Endpoints de ingestão (`/api/v1/clients`, `/graphql`, etc) |
+
+<Note>
+  Este documento foca **exclusivamente em Tokens de Cliente** para API de Ingestão. Para gerenciamento de usuários administradores, consulte [Gerenciamento de Usuários Administradores](/api-ingestion/admin-users).
+</Note>
+
+---
+
+## Estrutura do Token JWT de Cliente
+
+### Payload Obrigatório
+
+```typescript
+export interface JwtPayload {
+  client_id: string;                  // Identificador único do cliente Nexfar
+  environment: 'sandbox' | 'production'; // Ambiente alvo
+  scopes: string[];                   // Permissões ['ingest:write', 'audit:read']
+  iat: number;                        // Issued at (Unix timestamp)
+  exp: number;                        // Expiration (Unix timestamp)
+  sub?: string;                       // Subject (opcional - geralmente = client_id)
+}
+```
+
+### Exemplo de Token Decodificado
+
+```json
+{
+  "header": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "payload": {
+    "client_id": "cli_abc123xyz789",
+    "environment": "sandbox",
+    "scopes": ["ingest:write", "audit:read"],
+    "iat": 1699459200,
+    "exp": 1707321600,
+    "sub": "cli_abc123xyz789"
+  },
+  "signature": "..."
+}
+```
+
+<Info>
+  A **signature** é gerada usando o secret configurado em `AUTH_JWT_SECRET` (ambiente) e garante que o token não pode ser adulterado.
+</Info>
+
+---
+
+## Pré-requisitos para Gerar Tokens
+
+Antes de gerar um token JWT para um cliente, certifique-se de ter:
+
+1. **Client ID único** - Identificador do cliente no formato `cli_XXXXXXXXX`
+2. **Environment definido** - `sandbox` (testes) ou `production` (dados reais)
+3. **Scopes apropriados** - Permissões necessárias (ex: `["ingest:write", "audit:read"]`)
+4. **Validade do token** - Quantos dias o token será válido (ex: 90 dias para Sandbox, 365 dias para Production)
+5. **Secret JWT** - Valor de `AUTH_JWT_SECRET` da variável de ambiente do servidor
+
+<Warning>
+  **IMPORTANTE:** O `AUTH_JWT_SECRET` NUNCA deve ser exposto ou compartilhado publicamente. Tokens gerados com secret incorreto serão rejeitados pela API.
+</Warning>
+
+---
+
+## Método 1: Gerar Token via Node.js (Recomendado)
+
+### Passo 1: Instalar Dependências
+
+```bash
+npm install jsonwebtoken
+```
+
+### Passo 2: Script de Geração
+
+Crie um arquivo `generate-client-jwt.js`:
+
+```javascript
+const jwt = require('jsonwebtoken');
+
+// ============================================
+// CONFIGURAÇÃO - AJUSTAR CONFORME NECESSÁRIO
+// ============================================
+
+const CLIENT_ID = 'cli_abc123xyz789';  // Identificador único do cliente
+const ENVIRONMENT = 'sandbox';          // 'sandbox' ou 'production'
+const SCOPES = ['ingest:write', 'audit:read']; // Permissões
+const VALIDITY_DAYS = 90;               // Quantos dias o token será válido
+
+// Secret JWT (DEVE SER O MESMO DO SERVIDOR!)
+const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'your-secret-key-change-in-production';
+
+// ============================================
+// GERAÇÃO DO TOKEN
+// ============================================
+
+const now = Math.floor(Date.now() / 1000); // Timestamp Unix atual
+const expirationTimestamp = now + (VALIDITY_DAYS * 24 * 60 * 60);
+
+const payload = {
+  client_id: CLIENT_ID,
+  environment: ENVIRONMENT,
+  scopes: SCOPES,
+  iat: now,
+  exp: expirationTimestamp,
+  sub: CLIENT_ID  // Subject (opcional)
+};
+
+const token = jwt.sign(payload, JWT_SECRET, {
+  algorithm: 'HS256'
+});
+
+// ============================================
+// OUTPUT
+// ============================================
+
+console.log('\n=== Token JWT Gerado com Sucesso ===\n');
+console.log('Client ID:', CLIENT_ID);
+console.log('Environment:', ENVIRONMENT);
+console.log('Scopes:', SCOPES.join(', '));
+console.log('Issued At:', new Date(now * 1000).toISOString());
+console.log('Expires At:', new Date(expirationTimestamp * 1000).toISOString());
+console.log('Validity:', VALIDITY_DAYS, 'dias\n');
+console.log('--- TOKEN JWT (copie e cole) ---');
+console.log(token);
+console.log('\n');
+```
+
+### Passo 3: Executar o Script
+
+```bash
+# Definir secret JWT (DEVE SER O MESMO DO SERVIDOR!)
+export AUTH_JWT_SECRET="seu-secret-jwt-do-servidor"
+
+# Executar script
+node generate-client-jwt.js
+```
+
+**Saída Esperada:**
+
+```
+=== Token JWT Gerado com Sucesso ===
+
+Client ID: cli_abc123xyz789
+Environment: sandbox
+Scopes: ingest:write, audit:read
+Issued At: 2025-11-15T14:30:00.000Z
+Expires At: 2026-02-13T14:30:00.000Z
+Validity: 90 dias
+
+--- TOKEN JWT (copie e cole) ---
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJjbGlfYWJjMTIzIiwiZW52aXJvbm1lbnQiOiJzYW5kYm94Iiwic2NvcGVzIjpbImluZ2VzdGlvbjp3cml0ZSIsImF1ZGl0OnJlYWQiXSwiaWF0IjoxNjk5NDU5MjAwLCJleHAiOjE3MDczMjE2MDAsInN1YiI6ImNsaV9hYmMxMjMifQ.8h3Kx9L2mN4pQ5rS6tU7vW8xY9zA0bC1dE2fG3hI4jK
+```
+
+<Check>
+  Copie o token completo (string longa) e envie para o cliente via email seguro.
+</Check>
+
+---
+
+## Método 2: Gerar Token via Python
+
+### Passo 1: Instalar Dependências
+
+```bash
+pip install pyjwt
+```
+
+### Passo 2: Script de Geração
+
+Crie um arquivo `generate_client_jwt.py`:
+
+```python
+import jwt
+import time
+import os
+from datetime import datetime, timedelta
+
+# ============================================
+# CONFIGURAÇÃO - AJUSTAR CONFORME NECESSÁRIO
+# ============================================
+
+CLIENT_ID = 'cli_abc123xyz789'  # Identificador único do cliente
+ENVIRONMENT = 'sandbox'          # 'sandbox' ou 'production'
+SCOPES = ['ingest:write', 'audit:read']  # Permissões
+VALIDITY_DAYS = 90               # Quantos dias o token será válido
+
+# Secret JWT (DEVE SER O MESMO DO SERVIDOR!)
+JWT_SECRET = os.getenv('AUTH_JWT_SECRET', 'your-secret-key-change-in-production')
+
+# ============================================
+# GERAÇÃO DO TOKEN
+# ============================================
+
+now = int(time.time())  # Timestamp Unix atual
+expiration = now + (VALIDITY_DAYS * 24 * 60 * 60)
+
+payload = {
+    'client_id': CLIENT_ID,
+    'environment': ENVIRONMENT,
+    'scopes': SCOPES,
+    'iat': now,
+    'exp': expiration,
+    'sub': CLIENT_ID  # Subject (opcional)
+}
+
+token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+
+# ============================================
+# OUTPUT
+# ============================================
+
+print('\n=== Token JWT Gerado com Sucesso ===\n')
+print(f'Client ID: {CLIENT_ID}')
+print(f'Environment: {ENVIRONMENT}')
+print(f'Scopes: {", ".join(SCOPES)}')
+print(f'Issued At: {datetime.fromtimestamp(now).isoformat()}')
+print(f'Expires At: {datetime.fromtimestamp(expiration).isoformat()}')
+print(f'Validity: {VALIDITY_DAYS} dias\n')
+print('--- TOKEN JWT (copie e cole) ---')
+print(token)
+print('\n')
+```
+
+### Passo 3: Executar o Script
+
+```bash
+# Definir secret JWT (DEVE SER O MESMO DO SERVIDOR!)
+export AUTH_JWT_SECRET="seu-secret-jwt-do-servidor"
+
+# Executar script
+python generate_client_jwt.py
+```
+
+---
+
+## Método 3: Gerar Token Online (jwt.io) - Apenas Sandbox
+
+<Warning>
+  **NUNCA** use ferramentas online para gerar tokens de **produção**. Use apenas para tokens de **Sandbox** e com secrets de teste.
+</Warning>
+
+### Passo 1: Acessar jwt.io
+
+Visite [https://jwt.io](https://jwt.io)
+
+### Passo 2: Configurar Header
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+### Passo 3: Configurar Payload
+
+```json
+{
+  "client_id": "cli_sandbox_test_123",
+  "environment": "sandbox",
+  "scopes": ["ingest:write", "audit:read"],
+  "iat": 1699459200,
+  "exp": 1707321600,
+  "sub": "cli_sandbox_test_123"
+}
+```
+
+**Como calcular timestamps:**
+- `iat` (Issued At): Timestamp Unix atual → [https://www.unixtimestamp.com](https://www.unixtimestamp.com)
+- `exp` (Expiration): `iat + (90 * 24 * 60 * 60)` (90 dias)
+
+### Passo 4: Inserir Secret
+
+Na seção "Verify Signature", insira o `AUTH_JWT_SECRET` do servidor.
+
+### Passo 5: Copiar Token
+
+Copie o token gerado no campo "Encoded" (lado esquerdo).
+
+<Warning>
+  **Lembre-se:** Este método é APENAS para Sandbox e testes. Tokens de Production devem ser gerados via scripts (Método 1 ou 2).
+</Warning>
+
+---
+
+## Boas Práticas de Geração de Tokens
+
+### 1. Client ID Único
+
+Sempre gere um `client_id` único para cada cliente:
+
+```javascript
+// Formato recomendado: cli_ + 16 caracteres aleatórios
+const crypto = require('crypto');
+const clientId = 'cli_' + crypto.randomBytes(8).toString('hex');
+// Exemplo: cli_a1b2c3d4e5f6g7h8
+```
+
+### 2. Validade por Ambiente
+
+Recomendações de validade do token:
+
+| Environment | Validade Recomendada | Justificativa |
+|-------------|---------------------|---------------|
+| **Sandbox** | 90 dias | Tempo suficiente para testes, mas força renovação periódica |
+| **Production** | 365 dias | Reduz fricção operacional, mas requer renovação anual |
+
+<Tip>
+  Configure alertas para notificar clientes 30 dias antes da expiração do token para evitar interrupções no serviço.
+</Tip>
+
+### 3. Scopes Apropriados
+
+Defina apenas os scopes necessários:
+
+| Scope | Descrição | Quando Usar |
+|-------|-----------|-------------|
+| `ingest:write` | Permite enviar dados de ingestão (POST, PUT) | Sempre para clientes da API |
+| `audit:read` | Permite consultar audit log (GET /audit-logs) | Opcional - se cliente precisa rastreabilidade |
+| `ingest:read` | Permite consultar dados ingeridos (GET) | Raro - maioria dos clientes só envia dados |
+
+**Exemplo de Configuração:**
+
+```javascript
+// Cliente padrão (apenas envio)
+const scopes = ['ingest:write'];
+
+// Cliente avançado (envio + rastreabilidade)
+const scopes = ['ingest:write', 'audit:read'];
+```
+
+### 4. Rotação de Secrets
+
+<Warning>
+  Se o `AUTH_JWT_SECRET` for comprometido, **TODOS** os tokens JWT se tornam inválidos quando o secret é alterado.
+</Warning>
+
+**Processo de Rotação de Secret:**
+
+1. Gerar novo secret seguro (min. 32 caracteres)
+2. Atualizar variável de ambiente `AUTH_JWT_SECRET` no servidor
+3. Reiniciar aplicação NestJS
+4. **TODOS** os clientes precisam receber novos tokens JWT
+
+```bash
+# Gerar novo secret (Linux/macOS)
+openssl rand -base64 32
+
+# Output exemplo: 7Kx9L2mN4pQ5rS6tU7vW8xY9zA0bC1dE2fG3hI4jKs=
+```
+
+### 5. Armazenamento Seguro de Tokens Gerados
+
+Mantenha registro de tokens gerados:
+
+```json
+{
+  "client_id": "cli_abc123xyz789",
+  "client_name": "Farmácia XYZ Distribuidora",
+  "environment": "production",
+  "scopes": ["ingest:write", "audit:read"],
+  "issued_at": "2025-11-15T14:30:00.000Z",
+  "expires_at": "2026-11-15T14:30:00.000Z",
+  "token_hash": "sha256:a1b2c3d4...",  // Não armazene o token completo!
+  "status": "active"
+}
+```
+
+<Tip>
+  Armazene apenas um **hash SHA-256** do token, nunca o token completo. Isso previne vazamento acidental.
+</Tip>
+
+---
+
+## Fluxo de Onboarding de Cliente
+
+### Processo Completo
+
+```mermaid
+sequenceDiagram
+    participant Cliente
+    participant Nexfar Tech Team
+    participant API
+
+    Cliente->>Nexfar Tech Team: Solicita integração
+    Nexfar Tech Team->>Nexfar Tech Team: Gera Client ID único
+    Nexfar Tech Team->>Nexfar Tech Team: Gera JWT Sandbox (90 dias)
+    Nexfar Tech Team->>Cliente: Email com credenciais Sandbox
+    Cliente->>API: Testa integração (Sandbox)
+    Cliente->>Nexfar Tech Team: Confirma validação completa
+    Nexfar Tech Team->>Nexfar Tech Team: Gera JWT Production (365 dias)
+    Nexfar Tech Team->>Cliente: Email com credenciais Production
+    Cliente->>API: Envia dados reais (Production)
+```
+
+### Template de Email para Onboarding
+
+```
+Assunto: Credenciais de Acesso - API de Ingestão Nexfar (Sandbox)
+
+Olá [Nome do Cliente],
+
+Bem-vindo à API de Ingestão Nexfar! Seguem suas credenciais de acesso ao ambiente Sandbox:
+
+---
+
+**Ambiente:** Sandbox (Testes)
+**URL Base:** https://api-sandbox.nexfar.com.br
+**Client ID:** cli_abc123xyz789
+**Validade do Token:** 90 dias (até 13/02/2026)
+
+**Token JWT:**
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJjbGlfYWJjMTIzIiwiZW52aXJvbm1lbnQiOiJzYW5kYm94Iiwic2NvcGVzIjpbImluZ2VzdGlvbjp3cml0ZSIsImF1ZGl0OnJlYWQiXSwiaWF0IjoxNjk5NDU5MjAwLCJleHAiOjE3MDczMjE2MDAsInN1YiI6ImNsaV9hYmMxMjMifQ.8h3Kx9L2mN4pQ5rS6tU7vW8xY9zA0bC1dE2fG3hI4jK
+```
+
+---
+
+**Próximos Passos:**
+
+1. Acesse a documentação: https://docs.nexfar.com.br/api-ingestion/quickstart
+2. Configure sua aplicação para apontar para o Sandbox
+3. Envie dados de teste
+4. Após validação completa, solicite credenciais de Produção
+
+**Importante:**
+- ⚠️ Dados no Sandbox são deletados após 30 dias
+- ⚠️ Use apenas dados fictícios no Sandbox (NUNCA dados reais)
+- 🔒 Armazene o token em variável de ambiente (não em código)
+
+Para dúvidas, responda este email ou contate: suporte@nexfar.com.br
+
+Atenciosamente,
+Equipe Nexfar
+```
+
+---
+
+## Validação e Troubleshooting
+
+### Validar Token Gerado
+
+Após gerar o token, valide que está correto:
+
+#### Opção 1: Decodificar em jwt.io
+
+1. Acesse [https://jwt.io](https://jwt.io)
+2. Cole o token no campo "Encoded"
+3. Verifique payload no lado direito:
+   - ✅ `client_id` correto
+   - ✅ `environment` correto (`sandbox` ou `production`)
+   - ✅ `scopes` corretos
+   - ✅ `exp` no futuro (não expirado)
+
+#### Opção 2: Testar na API
+
+```bash
+# Testar token Sandbox
+curl -X GET https://api-sandbox.nexfar.com.br/health \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+
+# Resposta esperada (200 OK):
+{
+  "status": "ok",
+  "info": {
+    "database": { "status": "up" },
+    "memory_heap": { "status": "up" }
+  }
+}
+```
+
+<Check>
+  Se receber **200 OK**, o token está válido e funcional!
+</Check>
+
+### Problemas Comuns
+
+<AccordionGroup>
+
+<Accordion title="❌ Token Inválido: Signature Invalid">
+  **Causa:** Secret JWT usado para gerar o token é diferente do secret do servidor.
+
+  **Solução:**
+  1. Confirme que `AUTH_JWT_SECRET` do script = `AUTH_JWT_SECRET` do servidor
+  2. Verifique se não há espaços extras ou caracteres ocultos no secret
+  3. Regere o token com o secret correto
+
+  **Exemplo de Verificação:**
+  ```bash
+  # No servidor NestJS
+  echo $AUTH_JWT_SECRET
+
+  # No script de geração
+  echo $AUTH_JWT_SECRET
+
+  # DEVEM SER IDÊNTICOS
+  ```
+</Accordion>
+
+<Accordion title="❌ Token Expirado: Token has expired">
+  **Causa:** Claim `exp` (expiration) está no passado.
+
+  **Solução:**
+  1. Verifique timestamp de expiração em jwt.io
+  2. Confirme que `exp` está no futuro
+  3. Regere o token com nova validade
+
+  **Cálculo de Expiração:**
+  ```javascript
+  const now = Math.floor(Date.now() / 1000); // Agora
+  const exp = now + (90 * 24 * 60 * 60);      // +90 dias
+
+  console.log('Agora:', new Date(now * 1000).toISOString());
+  console.log('Expira:', new Date(exp * 1000).toISOString());
+  ```
+</Accordion>
+
+<Accordion title="❌ Client ID Não Reconhecido">
+  **Causa:** `client_id` no token não existe no sistema ou está incorreto.
+
+  **Solução:**
+  1. Verifique que `client_id` segue formato: `cli_XXXXXXXXX`
+  2. Confirme que Client ID foi registrado corretamente
+  3. Use Client ID consistente em todos os tokens desse cliente
+
+  **Nota:** `client_id` é usado para particionar dados - deve ser único por cliente.
+</Accordion>
+
+<Accordion title="❌ Scopes Insuficientes: Forbidden">
+  **Causa:** Token não tem scopes necessários para a operação.
+
+  **Exemplo:**
+  - Tentou enviar dados (POST) mas token só tem `audit:read`
+  - Tentou consultar audit log mas token só tem `ingest:write`
+
+  **Solução:**
+  1. Verifique scopes atuais do token em jwt.io
+  2. Regere token com scopes corretos: `["ingest:write", "audit:read"]`
+
+  **Scopes Recomendados:**
+  ```javascript
+  // Cliente padrão (envio de dados)
+  scopes: ['ingest:write']
+
+  // Cliente avançado (envio + rastreabilidade)
+  scopes: ['ingest:write', 'audit:read']
+  ```
+</Accordion>
+
+<Accordion title="✅ Token Válido mas Dados Não Aparecem">
+  **Causa:** Possível problema de isolamento de ambiente.
+
+  **Validação:**
+  1. Verifique claim `environment` do token em jwt.io
+  2. Confirme URL usada:
+     - Sandbox: `api-sandbox.nexfar.com.br`
+     - Production: `api.nexfar.com.br`
+  3. Dados Sandbox NUNCA aparecem em Production (isolamento absoluto)
+
+  **Solução:**
+  - Se token Sandbox mas esperava Production: solicite token Production
+  - Se token Production mas usando URL Sandbox: corrija URL
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Segurança e Compliance
+
+### Proteção do Secret JWT
+
+<Warning>
+  O `AUTH_JWT_SECRET` é a chave mestra para todos os tokens JWT. Se comprometido, **TODOS** os tokens devem ser revogados e regenerados.
+</Warning>
+
+**Boas Práticas:**
+
+1. **Nunca exponha em código:** Use variáveis de ambiente
+2. **Rotacione periodicamente:** A cada 6-12 meses
+3. **Armazene em secrets manager:** AWS Secrets Manager, Azure Key Vault, HashiCorp Vault
+4. **Acesso restrito:** Apenas tech leads e DevOps devem ter acesso
+5. **Auditoria:** Mantenha log de quem acessou o secret
+
+### Registro de Tokens Emitidos
+
+Mantenha registro de todos os tokens emitidos:
+
+| Campo | Descrição | Exemplo |
+|-------|-----------|---------|
+| `client_id` | Identificador do cliente | `cli_abc123xyz789` |
+| `client_name` | Nome da empresa | Farmácia XYZ |
+| `environment` | Ambiente do token | `sandbox` ou `production` |
+| `scopes` | Permissões | `["ingest:write", "audit:read"]` |
+| `issued_at` | Data de emissão | `2025-11-15T14:30:00Z` |
+| `expires_at` | Data de expiração | `2026-02-13T14:30:00Z` |
+| `issued_by` | Quem emitiu | `tech@nexfar.com.br` |
+| `status` | Status do token | `active`, `expired`, `revoked` |
+| `revoked_at` | Data de revogação | `2025-12-01T10:00:00Z` (se revogado) |
+| `revoked_reason` | Motivo da revogação | "Client requested new token" |
+
+### Revogação de Tokens
+
+<Warning>
+  Tokens JWT são **stateless** - não há como revogá-los individualmente sem implementação adicional.
+</Warning>
+
+**Opções de Revogação:**
+
+1. **Rotação de Secret (Revogação Global):**
+   - Altera `AUTH_JWT_SECRET`
+   - **TODOS** os tokens existentes se tornam inválidos
+   - Exige reemissão de tokens para todos os clientes
+
+2. **Blacklist de Tokens (Implementação Futura):**
+   - Manter lista de tokens revogados em Redis
+   - API verifica blacklist antes de aceitar token
+   - Permite revogação individual de tokens
+
+3. **Expiração Curta + Refresh (Implementação Futura):**
+   - Tokens de curta duração (ex: 1 hora)
+   - Refresh token para renovação automática
+   - Cliente revogado: não recebe novo refresh
+
+---
+
+## Automação de Geração de Tokens
+
+### Script CLI Completo
+
+Crie um CLI tool para facilitar geração de tokens:
+
+```javascript
+#!/usr/bin/env node
+// save as: bin/generate-client-jwt.js
+
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function prompt(question) {
+  return new Promise((resolve) => {
+    rl.question(question, resolve);
+  });
+}
+
+async function generateToken() {
+  console.log('\n=== Nexfar JWT Token Generator ===\n');
+
+  // Coletar inputs
+  const clientName = await prompt('Client Name (Farmácia XYZ): ');
+  const clientIdInput = await prompt('Client ID (deixe vazio para gerar automaticamente): ');
+  const clientId = clientIdInput || 'cli_' + crypto.randomBytes(8).toString('hex');
+
+  const environment = await prompt('Environment (sandbox/production) [sandbox]: ') || 'sandbox';
+  const validityDays = parseInt(await prompt('Validade em dias [90]: ') || '90');
+  const scopesInput = await prompt('Scopes (separados por vírgula) [ingest:write,audit:read]: ') || 'ingest:write,audit:read';
+  const scopes = scopesInput.split(',').map(s => s.trim());
+
+  const secret = process.env.AUTH_JWT_SECRET;
+  if (!secret) {
+    console.error('\n❌ Erro: AUTH_JWT_SECRET não definido!');
+    console.error('Execute: export AUTH_JWT_SECRET="your-secret-here"\n');
+    rl.close();
+    return;
+  }
+
+  // Gerar token
+  const now = Math.floor(Date.now() / 1000);
+  const exp = now + (validityDays * 24 * 60 * 60);
+
+  const payload = {
+    client_id: clientId,
+    environment,
+    scopes,
+    iat: now,
+    exp,
+    sub: clientId
+  };
+
+  const token = jwt.sign(payload, secret, { algorithm: 'HS256' });
+
+  // Output
+  console.log('\n✅ Token JWT Gerado com Sucesso!\n');
+  console.log('Client Name:', clientName);
+  console.log('Client ID:', clientId);
+  console.log('Environment:', environment);
+  console.log('Scopes:', scopes.join(', '));
+  console.log('Issued At:', new Date(now * 1000).toISOString());
+  console.log('Expires At:', new Date(exp * 1000).toISOString());
+  console.log('Validity:', validityDays, 'dias\n');
+  console.log('--- TOKEN JWT ---');
+  console.log(token);
+  console.log('\n');
+
+  rl.close();
+}
+
+generateToken();
+```
+
+**Uso:**
+
+```bash
+chmod +x bin/generate-client-jwt.js
+export AUTH_JWT_SECRET="your-secret-here"
+./bin/generate-client-jwt.js
+```
+
+---
+
+## Referências
+
+### Documentação Interna
+
+- [Autenticação JWT](/api-ingestion/authentication) - Guia para clientes sobre como usar tokens
+- [Ambientes: Sandbox vs Produção](/api-ingestion/environments) - Diferença entre ambientes
+- [Gerenciamento de Usuários Administradores](/api-ingestion/admin-users) - Tokens de Admin
+
+### Documentação Externa
+
+- [JWT.io](https://jwt.io) - Ferramenta de decodificação de tokens
+- [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519) - Especificação oficial JWT
+- [OWASP JWT Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html)
+
+### Bibliotecas Recomendadas
+
+- **Node.js:** [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- **Python:** [PyJWT](https://pypi.org/project/PyJWT/)
+- **Java:** [java-jwt](https://github.com/auth0/java-jwt)
+- **C#:** [System.IdentityModel.Tokens.Jwt](https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/)
+
+---
+
+## Suporte
+
+Para dúvidas ou problemas relacionados à geração de tokens JWT:
+
+- **Email:** suporte@nexfar.com.br
+- **Slack:** #nexfar-tech-team
+- **Documentação Técnica:** [docs.nexfar.com.br](https://docs.nexfar.com.br)
