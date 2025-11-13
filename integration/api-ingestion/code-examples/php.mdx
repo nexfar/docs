@@ -40,7 +40,7 @@ O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a A
 <?php
 
 // Configuração da API
-$apiUrl = "https://api-sandbox.nexfar.com.br";
+$apiUrl = "https://api.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido pela Nexfar
 
 // Payload com dados do cliente
@@ -184,7 +184,7 @@ php sendClient.php
 ### 1. Configuração Inicial
 
 ```php
-$apiUrl = "https://api-sandbox.nexfar.com.br";
+$apiUrl = "https://api.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 ```
 
@@ -253,7 +253,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 
 // Configuração
-$apiUrl = "https://api-sandbox.nexfar.com.br";
+$apiUrl = "https://api.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 
 $clientData = [
@@ -321,7 +321,7 @@ Se você está usando Laravel, pode usar o HTTP Client nativo:
 
 use Illuminate\Support\Facades\Http;
 
-$apiUrl = "https://api-sandbox.nexfar.com.br";
+$apiUrl = "https://api.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 
 $response = Http::timeout(10)
@@ -393,12 +393,11 @@ if ($response->successful()) {
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - Sandbox: `https://api-sandbox.nexfar.com.br`
-       - Produção: `https://api.nexfar.com.br`
+       - `https://api.nexfar.com.br`
     2. Teste conectividade:
        ```bash
-       ping api-sandbox.nexfar.com.br
-       curl -I https://api-sandbox.nexfar.com.br
+       ping api.nexfar.com.br
+       curl -I https://api.nexfar.com.br
        ```
     3. Verifique configurações de firewall/proxy
   </Accordion>

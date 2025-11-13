@@ -118,11 +118,11 @@ Veja mais exemplos na seção [Erros de Validação Comuns](#erros-de-validacao-
 ```bash
 # ❌ Erro: Faltando "Bearer "
 curl -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  https://api-sandbox.nexfar.com.br/api/v1/clients
+  https://api.nexfar.com.br/api/v1/clients
 
 # ✅ Correto: Incluir "Bearer "
 curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  https://api-sandbox.nexfar.com.br/api/v1/clients
+  https://api.nexfar.com.br/api/v1/clients
 ```
 
 ### Como Verificar Expiração do Token
@@ -162,7 +162,7 @@ Consulte a [Documentação de Autenticação JWT](/integration/api-ingestion/aut
 2. Confirmar que scope necessário está presente (ex: `ingest:write`)
 3. Se scope ausente: Solicitar atualização de permissões à Nexfar
 4. Verificar claim `environment` corresponde ao endpoint usado:
-   - Token sandbox → usar `api-sandbox.nexfar.com.br`
+   - Token sandbox → usar `api.nexfar.com.br`
    - Token production → usar `api.nexfar.com.br`
 5. Confirmar que `client_id` no token corresponde aos dados que está tentando acessar
 
@@ -175,7 +175,7 @@ curl -H "Authorization: Bearer TOKEN_SANDBOX" \
 
 # ✅ Correto: Token sandbox com URL sandbox
 curl -H "Authorization: Bearer TOKEN_SANDBOX" \
-  https://api-sandbox.nexfar.com.br/api/v1/clients
+  https://api.nexfar.com.br/api/v1/clients
 ```
 
 Consulte a [Documentação de Ambientes](/integration/api-ingestion/environments) para entender melhor a separação entre Sandbox e Production.

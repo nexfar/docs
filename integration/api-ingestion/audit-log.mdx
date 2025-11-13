@@ -32,14 +32,14 @@ O endpoint GET `/api/v1/audit-log` permite consultar o histórico completo de en
 ### Especificação do Endpoint
 
 - **Método HTTP**: `GET`
-- **URL Sandbox**: `https://api-sandbox.nexfar.com.br/api/v1/audit-log`
+- **URL Sandbox**: `https://api.nexfar.com.br/api/v1/audit-log`
 - **URL Produção**: `https://api.nexfar.com.br/api/v1/audit-log`
 - **Autenticação**: Bearer token JWT (obrigatório)
 
 ### Exemplo Básico
 
 ```bash
-curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log" \
+curl -X GET "https://api.nexfar.com.br/api/v1/audit-log" \
   -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
 ```
 
@@ -132,28 +132,28 @@ A resposta é paginada e inclui metadados de paginação.
 <Tabs>
   <Tab title="Últimos 7 dias">
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-08" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-08" \
       -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
     ```
   </Tab>
 
   <Tab title="Apenas falhas">
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?status=failed" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?status=failed" \
       -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
     ```
   </Tab>
 
   <Tab title="Modelo específico (clients)">
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?model=client&page=1&page_size=20" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?model=client&page=1&page_size=20" \
       -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
     ```
   </Tab>
 
   <Tab title="Paginação - Página 2">
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?page=2&page_size=50" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?page=2&page_size=50" \
       -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
     ```
   </Tab>
@@ -165,7 +165,7 @@ A resposta é paginada e inclui metadados de paginação.
 import requests
 import os
 
-url = "https://api-sandbox.nexfar.com.br/api/v1/audit-log"
+url = "https://api.nexfar.com.br/api/v1/audit-log"
 headers = {
     "Authorization": f"Bearer {os.getenv('NEXFAR_JWT_TOKEN')}"
 }
@@ -239,7 +239,7 @@ print(f"Hash calculado: {hash_calculado}")
 
     **Exemplo**:
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?status=failed&date_from=2025-11-01" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?status=failed&date_from=2025-11-01" \
       -H "Authorization: Bearer TOKEN"
     ```
   </Accordion>
@@ -254,7 +254,7 @@ print(f"Hash calculado: {hash_calculado}")
 
     **Exemplo**:
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?model=client&date_from=2025-11-08" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?model=client&date_from=2025-11-08" \
       -H "Authorization: Bearer TOKEN"
     ```
   </Accordion>
@@ -281,7 +281,7 @@ print(f"Hash calculado: {hash_calculado}")
 
     **Exemplo**:
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-30&page_size=100" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?date_from=2025-11-01&date_to=2025-11-30&page_size=100" \
       -H "Authorization: Bearer TOKEN"
     ```
   </Accordion>
@@ -382,7 +382,7 @@ print(f"Hash calculado: {hash_calculado}")
 
 | Aspecto | Sandbox | Production |
 |---------|---------|------------|
-| **URL** | `https://api-sandbox.nexfar.com.br/api/v1/audit-log` | `https://api.nexfar.com.br/api/v1/audit-log` |
+| **URL** | `https://api.nexfar.com.br/api/v1/audit-log` | `https://api.nexfar.com.br/api/v1/audit-log` |
 | **Dados** | Dados de teste, podem ser deletados após 30 dias | Dados reais, armazenados permanentemente |
 | **Retenção** | 30 dias (limpeza automática) | Permanente (conforme política de retenção) |
 | **Isolamento** | Isolado logicamente via JWT claim `environment=sandbox` | Isolado via JWT claim `environment=production` |

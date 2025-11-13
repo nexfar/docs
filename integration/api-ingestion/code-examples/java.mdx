@@ -53,7 +53,7 @@ import java.time.Duration;
 public class NexfarApiClient {
 
     // Configuração da API
-    private static final String API_URL = "https://api-sandbox.nexfar.com.br";
+    private static final String API_URL = "https://api.nexfar.com.br";
     private static final String JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
 
     public static void main(String[] args) {
@@ -199,7 +199,7 @@ Correlation ID: 7c9e6679-7425-40de-944b-e07fc1f90ae7
 ### 1. Configuração Inicial
 
 ```java
-private static final String API_URL = "https://api-sandbox.nexfar.com.br";
+private static final String API_URL = "https://api.nexfar.com.br";
 private static final String JWT_TOKEN = "seu_token_jwt_aqui";
 ```
 
@@ -347,7 +347,7 @@ Map<String, Object> responseData = gson.fromJson(response.body(), Map.class);
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - Sandbox: `https://api-sandbox.nexfar.com.br`
+       - Sandbox: `https://api.nexfar.com.br`
        - Produção: `https://api.nexfar.com.br`
     2. Teste sua conexão com a internet
     3. Verifique configurações de firewall/proxy corporativo

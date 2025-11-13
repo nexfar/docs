@@ -18,7 +18,7 @@ A filosofia é simples: **teste sem riscos antes de enviar dados reais**. O Sand
 
 | Aspecto | Sandbox | Produção |
 |---------|---------|----------|
-| **URL Base** | `api-sandbox.nexfar.com.br` | `api.nexfar.com.br` |
+| **URL Base** | `api.nexfar.com.br` | `api.nexfar.com.br` |
 | **JWT Claim `environment`** | `"sandbox"` | `"production"` |
 | **Finalidade** | Testes, desenvolvimento, integração | Dados reais, uso em produção |
 | **Dados** | Isolados, fictícios ou de teste | Dados reais da operação |
@@ -118,11 +118,11 @@ Dados no Sandbox são **temporários** e deletados automaticamente após **30 di
 
 <Steps>
   <Step title="Começar no Sandbox">
-    Receba credenciais JWT Sandbox via email da Nexfar. Configure sua aplicação para apontar para `api-sandbox.nexfar.com.br`.
+    Receba credenciais JWT Sandbox via email da Nexfar. Configure sua aplicação para apontar para `api.nexfar.com.br`.
 
     **O que você receberá:**
     - Token JWT com claim `environment: "sandbox"`
-    - URL do Sandbox: `https://api-sandbox.nexfar.com.br`
+    - URL do Sandbox: `https://api.nexfar.com.br`
     - Link para documentação da API
     - Client ID único
 
@@ -313,7 +313,7 @@ import os
 
 ENV = os.getenv("NEXFAR_ENV", "sandbox")  # Default: sandbox
 API_URL = (
-    "https://api-sandbox.nexfar.com.br"
+    "https://api.nexfar.com.br"
     if ENV == "sandbox"
     else "https://api.nexfar.com.br"
 )
@@ -376,7 +376,7 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
   **Validação Imediata:**
   1. Confirme claim `environment` do token atual em [jwt.io](https://jwt.io)
   2. Verifique URL usada:
-     - Sandbox: `api-sandbox.nexfar.com.br`
+     - Sandbox: `api.nexfar.com.br`
      - Production: `api.nexfar.com.br`
   3. Se problema persistir, **reporte IMEDIATAMENTE**: suporte@nexfar.com.br
 
@@ -393,7 +393,7 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
      - `"sandbox"` → Você está no Sandbox
      - `"production"` → Você está em Produção
   3. **Confirmar URL corresponde ao environment:**
-     - Sandbox: `https://api-sandbox.nexfar.com.br`
+     - Sandbox: `https://api.nexfar.com.br`
      - Production: `https://api.nexfar.com.br`
   4. **Enviar requisição de teste e verificar Audit Log**
 

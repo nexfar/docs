@@ -47,7 +47,7 @@ namespace NexfarIntegration
     class NexfarApiClient
     {
         // Configuração da API
-        private const string API_URL = "https://api-sandbox.nexfar.com.br";
+        private const string API_URL = "https://api.nexfar.com.br";
         private const string JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
 
         static async Task Main(string[] args)
@@ -209,11 +209,11 @@ dotnet run
 ### 1. Configuração Inicial
 
 ```csharp
-private const string API_URL = "https://api-sandbox.nexfar.com.br";
+private const string API_URL = "https://api.nexfar.com.br";
 private const string JWT_TOKEN = "seu_token_jwt_aqui";
 ```
 
-- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **API_URL**: Endereço da API Nexfar
 - **JWT_TOKEN**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
 
 ### 2. Serialização JSON
@@ -377,8 +377,7 @@ Console.WriteLine($"ID: {clientResponse.Id}");
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - Sandbox: `https://api-sandbox.nexfar.com.br`
-       - Produção: `https://api.nexfar.com.br`
+       - `https://api.nexfar.com.br`
     2. Teste sua conexão com a internet
     3. Verifique configurações de firewall/proxy corporativo
   </Accordion>

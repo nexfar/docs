@@ -37,8 +37,8 @@ GraphQL e REST não são mutuamente exclusivos - você pode usar ambos no mesmo 
 
 O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar que permite explorar o schema GraphQL e testar mutations em tempo real sem escrever código. Com tema dark mode, exemplos pré-carregados, e documentação integrada, o Playground é a forma mais rápida de testar a API GraphQL.
 
-<Card title="🎮 GraphQL Playground - Sandbox" icon="play" href="https://api-sandbox.nexfar.com.br/graphql">
-  Acesse o playground interativo no ambiente Sandbox para testar mutations sem impacto em produção.
+<Card title="🎮 GraphQL Playground" icon="play" href="https://api.nexfar.com.br/graphql">
+  Acesse o playground interativo para testar mutations.
 </Card>
 
 ### Principais Recursos
@@ -54,19 +54,18 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
 
 | Ambiente | URL | Status |
 |----------|-----|--------|
-| **Sandbox** | `https://api-sandbox.nexfar.com.br/graphql` | ✅ Disponível |
+| **Production** | `https://api.nexfar.com.br/graphql` | ✅ Disponível |
 | **Staging** | `https://nf-nest-integration-staging.up.railway.app/graphql` | ✅ Disponível |
-| **Produção** | `https://api.nexfar.com.br/graphql` | ❌ Desabilitado (segurança) |
 
-<Warning>
-⚠️ **GraphQL Playground está habilitado apenas em Sandbox e Staging** por motivos de segurança. Em Produção, use cliente GraphQL programático como Apollo Client, urql, ou Postman.
-</Warning>
+<Note>
+📝 **GraphQL Playground está disponível em todos os ambientes.** Você também pode usar clientes GraphQL programáticos como Apollo Client, urql, ou Postman.
+</Note>
 
 ### Como Usar o Playground
 
 <Steps>
   <Step title="Acessar Playground">
-    Clique no card acima ou acesse diretamente: `https://api-sandbox.nexfar.com.br/graphql`
+    Clique no card acima ou acesse diretamente: `https://api.nexfar.com.br/graphql`
 
     O Playground abre com uma tab pré-carregada chamada **"Exemplos - API Nexfar"** contendo mutations de exemplo.
   </Step>
@@ -132,25 +131,13 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
     Após executar uma mutation com sucesso, use o `correlation_id` retornado para validar no Audit Log:
 
     ```bash
-    curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
+    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
       -H "Authorization: Bearer $TOKEN"
     ```
 
     **Veja também:** [Audit Log API](/integration/api-ingestion/audit-log)
   </Step>
 </Steps>
-
-### Screenshot do Playground
-
-Abaixo está um exemplo de como o GraphQL Playground aparece quando aberto, mostrando a interface completa com mutation de exemplo, header JWT configurado, e resposta de sucesso:
-
-<img
-  src="/integration/api-ingestion/assets/graphql-playground-screenshot.png"
-  alt="GraphQL Playground da Nexfar mostrando mutation CreateClient com resposta de sucesso"
-  style={{ borderRadius: '8px', border: '1px solid #333' }}
-/>
-
-*Interface do GraphQL Playground com tema dark mode, mutation de exemplo pré-carregada, e tab "Docs" mostrando schema completo.*
 
 ## Modelos Disponíveis (34 Types)
 
@@ -327,7 +314,7 @@ Siga os passos abaixo para configurar autenticação no Playground:
 
 <Steps>
   <Step title="Abrir GraphQL Playground">
-    Acesse: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
+    Acesse: `https://api.nexfar.com.br/graphql`
   </Step>
 
   <Step title="Configurar Header JWT">
@@ -357,7 +344,7 @@ import { ApolloClient, InMemoryCache, HttpLink, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = new HttpLink({
-  uri: 'https://api-sandbox.nexfar.com.br/graphql',
+  uri: 'https://api.nexfar.com.br/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -408,7 +395,7 @@ from gql.transport.requests import RequestsHTTPTransport
 import os
 
 transport = RequestsHTTPTransport(
-    url='https://api-sandbox.nexfar.com.br/graphql',
+    url='https://api.nexfar.com.br/graphql',
     headers={'Authorization': f'Bearer {os.getenv("NEXFAR_JWT_TOKEN")}'},
 )
 
@@ -473,7 +460,7 @@ O schema GraphQL é gerado automaticamente pelo NestJS usando abordagem **code-f
 
 ### Explorar Schema no Playground
 
-1. Abra o GraphQL Playground: `https://api-sandbox.nexfar.com.br/graphql`
+1. Abra o GraphQL Playground: `https://api.nexfar.com.br/graphql`
 2. Clique na aba **"Schema"** (lado direito)
 3. Navegue pelos types, inputs, mutations disponíveis
 
@@ -484,7 +471,7 @@ Você pode usar introspection para gerar o arquivo `schema.graphql` localmente:
 ```bash
 # Usando graphql-cli
 npm install -g graphql-cli
-graphql get-schema --endpoint https://api-sandbox.nexfar.com.br/graphql \
+graphql get-schema --endpoint https://api.nexfar.com.br/graphql \
   --header "Authorization: Bearer $NEXFAR_JWT_TOKEN" \
   --output schema.graphql
 ```
@@ -563,12 +550,12 @@ graphql get-schema --endpoint https://api-sandbox.nexfar.com.br/graphql \
   - CORS bloqueando acesso
 
   **Soluções:**
-  1. Confirmar ambiente: Playground só está disponível em Sandbox/Staging
-  2. URL correta: `https://api-sandbox.nexfar.com.br/graphql` (Sandbox)
-  3. Se em produção, use cliente GraphQL programático (Apollo, urql)
+  1. Confirmar que está acessando o endpoint correto
+  2. URL correta: `https://api.nexfar.com.br/graphql`
+  3. Você também pode usar clientes GraphQL programáticos (Apollo, urql)
   4. Testar endpoint com curl:
      ```bash
-     curl -X POST https://api-sandbox.nexfar.com.br/graphql \
+     curl -X POST https://api.nexfar.com.br/graphql \
        -H "Authorization: Bearer $TOKEN" \
        -H "Content-Type: application/json" \
        -d '{"query":"{ __typename }"}'
@@ -583,7 +570,7 @@ graphql get-schema --endpoint https://api-sandbox.nexfar.com.br/graphql \
 
   **Consultar Audit Log API para validar persistência:**
   ```bash
-  curl -X GET "https://api-sandbox.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
+  curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?correlation_id={id}" \
     -H "Authorization: Bearer $TOKEN"
   ```
 
@@ -595,7 +582,7 @@ graphql get-schema --endpoint https://api-sandbox.nexfar.com.br/graphql \
 ## Próximos Passos
 
 <CardGroup cols={2}>
-  <Card title="Explorar GraphQL Playground" icon="flask" href="https://api-sandbox.nexfar.com.br/graphql">
+  <Card title="Explorar GraphQL Playground" icon="flask" href="https://api.nexfar.com.br/graphql">
     Acesse o Playground interativo para testar mutations
   </Card>
 

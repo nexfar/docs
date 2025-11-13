@@ -39,6 +39,14 @@
                   "integration/api-ingestion/audit-log",
                   "integration/api-ingestion/troubleshooting",
                   {
+                    "group": "Privado",
+                    "hidden": true,
+                    "pages": [
+                      "integration/api-ingestion/jwt-creation-guide",
+                      "integration/api-ingestion/admin-users"
+                    ]
+                  },
+                  {
                     "group": "Exemplos de Código",
                     "pages": [
                       "integration/api-ingestion/code-examples/python",
