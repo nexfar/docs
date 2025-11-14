@@ -73,10 +73,14 @@ namespace NexfarIntegration
             // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
             var clientData = new
             {
-                cnpj = "12.345.678/0001-90",  // CNPJ no formato com pontuação
-                razao_social = "Farmácia Exemplo LTDA",
-                email = "contato@exemplo.com.br",
-                status = "ACTIVE"
+                name = "Farmácia Exemplo",
+                cnpj = "12345678000190",
+                externalId = "CLI-EX-001",
+                razaoSocial = "Farmácia Exemplo LTDA",
+                state = "SP",
+                emailErp = "contato@exemplo.com.br",
+                phone = "11987654321",
+                drugstore = true
             };
 
             // Serializar para JSON usando System.Text.Json
@@ -221,10 +225,14 @@ private const string JWT_TOKEN = "seu_token_jwt_aqui";
 ```csharp
 var clientData = new
 {
-    cnpj = "12.345.678/0001-90",
-    razao_social = "Farmácia Exemplo LTDA",
-    email = "contato@exemplo.com.br",
-    status = "ACTIVE"
+    name = "Farmácia Exemplo",
+    cnpj = "12345678000190",
+    externalId = "CLI-EX-001",
+    razaoSocial = "Farmácia Exemplo LTDA",
+    state = "SP",
+    emailErp = "contato@exemplo.com.br",
+    phone = "11987654321",
+    drugstore = true
 };
 
 string jsonPayload = JsonSerializer.Serialize(clientData);
@@ -282,17 +290,35 @@ Para aplicações de produção, recomendamos criar classes tipadas:
 ```csharp
 public class ClientRequest
 {
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
     [JsonPropertyName("cnpj")]
     public string Cnpj { get; set; }
 
-    [JsonPropertyName("razao_social")]
+    [JsonPropertyName("externalId")]
+    public string ExternalId { get; set; }
+
+    [JsonPropertyName("razaoSocial")]
     public string RazaoSocial { get; set; }
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; }
+    [JsonPropertyName("state")]
+    public string State { get; set; }
 
-    [JsonPropertyName("status")]
-    public string Status { get; set; }
+    [JsonPropertyName("emailErp")]
+    public string? EmailErp { get; set; }
+
+    [JsonPropertyName("phone")]
+    public string? Phone { get; set; }
+
+    [JsonPropertyName("drugstore")]
+    public bool? Drugstore { get; set; }
+
+    [JsonPropertyName("customFields")]
+    public Dictionary<string, object>? CustomFields { get; set; }
+
+    [JsonPropertyName("extraParams")]
+    public Dictionary<string, object>? ExtraParams { get; set; }
 }
 
 public class ClientResponse
@@ -303,17 +329,23 @@ public class ClientResponse
     [JsonPropertyName("correlation_id")]
     public string CorrelationId { get; set; }
 
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
     [JsonPropertyName("cnpj")]
     public string Cnpj { get; set; }
 
-    [JsonPropertyName("razao_social")]
+    [JsonPropertyName("externalId")]
+    public string ExternalId { get; set; }
+
+    [JsonPropertyName("razaoSocial")]
     public string RazaoSocial { get; set; }
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; }
+    [JsonPropertyName("state")]
+    public string State { get; set; }
 
-    [JsonPropertyName("status")]
-    public string Status { get; set; }
+    [JsonPropertyName("emailErp")]
+    public string? EmailErp { get; set; }
 
     [JsonPropertyName("created_at")]
     public DateTime CreatedAt { get; set; }
@@ -322,10 +354,14 @@ public class ClientResponse
 // Uso
 var clientData = new ClientRequest
 {
-    Cnpj = "12.345.678/0001-90",
+    Name = "Farmácia Exemplo",
+    Cnpj = "12345678000190",
+    ExternalId = "CLI-EX-001",
     RazaoSocial = "Farmácia Exemplo LTDA",
-    Email = "contato@exemplo.com.br",
-    Status = "ACTIVE"
+    State = "SP",
+    EmailErp = "contato@exemplo.com.br",
+    Phone = "11987654321",
+    Drugstore = true
 };
 
 string jsonPayload = JsonSerializer.Serialize(clientData);

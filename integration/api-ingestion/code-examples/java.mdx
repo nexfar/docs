@@ -72,10 +72,14 @@ public class NexfarApiClient {
         // Payload JSON com dados do cliente
         // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
         String jsonPayload = "{"
-            + "\"cnpj\": \"12.345.678/0001-90\","  // CNPJ no formato com pontuação
-            + "\"razao_social\": \"Farmácia Exemplo LTDA\","
-            + "\"email\": \"contato@exemplo.com.br\","
-            + "\"status\": \"ACTIVE\""
+            + "\"name\": \"Farmácia Exemplo\","
+            + "\"cnpj\": \"12345678000190\","
+            + "\"externalId\": \"CLI-EX-001\","
+            + "\"razaoSocial\": \"Farmácia Exemplo LTDA\","
+            + "\"state\": \"SP\","
+            + "\"emailErp\": \"contato@exemplo.com.br\","
+            + "\"phone\": \"11987654321\","
+            + "\"drugstore\": true"
             + "}";
 
         // Criar requisição HTTP POST
@@ -210,10 +214,14 @@ private static final String JWT_TOKEN = "seu_token_jwt_aqui";
 
 ```java
 String jsonPayload = "{"
-    + "\"cnpj\": \"12.345.678/0001-90\","
-    + "\"razao_social\": \"Farmácia Exemplo LTDA\","
-    + "\"email\": \"contato@exemplo.com.br\","
-    + "\"status\": \"ACTIVE\""
+    + "\"name\": \"Farmácia Exemplo\","
+    + "\"cnpj\": \"12345678000190\","
+    + "\"externalId\": \"CLI-EX-001\","
+    + "\"razaoSocial\": \"Farmácia Exemplo LTDA\","
+    + "\"state\": \"SP\","
+    + "\"emailErp\": \"contato@exemplo.com.br\","
+    + "\"phone\": \"11987654321\","
+    + "\"drugstore\": true"
     + "}";
 ```
 
@@ -269,11 +277,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 // Criar payload usando Map
-Map<String, String> clientData = Map.of(
-    "cnpj", "12.345.678/0001-90",
-    "razao_social", "Farmácia Exemplo LTDA",
-    "email", "contato@exemplo.com.br",
-    "status", "ACTIVE"
+Map<String, Object> clientData = Map.of(
+    "name", "Farmácia Exemplo",
+    "cnpj", "12345678000190",
+    "externalId", "CLI-EX-001",
+    "razaoSocial", "Farmácia Exemplo LTDA",
+    "state", "SP",
+    "emailErp", "contato@exemplo.com.br",
+    "phone", "11987654321",
+    "drugstore", true
 );
 
 ObjectMapper mapper = new ObjectMapper();

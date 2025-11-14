@@ -599,7 +599,7 @@
     },
     "/api/v1/clients": {
       "post": {
-        "description": "\n      Ingest client (distributor) data with comprehensive validation.\n\n      **Validations:**\n      - CNPJ format (11 or 14 digits)\n      - Email format\n      - Required fields: cnpj, razao_social, email, status\n\n      **Partitioning:**\n      Data is automatically partitioned by client_id and environment from JWT token.\n    ",
+        "description": "\n      Ingest client (distributor) data with comprehensive validation.\n\n      **Validations:**\n      - CNPJ format (11 or 14 digits)\n      - Email format\n      - Required fields: cnpj, razao_social, email, status\n\n      **Partitioning:**\n      Data is automatically partitioned by tenant_id and environment from JWT token.\n    ",
         "operationId": "CadastrosController_createClient",
         "parameters": [],
         "requestBody": {
@@ -647,7 +647,7 @@
             "description": "Conflict - CNPJ already exists"
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -717,7 +717,7 @@
             "description": "Conflict - CPF already exists"
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -787,7 +787,7 @@
             "description": "Conflict - Payment condition code already exists"
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -857,7 +857,7 @@
             "description": "Conflict - Price group code already exists"
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -927,7 +927,7 @@
             "description": "Conflict - Client branch already exists"
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -994,7 +994,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1064,7 +1064,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1134,7 +1134,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1204,7 +1204,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1274,7 +1274,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1344,7 +1344,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1414,7 +1414,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1484,7 +1484,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1554,7 +1554,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1624,7 +1624,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1694,7 +1694,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1764,7 +1764,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1834,7 +1834,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1904,7 +1904,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1974,7 +1974,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2044,7 +2044,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2114,7 +2114,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2184,7 +2184,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2254,7 +2254,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2324,7 +2324,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2394,7 +2394,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2464,7 +2464,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2534,7 +2534,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2604,7 +2604,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2674,7 +2674,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2744,7 +2744,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2814,7 +2814,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2884,7 +2884,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2954,7 +2954,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded - max 100 req/min per client_id",
+            "description": "Rate limit exceeded - max 100 req/min per tenant_id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2980,7 +2980,7 @@
     },
     "/api/v1/audit-log": {
       "get": {
-        "description": "Retorna histórico paginado de registros de auditoria do cliente autenticado. Permite filtrar por período, status e modelo. Inclui isolamento automático por client_id do JWT.",
+        "description": "Retorna histórico paginado de registros de auditoria do cliente autenticado. Permite filtrar por período, status e modelo. Inclui isolamento automático por tenant_id do JWT.",
         "operationId": "AuditLogController_queryAuditLog",
         "parameters": [
           {
@@ -3520,7 +3520,7 @@
       "CreateClientDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3534,51 +3534,133 @@
             ],
             "example": "sandbox"
           },
+          "name": {
+            "type": "string",
+            "description": "Nome Fantasia do cliente",
+            "example": "Farmácia São Paulo",
+            "maxLength": 255
+          },
           "cnpj": {
             "type": "string",
             "description": "CNPJ do cliente (11 ou 14 dígitos)",
             "example": "12345678000190",
-            "maxLength": 14
+            "maxLength": 20
           },
-          "razao_social": {
+          "externalId": {
             "type": "string",
-            "description": "Razão social do cliente",
-            "example": "Empresa LTDA",
-            "maxLength": 200
+            "description": "ID no ERP relacionado ao cliente",
+            "example": "CLI-001",
+            "maxLength": 20
           },
-          "nome_fantasia": {
+          "razaoSocial": {
             "type": "string",
-            "description": "Nome fantasia do cliente",
-            "example": "Empresa",
-            "maxLength": 100
+            "description": "Razão Social do cliente",
+            "example": "Farmácia São Paulo LTDA",
+            "maxLength": 255
           },
-          "email": {
+          "state": {
             "type": "string",
-            "description": "Email do cliente",
-            "example": "contato@empresa.com",
-            "maxLength": 100
+            "description": "Estado (UF) do cliente",
+            "example": "SP",
+            "maxLength": 2
           },
-          "telefone": {
+          "cnpjMatriz": {
+            "type": "string",
+            "description": "CNPJ da loja matriz, caso o cliente seja uma filial",
+            "example": "12345678000100",
+            "maxLength": 20
+          },
+          "emailErp": {
+            "type": "string",
+            "description": "E-mail do cliente",
+            "example": "contato@farmacia.com",
+            "maxLength": 255
+          },
+          "phone": {
             "type": "string",
             "description": "Telefone do cliente (10-11 dígitos)",
             "example": "11987654321",
             "maxLength": 20
           },
-          "status": {
+          "cep": {
             "type": "string",
-            "description": "Status do cliente",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "example": "ACTIVE"
+            "description": "CEP do cliente",
+            "example": "01310-100",
+            "maxLength": 20
+          },
+          "city": {
+            "type": "string",
+            "description": "Cidade do cliente",
+            "example": "São Paulo",
+            "maxLength": 255
+          },
+          "address": {
+            "type": "string",
+            "description": "Endereço do cliente (Rua, número, bairro, complemento)",
+            "example": "Av. Paulista, 1000 - Bela Vista",
+            "maxLength": 255
+          },
+          "totalCreditLimit": {
+            "type": "number",
+            "description": "Limite de crédito total do cliente",
+            "example": 10000.5
+          },
+          "availableCreditLimit": {
+            "type": "number",
+            "description": "Limite de crédito disponível no momento da consulta",
+            "example": 5000.75
+          },
+          "creditStatus": {
+            "type": "string",
+            "description": "Situação de crédito do cliente (REGULAR ou IRREGULAR)",
+            "example": "REGULAR",
+            "maxLength": 50
+          },
+          "drugstore": {
+            "type": "boolean",
+            "description": "CNPJ pertence a uma farmácia?",
+            "example": true
+          },
+          "clientMarginCode": {
+            "type": "string",
+            "description": "Código de agrupamento de clientes para margem (EXCLUSIVO NEXOFF)",
+            "example": "GRUPO-A",
+            "maxLength": 255
+          },
+          "note": {
+            "type": "string",
+            "description": "Anotações do cliente (editável na plataforma)",
+            "example": "Cliente preferencial",
+            "maxLength": 255
+          },
+          "customFields": {
+            "type": "object",
+            "description": "Campos personalizados de cliente (prefixo: cf_)",
+            "example": {
+              "cf_custom1": "value1",
+              "cf_custom2": "value2"
+            }
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
+          },
+          "orderMinValueReduced": {
+            "type": "number",
+            "description": "Valor de pedido mínimo reduzido após primeiro pedido do dia",
+            "example": 100
           }
         },
         "required": [
+          "name",
           "cnpj",
-          "razao_social",
-          "email",
-          "status"
+          "externalId",
+          "razaoSocial",
+          "state"
         ]
       },
       "IngestionResponseDto": {
@@ -3745,7 +3827,7 @@
       "CreateSellerDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3758,52 +3840,79 @@
               "production"
             ],
             "example": "sandbox"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do Vendedor",
+            "example": "João Silva",
+            "maxLength": 255
+          },
+          "externalId": {
+            "type": "string",
+            "description": "ID do vendedor no ERP",
+            "example": "VEND-001",
+            "maxLength": 50
+          },
+          "televendas": {
+            "type": "boolean",
+            "description": "É um televendedor? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "clientFullAccess": {
+            "type": "boolean",
+            "description": "Vendedor possui acesso a todos os clientes de todas as bases? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "isSupervisor": {
+            "type": "boolean",
+            "description": "Deve ser considerado como supervisor? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "team": {
+            "type": "string",
+            "description": "Equipe que o vendedor faz parte",
+            "example": "Equipe A",
+            "maxLength": 255
           },
           "cpf": {
             "type": "string",
             "description": "CPF do vendedor (11 dígitos)",
             "example": "12345678901",
-            "maxLength": 11
-          },
-          "nome": {
-            "type": "string",
-            "description": "Nome do vendedor",
-            "example": "João Silva",
-            "maxLength": 200
+            "maxLength": 20
           },
           "email": {
             "type": "string",
-            "description": "Email do vendedor",
+            "description": "E-mail do vendedor (EXCLUSIVO NEXOFF)",
             "example": "joao@empresa.com",
             "maxLength": 100
           },
-          "telefone": {
+          "supervisorId": {
             "type": "string",
-            "description": "Telefone do vendedor (10-11 dígitos)",
-            "example": "11987654321",
-            "maxLength": 20
+            "description": "ID do supervisor (EXCLUSIVO NEXOFF)",
+            "example": "SUP-001",
+            "maxLength": 255
           },
-          "status": {
-            "type": "string",
-            "description": "Status do vendedor",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "example": "ACTIVE"
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "cpf",
-          "nome",
-          "email",
-          "status"
+          "name",
+          "externalId",
+          "televendas",
+          "clientFullAccess",
+          "isSupervisor"
         ]
       },
       "CreatePaymentConditionDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3817,42 +3926,81 @@
             ],
             "example": "sandbox"
           },
-          "codigo": {
+          "name": {
             "type": "string",
-            "description": "Código da condição de pagamento",
-            "example": "CP001",
+            "description": "Nome da condição de pagamento",
+            "example": "À vista",
+            "maxLength": 255
+          },
+          "externalId": {
+            "type": "string",
+            "description": "ID da condição de pagamento no ERP",
+            "example": "CP-001",
+            "maxLength": 255
+          },
+          "method": {
+            "type": "string",
+            "description": "Método de pagamento (BOLETO ou CASH)",
+            "example": "BOLETO",
             "maxLength": 50
           },
-          "descricao": {
+          "branchId": {
             "type": "string",
-            "description": "Descrição da condição de pagamento",
-            "example": "À vista",
-            "maxLength": 200
+            "description": "ID da Base no ERP",
+            "example": "BASE-001",
+            "maxLength": 255
           },
-          "dias_prazo": {
-            "type": "number",
-            "description": "Dias de prazo para pagamento",
-            "example": 30,
-            "minimum": 0
+          "priceGroupId": {
+            "type": "string",
+            "description": "ID da tabela de preço/política comercial",
+            "example": "PG-001",
+            "maxLength": 255
           },
-          "percentual_desconto": {
+          "mediumTerm": {
             "type": "number",
-            "description": "Percentual de desconto",
-            "example": 5.5,
-            "minimum": 0,
-            "maximum": 100
+            "description": "Prazo médio da condição de pagamento",
+            "example": 30
+          },
+          "instalments": {
+            "type": "number",
+            "description": "Quantidade de parcelas totais",
+            "example": 3
+          },
+          "timesInDays": {
+            "type": "string",
+            "description": "Parcelas separadas por \"/\" (ex: 30/60/90)",
+            "example": "30/60/90",
+            "maxLength": 255
+          },
+          "discount": {
+            "type": "number",
+            "description": "Desconto no pedido vinculado ao prazo de pagamento",
+            "example": 5.5
+          },
+          "orderMinValue": {
+            "type": "number",
+            "description": "Valor mínimo do pedido para ter acesso à condição",
+            "example": 100
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "codigo",
-          "descricao",
-          "dias_prazo"
+          "name",
+          "externalId",
+          "method"
         ]
       },
       "CreatePriceGroupDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3866,33 +4014,47 @@
             ],
             "example": "sandbox"
           },
-          "codigo": {
+          "name": {
             "type": "string",
-            "description": "Código do grupo de preço",
-            "example": "GP001",
+            "description": "Nome da tabela de preço/política comercial/condição comercial",
+            "example": "Varejo",
+            "maxLength": 255
+          },
+          "externalId": {
+            "type": "string",
+            "description": "ID da tabela de preço no ERP",
+            "example": "PG-001",
+            "maxLength": 255
+          },
+          "marginCalculationMode": {
+            "type": "string",
+            "description": "Modo de cálculo da margem: PRICE (sem imposto) | FINAL_PRICE (com imposto) - EXCLUSIVO NEXOFF",
+            "example": "PRICE",
             "maxLength": 50
           },
-          "descricao": {
-            "type": "string",
-            "description": "Descrição do grupo de preço",
-            "example": "Varejo",
-            "maxLength": 200
-          },
-          "percentual_markup": {
+          "orderMinMargin": {
             "type": "number",
-            "description": "Percentual de markup",
+            "description": "Valor mínimo de margem que o pedido deve ter - EXCLUSIVO NEXOFF",
             "example": 15.5
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "codigo",
-          "descricao"
+          "name",
+          "externalId"
         ]
       },
       "CreateClientBranchDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3906,53 +4068,109 @@
             ],
             "example": "sandbox"
           },
-          "client_cnpj": {
+          "clientId": {
             "type": "string",
-            "description": "CNPJ do cliente (11 ou 14 dígitos)",
-            "example": "12345678000190",
-            "maxLength": 14
+            "description": "ID do cliente no ERP",
+            "example": "CLI-001",
+            "maxLength": 255
           },
-          "branch_codigo": {
+          "branchId": {
             "type": "string",
-            "description": "Código da filial",
-            "example": "FIL001",
+            "description": "ID da base (loja) no ERP",
+            "example": "BASE-001",
+            "maxLength": 255
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "ID do Centro de Distribuição (estoque) no ERP",
+            "example": "CD-001",
+            "maxLength": 255
+          },
+          "priceGroupId": {
+            "type": "string",
+            "description": "Código da tabela de preço/política comercial",
+            "example": "PG-001",
+            "maxLength": 255
+          },
+          "module": {
+            "type": "string",
+            "description": "Disponível no e-commerce ou força de vendas (NEXON | NEXOFF)",
+            "example": "NEXOFF",
             "maxLength": 50
           },
-          "branch_nome": {
+          "cnpj": {
             "type": "string",
-            "description": "Nome da filial",
-            "example": "Filial Centro",
-            "maxLength": 200
+            "description": "CNPJ do cliente",
+            "example": "12345678000190",
+            "maxLength": 20
           },
-          "endereco": {
-            "type": "string",
-            "description": "Endereço da filial",
-            "example": "Rua Principal, 123",
-            "maxLength": 300
+          "orderMinValue": {
+            "type": "number",
+            "description": "Valor do pedido mínimo do cliente",
+            "example": 100
           },
-          "cidade": {
+          "sellerId": {
             "type": "string",
-            "description": "Cidade da filial",
-            "example": "São Paulo",
-            "maxLength": 100
+            "description": "ID do vendedor no ERP",
+            "example": "VEND-001",
+            "maxLength": 255
           },
-          "uf": {
+          "mainSeller": {
+            "type": "boolean",
+            "description": "É o vendedor principal do cliente?",
+            "example": false
+          },
+          "paymentConditions": {
             "type": "string",
-            "description": "UF da filial",
-            "example": "SP",
-            "maxLength": 2
+            "description": "Lista de IDs de condições de pagamento concatenados por \"/\"",
+            "example": "10/13/19",
+            "maxLength": 255
+          },
+          "mediumTerm": {
+            "type": "number",
+            "description": "Prazo médio de pagamento do cliente",
+            "example": 30
+          },
+          "taxFree": {
+            "type": "boolean",
+            "description": "Cliente é Isento de ST na Base?",
+            "example": false
+          },
+          "clientTaxCode": {
+            "type": "string",
+            "description": "Código de agrupamento de clientes para cálculo de impostos",
+            "example": "TAX-001",
+            "maxLength": 255
+          },
+          "sellersSelector": {
+            "type": "string",
+            "description": "Lista de IDs de vendedores fixos concatenados por \"/\"",
+            "example": "ELOI/MGO105/WEB",
+            "maxLength": 255
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "client_cnpj",
-          "branch_codigo",
-          "branch_nome"
+          "clientId",
+          "branchId",
+          "warehouseId",
+          "priceGroupId",
+          "module",
+          "cnpj",
+          "orderMinValue"
         ]
       },
       "CreateProductDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -3966,60 +4184,123 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "name": {
             "type": "string",
-            "description": "Código do produto",
+            "description": "Nome do Produto",
+            "example": "Paracetamol 500mg",
+            "maxLength": 255
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto no ERP (ID externo, registro único)",
             "example": "PROD-001",
-            "maxLength": 50
+            "maxLength": 20
           },
-          "descricao": {
-            "type": "string",
-            "description": "Descrição do produto",
-            "example": "Produto de Exemplo",
-            "maxLength": 200
+          "partnerMaker": {
+            "type": "boolean",
+            "description": "Produto faz parte de um fornecedor parceiro?",
+            "example": false
           },
-          "codigo_ean": {
+          "ean": {
             "type": "string",
-            "description": "Código EAN-13 (13 dígitos) ou EAN-14 (14 dígitos) do produto",
+            "description": "Código de Barras do Produto (EAN)",
             "example": "7891234567890",
-            "minLength": 13,
-            "maxLength": 14
+            "maxLength": 20
           },
-          "unidade_medida": {
+          "maker": {
             "type": "string",
-            "description": "Unidade de medida do produto",
-            "enum": [
-              "UN",
-              "CX",
-              "KG",
-              "L",
-              "M",
-              "MT",
-              "PC"
-            ],
-            "example": "UN"
+            "description": "Fabricante do Produto",
+            "example": "Laboratório XYZ",
+            "maxLength": 255
           },
-          "status": {
+          "category": {
             "type": "string",
-            "description": "Status do produto",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "example": "ACTIVE"
+            "description": "Categoria do Produto",
+            "example": "Medicamentos",
+            "maxLength": 255
+          },
+          "principle": {
+            "type": "string",
+            "description": "Princípio ativo do Produto",
+            "example": "Paracetamol",
+            "maxLength": 255
+          },
+          "similar": {
+            "type": "string",
+            "description": "Produto semelhante (usado em pesquisar semelhantes)",
+            "example": "Paracetamol",
+            "maxLength": 255
+          },
+          "reference": {
+            "type": "string",
+            "description": "Produto referência, caso exista",
+            "example": "Tylenol",
+            "maxLength": 255
+          },
+          "complementaryDescription": {
+            "type": "string",
+            "description": "Descrição complementar do Produto",
+            "example": "Comprimido revestido",
+            "maxLength": 255
+          },
+          "boxQuantity": {
+            "type": "number",
+            "description": "Quantidade que possui uma caixa padrão",
+            "example": 100
+          },
+          "availableNexOn": {
+            "type": "boolean",
+            "description": "Produto pode ser vendido no E-commerce?",
+            "example": true
+          },
+          "availableNexOff": {
+            "type": "boolean",
+            "description": "Produto pode ser vendido no Força de Vendas?",
+            "example": true
+          },
+          "controlled": {
+            "type": "boolean",
+            "description": "Produto é controlado?",
+            "example": false
+          },
+          "requiredDocuments": {
+            "type": "string",
+            "description": "Documentos necessários para adquirir o produto (ex: ANVISA/ALVARA SANITARIO)",
+            "example": "ANVISA/RECEITA",
+            "maxLength": 255
+          },
+          "launch": {
+            "type": "boolean",
+            "description": "Produto é lançamento? (destaque na plataforma)",
+            "example": false
+          },
+          "customFields": {
+            "type": "object",
+            "description": "Campos personalizados de produto (prefixo: cf_)",
+            "example": {
+              "cf_custom1": "value1",
+              "cf_custom2": "value2"
+            }
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "descricao",
-          "unidade_medida",
-          "status"
+          "name",
+          "sku",
+          "partnerMaker"
         ]
       },
       "CreateProductBranchDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4033,42 +4314,40 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "productId": {
             "type": "string",
-            "description": "Código do produto",
+            "description": "ID único do produto no ERP (ou SKU se não tiver)",
             "example": "PROD-001",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "codigo_filial": {
+          "branchId": {
             "type": "string",
-            "description": "Código da filial",
-            "example": "FILIAL-001",
-            "maxLength": 50
+            "description": "ID da Base que o produto ficará disponível para venda",
+            "example": "BASE-001",
+            "maxLength": 255
           },
-          "estoque_disponivel": {
-            "type": "number",
-            "description": "Estoque disponível na filial (deve ser não-negativo)",
-            "example": 100,
-            "minimum": 0
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto no ERP (ID externo do produto)",
+            "example": "SKU-001",
+            "maxLength": 20
           },
-          "preco_venda": {
+          "multiple": {
             "type": "number",
-            "description": "Preço de venda na filial (deve ser não-negativo)",
-            "example": 99.99,
-            "minimum": 0
+            "description": "Valor múltiplo que o produto deve ser vendido (ex: 5 em 5)",
+            "example": 1
           }
         },
         "required": [
-          "codigo_produto",
-          "codigo_filial",
-          "estoque_disponivel",
-          "preco_venda"
+          "productId",
+          "branchId",
+          "sku"
         ]
       },
       "CreateProductWarehouseDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4082,35 +4361,54 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "productId": {
             "type": "string",
-            "description": "Código do produto",
+            "description": "ID único do produto no ERP (ou SKU se não tiver)",
             "example": "PROD-001",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "codigo_armazem": {
+          "warehouseId": {
             "type": "string",
-            "description": "Código do armazém",
-            "example": "ARM-001",
-            "maxLength": 50
+            "description": "ID do Centro de Distribuição que identificará o estoque do produto",
+            "example": "CD-001",
+            "maxLength": 255
           },
-          "quantidade_estoque": {
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto no ERP (ID externo do produto)",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "quantityAvailable": {
             "type": "number",
-            "description": "Quantidade em estoque no armazém (deve ser não-negativo)",
-            "example": 500,
-            "minimum": 0
+            "description": "Quantas unidades o produto possui em estoque",
+            "example": 100
+          },
+          "validUntil": {
+            "type": "string",
+            "description": "Data de validade do Produto (formato ISO 8601)",
+            "example": "2025-12-31"
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "codigo_armazem",
-          "quantidade_estoque"
+          "productId",
+          "warehouseId",
+          "sku",
+          "quantityAvailable"
         ]
       },
       "CreateProductPriceDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4124,41 +4422,123 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "productId": {
             "type": "string",
-            "description": "Código do produto",
+            "description": "ID único do produto no ERP (ou SKU se não tiver)",
             "example": "PROD-001",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "codigo_tabela_preco": {
+          "priceGroupId": {
             "type": "string",
-            "description": "Código da tabela de preço",
-            "example": "TABELA-01",
-            "maxLength": 50
+            "description": "ID da tabela de preço/política comercial",
+            "example": "PG-001",
+            "maxLength": 255
           },
-          "preco_unitario": {
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto no ERP",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "allowPromotions": {
+            "type": "boolean",
+            "description": "Produto pode ser adicionado em uma ação comercial?",
+            "example": true
+          },
+          "allowCreditDown": {
+            "type": "boolean",
+            "description": "Para negociar e aplicar desconto, RCA deve utilizar verba? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "allowCreditUp": {
+            "type": "boolean",
+            "description": "Para negociar e aplicar aumento, RCA acumulará verba? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "allowNegotiationDown": {
+            "type": "boolean",
+            "description": "Vendedor pode negociar e aplicar desconto no preço? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "allowNegotiationUp": {
+            "type": "boolean",
+            "description": "Vendedor pode negociar e aplicar aumento no preço? (EXCLUSIVO NEXOFF)",
+            "example": false
+          },
+          "price": {
             "type": "number",
-            "description": "Preço unitário do produto (deve ser não-negativo, zero é válido)",
-            "example": 100.5,
-            "minimum": 0
+            "description": "Preço do produto sem o valor de ST",
+            "example": 100
           },
-          "data_vigencia": {
-            "type": "string",
-            "description": "Data de vigência do preço (formato ISO 8601)",
-            "example": "2025-11-01"
+          "finalPrice": {
+            "type": "number",
+            "description": "Preço do produto com o valor de ST",
+            "example": 120
+          },
+          "suggestedPrice": {
+            "type": "number",
+            "description": "Preço sugerido do produto (EXCLUSIVO NEXOFF)",
+            "example": 110
+          },
+          "discount": {
+            "type": "number",
+            "description": "Desconto do produto em relação ao preço fábrica",
+            "example": 10
+          },
+          "minPrice": {
+            "type": "number",
+            "description": "Preço mínimo do produto nesta tabela de preço",
+            "example": 0.01
+          },
+          "negotiationMinPrice": {
+            "type": "number",
+            "description": "Preço mínimo que o produto pode ser negociado (EXCLUSIVO NEXOFF)",
+            "example": 90
+          },
+          "negotiationMaxPrice": {
+            "type": "number",
+            "description": "Preço máximo que o produto pode ser negociado (EXCLUSIVO NEXOFF)",
+            "example": 150
+          },
+          "negotiationMinMargin": {
+            "type": "number",
+            "description": "Margem mínima que o produto pode ser negociado (EXCLUSIVO NEXOFF)",
+            "example": 15
+          },
+          "marginKickbackRanges": {
+            "type": "number",
+            "description": "Comissão para cada faixa de lucro - Formato: MARGEM;COMISSÃO separado por -",
+            "example": 10
+          },
+          "sellerKickback": {
+            "type": "number",
+            "description": "Comissão padrão do vendedor (EXCLUSIVO NEXOFF)",
+            "example": 5
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1",
+              "ep_extra2": "value2"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "codigo_tabela_preco",
-          "preco_unitario",
-          "data_vigencia"
+          "productId",
+          "priceGroupId",
+          "sku",
+          "allowPromotions",
+          "allowCreditDown",
+          "allowCreditUp",
+          "allowNegotiationDown",
+          "allowNegotiationUp"
         ]
       },
       "CreateProductPmcPfDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4172,35 +4552,57 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "productId": {
             "type": "string",
-            "description": "Código do produto",
+            "description": "ID único do produto no ERP",
             "example": "PROD-001",
-            "maxLength": 50
+            "maxLength": 255
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "uf": {
+            "type": "string",
+            "description": "Estado (UF)",
+            "example": "SP",
+            "maxLength": 20
+          },
+          "industryPrice": {
+            "type": "number",
+            "description": "Preço Fábrica (será considerado null quando 0 ou menor que 0)",
+            "example": 80
           },
           "pmc": {
             "type": "number",
-            "description": "Preço Máximo ao Consumidor - PMC (deve ser não-negativo, zero é válido)",
-            "example": 150,
-            "minimum": 0
+            "description": "Preço Máximo do produto ao Consumidor (será considerado null quando 0 ou menor que 0)",
+            "example": 150
           },
-          "pf": {
+          "pmpf": {
             "type": "number",
-            "description": "Preço de Fábrica - PF (deve ser não-negativo, zero é válido)",
-            "example": 80,
-            "minimum": 0
+            "description": "Preço Médio Ponderado a Consumidor Final (será considerado null quando 0 ou menor que 0)",
+            "example": 120
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "pmc",
-          "pf"
+          "productId",
+          "sku",
+          "uf"
         ]
       },
       "CreateProductRestrictionDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4214,40 +4616,131 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "module": {
             "type": "string",
-            "description": "Código do produto",
-            "example": "PROD-001",
+            "description": "Restrição do produto é para e-commerce e/ou força de vendas? (NEXON, NEXOFF ou ALL)",
+            "example": "ALL",
             "maxLength": 50
           },
-          "tipo_restricao": {
+          "externalId": {
             "type": "string",
-            "description": "Tipo de restrição aplicada ao produto",
-            "enum": [
-              "VENDA_PROIBIDA",
-              "LIMITE_QUANTIDADE",
-              "REGIAO_RESTRITA",
-              "PRESCRICAO_MEDICA",
-              "CONTROLE_ESPECIAL"
-            ],
-            "example": "VENDA_PROIBIDA"
+            "description": "ID da restrição no ERP (será considerado = ID do PGSQL quando null)",
+            "example": "REST-001",
+            "maxLength": 255
           },
-          "descricao_restricao": {
+          "clientId": {
             "type": "string",
-            "description": "Descrição detalhada da restrição",
-            "example": "Produto não pode ser vendido para menores de 18 anos",
-            "maxLength": 500
+            "description": "ID do cliente no ERP para o qual a restrição será aplicada (quando todos filtros cliente nulos, aplica para todos)",
+            "example": "CLI-001",
+            "maxLength": 255
+          },
+          "clientCnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente para o qual a restrição será aplicada",
+            "example": "12345678000190",
+            "maxLength": 20
+          },
+          "clientUf": {
+            "type": "string",
+            "description": "UF do cliente para a qual a restrição será aplicada",
+            "example": "SP",
+            "maxLength": 2
+          },
+          "sellerId": {
+            "type": "string",
+            "description": "ID do vendedor no ERP para o qual a restrição será aplicada (quando todos filtros vendedor nulos, aplica para todos)",
+            "example": "VEND-001",
+            "maxLength": 255
+          },
+          "supervisorId": {
+            "type": "string",
+            "description": "ID do supervisor no ERP para o qual a restrição será aplicada",
+            "example": "SUP-001",
+            "maxLength": 255
+          },
+          "productId": {
+            "type": "string",
+            "description": "ID único do produto no ERP que será restringido (algum campo produto deve ser não nulo)",
+            "example": "PROD-001",
+            "maxLength": 255
+          },
+          "productSku": {
+            "type": "string",
+            "description": "SKU do Produto que será restringido (será considerado = productId quando null)",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "productMaker": {
+            "type": "string",
+            "description": "Fabricante que será restringido",
+            "example": "Fabricante A",
+            "maxLength": 255
+          },
+          "productCategory": {
+            "type": "string",
+            "description": "Categoria que será restringida",
+            "example": "Categoria A",
+            "maxLength": 255
+          },
+          "productPrinciple": {
+            "type": "string",
+            "description": "Princípio ativo que será restringido",
+            "example": "Princípio A",
+            "maxLength": 255
+          },
+          "maxQuantity": {
+            "type": "number",
+            "description": "Quantidade máxima permitida (valores acima de 1, se preenchido precisa ser > 1)",
+            "example": 10
+          },
+          "periodicity": {
+            "type": "string",
+            "description": "Periodicidade da restrição (DAILY, WEEKLY, MONTHLY ou ORDER)",
+            "example": "MONTHLY",
+            "maxLength": 50
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "ID do Centro de Distribuição onde a restrição deve ser aplicada (quando nulo, aplica em todos)",
+            "example": "CD-001",
+            "maxLength": 255
+          },
+          "branchId": {
+            "type": "string",
+            "description": "ID da Base onde a restrição deve ser aplicada (quando nulo, aplica em todas)",
+            "example": "BASE-001",
+            "maxLength": 255
+          },
+          "clientExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao cliente (prefixo: cep_)",
+            "example": {
+              "cep_extra1": "value1"
+            }
+          },
+          "productExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao produto (prefixo: pep_)",
+            "example": {
+              "pep_extra1": "value1"
+            }
+          },
+          "sellerExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao vendedor (prefixo: sep_)",
+            "example": {
+              "sep_extra1": "value1"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "tipo_restricao"
+          "module"
         ]
       },
       "CreateProductSaleNotAllowedDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4261,35 +4754,120 @@
             ],
             "example": "sandbox"
           },
-          "codigo_produto": {
+          "module": {
             "type": "string",
-            "description": "Código do produto",
-            "example": "PROD-001",
+            "description": "Bloqueio do produto é para e-commerce e/ou força de vendas? (NEXON, NEXOFF ou ALL)",
+            "example": "ALL",
             "maxLength": 50
           },
-          "codigo_cliente": {
+          "externalId": {
             "type": "string",
-            "description": "Código do cliente para o qual a venda não é permitida",
+            "description": "ID do bloqueio de venda no ERP (será considerado = ID do PGSQL quando null)",
+            "example": "BLOQ-001",
+            "maxLength": 255
+          },
+          "clientId": {
+            "type": "string",
+            "description": "ID do cliente no ERP para o qual o bloqueio será aplicado (quando todos filtros cliente nulos, aplica para todos)",
             "example": "CLI-001",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "motivo": {
+          "clientCnpj": {
             "type": "string",
-            "description": "Motivo pelo qual a venda não é permitida",
-            "example": "Cliente inadimplente",
-            "maxLength": 200
+            "description": "CNPJ do cliente para o qual o bloqueio será aplicado",
+            "example": "12345678000190",
+            "maxLength": 20
+          },
+          "clientUf": {
+            "type": "string",
+            "description": "UF do cliente para a qual o bloqueio será aplicado",
+            "example": "SP",
+            "maxLength": 2
+          },
+          "sellerId": {
+            "type": "string",
+            "description": "ID do vendedor no ERP para o qual o bloqueio será aplicado (quando todos filtros vendedor nulos, aplica para todos)",
+            "example": "VEND-001",
+            "maxLength": 255
+          },
+          "supervisorId": {
+            "type": "string",
+            "description": "ID do supervisor no ERP para o qual o bloqueio será aplicado",
+            "example": "SUP-001",
+            "maxLength": 255
+          },
+          "productId": {
+            "type": "string",
+            "description": "ID único do produto no ERP que será bloqueado (algum campo produto deve ser não nulo)",
+            "example": "PROD-001",
+            "maxLength": 255
+          },
+          "productSku": {
+            "type": "string",
+            "description": "SKU do Produto que será bloqueado (será considerado = productId quando null)",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "productMaker": {
+            "type": "string",
+            "description": "Fabricante que será bloqueado",
+            "example": "Fabricante A",
+            "maxLength": 255
+          },
+          "productCategory": {
+            "type": "string",
+            "description": "Categoria que será bloqueada",
+            "example": "Categoria A",
+            "maxLength": 255
+          },
+          "productPrinciple": {
+            "type": "string",
+            "description": "Princípio ativo que será bloqueado",
+            "example": "Princípio A",
+            "maxLength": 255
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "ID do Centro de Distribuição onde o bloqueio deve ser aplicado (quando nulo, aplica em todos)",
+            "example": "CD-001",
+            "maxLength": 255
+          },
+          "branchId": {
+            "type": "string",
+            "description": "ID da Base onde o bloqueio deve ser aplicado (quando nulo, aplica em todas)",
+            "example": "BASE-001",
+            "maxLength": 255
+          },
+          "clientExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao cliente (prefixo: cep_)",
+            "example": {
+              "cep_extra1": "value1"
+            }
+          },
+          "productExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao produto (prefixo: pep_)",
+            "example": {
+              "pep_extra1": "value1"
+            }
+          },
+          "sellerExtraParams": {
+            "type": "object",
+            "description": "Campos extras relacionados ao vendedor (prefixo: sep_)",
+            "example": {
+              "sep_extra1": "value1"
+            }
           }
         },
         "required": [
-          "codigo_produto",
-          "codigo_cliente",
-          "motivo"
+          "module"
         ]
       },
       "CreateClientDocumentDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4303,40 +4881,54 @@
             ],
             "example": "sandbox"
           },
-          "client_cnpj": {
+          "clientId": {
             "type": "string",
-            "description": "CNPJ do cliente (11 ou 14 dígitos)",
+            "description": "ID do cliente no ERP (faz referência com client.externalId)",
+            "example": "CLI-001",
+            "maxLength": 255
+          },
+          "cnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente no ERP (11 ou 14 dígitos)",
             "example": "12345678000190",
-            "maxLength": 14
+            "maxLength": 20
           },
-          "tipo_documento": {
+          "type": {
             "type": "string",
-            "description": "Tipo de documento",
-            "enum": [
-              "RG",
-              "PASSAPORTE",
-              "HABILITACAO",
-              "OUTRO"
-            ],
-            "example": "RG"
+            "description": "Nome do documento (Exemplos: ANVISA, CONTROLADO, CRF, VISA)",
+            "example": "ANVISA",
+            "maxLength": 50
           },
-          "numero_documento": {
+          "status": {
+            "type": "string",
+            "description": "Situação do documento (REGULAR ou VENCIDO)",
+            "example": "REGULAR",
+            "maxLength": 50
+          },
+          "value": {
             "type": "string",
             "description": "Número do documento",
             "example": "123456789",
-            "maxLength": 50
+            "maxLength": 255
+          },
+          "validUntil": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data de validade do documento (formato ISO 8601)",
+            "example": "2025-12-31"
           }
         },
         "required": [
-          "client_cnpj",
-          "tipo_documento",
-          "numero_documento"
+          "clientId",
+          "cnpj",
+          "type",
+          "status"
         ]
       },
       "CreateOrderHeaderDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4350,54 +4942,91 @@
             ],
             "example": "sandbox"
           },
-          "numero_pedido": {
+          "transientOrderExternalId": {
             "type": "string",
-            "example": "PED-001",
-            "description": "Número único do pedido",
-            "maxLength": 50
+            "description": "ID do pedido nas tabelas de integração do ERP",
+            "example": "PED-TRANS-001",
+            "maxLength": 255
           },
-          "data_pedido": {
+          "clientId": {
             "type": "string",
-            "example": "2025-11-03",
-            "description": "Data do pedido (formato ISO 8601)"
-          },
-          "codigo_cliente": {
-            "type": "string",
+            "description": "ID do cliente no ERP (faz referência com client.externalId)",
             "example": "CLI-001",
-            "description": "Código do cliente",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "status_pedido": {
+          "cnpj": {
             "type": "string",
-            "example": "CONFIRMED",
-            "enum": [
-              "PENDING",
-              "CONFIRMED",
-              "PROCESSING",
-              "SHIPPED",
-              "DELIVERED",
-              "CANCELLED"
-            ],
-            "description": "Status do pedido"
+            "description": "CNPJ do cliente no ERP",
+            "example": "12345678000190",
+            "maxLength": 20
           },
-          "valor_total": {
+          "sellerId": {
+            "type": "string",
+            "description": "ID do vendedor que fez o pedido no ERP (faz referência com seller.externalId)",
+            "example": "VEND-001",
+            "maxLength": 255
+          },
+          "status": {
+            "type": "string",
+            "description": "Status global do pedido (RECEIVED_BY_DISTRIBUTOR, BILLED, IN_TRANSIT, DELIVERED, CANCELED)",
+            "example": "RECEIVED_BY_DISTRIBUTOR",
+            "maxLength": 255
+          },
+          "orderDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data do pedido (formato ISO 8601)",
+            "example": "2025-11-03"
+          },
+          "orderExternalId": {
+            "type": "string",
+            "description": "ID do pedido integrado no ERP",
+            "example": "PED-001",
+            "maxLength": 255
+          },
+          "orderNexfarId": {
             "type": "number",
-            "example": 1000.5,
-            "description": "Valor total do pedido (mínimo 0)"
+            "description": "ID do pedido na plataforma Nexfar, se houver",
+            "example": 12345
+          },
+          "statusLabel": {
+            "type": "string",
+            "description": "Substatus - se inserido, apenas o nome do status será alterado (ex: \"Em separação (processado)\")",
+            "example": "Em separação (processado)",
+            "maxLength": 255
+          },
+          "statusReason": {
+            "type": "string",
+            "description": "Motivo do status",
+            "example": "Aguardando confirmação de pagamento",
+            "maxLength": 255
+          },
+          "billingDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data de faturamento do pedido (formato ISO 8601)",
+            "example": "2025-11-04"
+          },
+          "nfeFileName": {
+            "type": "string",
+            "description": "Nome completo do arquivo XML da NFE a ser importado (cliente deve disponibilizar antes de faturar)",
+            "example": "NFE-12345678901234567890123456789012345678901234.xml",
+            "maxLength": 255
           }
         },
         "required": [
-          "numero_pedido",
-          "data_pedido",
-          "codigo_cliente",
-          "status_pedido",
-          "valor_total"
+          "transientOrderExternalId",
+          "clientId",
+          "cnpj",
+          "sellerId",
+          "status",
+          "orderDate"
         ]
       },
       "CreateOrderItemDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4411,52 +5040,103 @@
             ],
             "example": "sandbox"
           },
-          "numero_pedido": {
+          "transientOrderExternalId": {
             "type": "string",
+            "description": "ID do pedido nas tabelas de integração do ERP",
+            "example": "PED-TRANS-001",
+            "maxLength": 255
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU do Produto (faz referência com product.sku)",
+            "example": "SKU-001",
+            "maxLength": 20
+          },
+          "quantityRequested": {
+            "type": "number",
+            "description": "Quantidade solicitada",
+            "example": 10
+          },
+          "quantityAttended": {
+            "type": "number",
+            "description": "Quantidade atendida",
+            "example": 10
+          },
+          "subsidized": {
+            "type": "boolean",
+            "description": "Sinaliza se é um item bonificado ou não",
+            "example": false
+          },
+          "price": {
+            "type": "number",
+            "description": "Preço do produto sem imposto",
+            "example": 100
+          },
+          "finalPrice": {
+            "type": "number",
+            "description": "Preço do produto com ST (se não tiver ST, enviar finalPrice = price)",
+            "example": 110
+          },
+          "orderExternalId": {
+            "type": "string",
+            "description": "ID do pedido integrado no ERP",
             "example": "PED-001",
-            "description": "Número do pedido (referência ao header)",
-            "maxLength": 50
+            "maxLength": 255
           },
-          "numero_item": {
+          "orderNexfarId": {
             "type": "number",
-            "example": 1,
-            "description": "Número sequencial do item"
+            "description": "ID do pedido na plataforma Nexfar, se houver",
+            "example": 12345
           },
-          "codigo_produto": {
+          "productId": {
             "type": "string",
+            "description": "ID do Produto no ERP",
             "example": "PROD-001",
-            "description": "Código do produto",
-            "maxLength": 50
+            "maxLength": 20
           },
-          "quantidade": {
-            "type": "number",
-            "example": 10.5,
-            "description": "Quantidade (mínimo 0.01)"
+          "statusReason": {
+            "type": "string",
+            "description": "Motivo do não atendimento ou cancelamento do item",
+            "example": "Produto sem estoque",
+            "maxLength": 255
           },
-          "preco_unitario": {
-            "type": "number",
-            "example": 100,
-            "description": "Preço unitário (mínimo 0)"
+          "returned": {
+            "type": "boolean",
+            "description": "Alguma unidade do produto foi devolvida?",
+            "example": false
           },
-          "valor_total_item": {
+          "returnedDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data da devolução (formato ISO 8601)",
+            "example": "2025-11-05"
+          },
+          "returnedQuantity": {
             "type": "number",
-            "example": 1000,
-            "description": "Valor total do item (mínimo 0)"
+            "description": "Quantidade devolvida",
+            "example": 2
+          },
+          "returnedReason": {
+            "type": "string",
+            "description": "Motivo da devolução",
+            "example": "Produto com defeito",
+            "maxLength": 255
           }
         },
         "required": [
-          "numero_pedido",
-          "numero_item",
-          "codigo_produto",
-          "quantidade",
-          "preco_unitario",
-          "valor_total_item"
+          "transientOrderExternalId",
+          "sku",
+          "quantityRequested",
+          "quantityAttended",
+          "subsidized",
+          "price",
+          "finalPrice"
         ]
       },
       "CreateOrderReturnedItemDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4509,7 +5189,7 @@
       "CreateOrderDistributorHeaderDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4570,7 +5250,7 @@
       "CreateOrderDistributorItemDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4623,7 +5303,7 @@
       "CreateSaleHeaderDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4681,7 +5361,7 @@
       "CreateSaleItemDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4739,7 +5419,7 @@
       "CreateSaleClientDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4779,7 +5459,7 @@
       "CreateSaleSellerDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4814,7 +5494,7 @@
       "CreateInvoiceDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4828,56 +5508,131 @@
             ],
             "example": "sandbox"
           },
-          "numero_nota_fiscal": {
+          "externalId": {
             "type": "string",
-            "example": "NF-001",
-            "description": "Número da nota fiscal",
+            "description": "ID da duplicata no ERP",
+            "example": "DUP-001",
+            "maxLength": 255
+          },
+          "clientId": {
+            "type": "string",
+            "description": "ID do cliente no ERP (faz referência com client.externalId)",
+            "example": "CLI-001",
+            "maxLength": 255
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "ID do Centro de Distribuição",
+            "example": "CD-001",
+            "maxLength": 255
+          },
+          "cnpj": {
+            "type": "string",
+            "description": "CNPJ do cliente no ERP",
+            "example": "12345678000190",
+            "maxLength": 20
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origem do pedido (NEXFAR = via plataforma Nexfar, DISTRIBUTOR = via canais externos)",
+            "example": "NEXFAR",
             "maxLength": 50
-          },
-          "numero_pedido": {
-            "type": "string",
-            "example": "PED-001",
-            "description": "Número do pedido (referência)",
-            "maxLength": 50
-          },
-          "data_emissao": {
-            "type": "string",
-            "example": "2025-11-03",
-            "description": "Data de emissão da nota fiscal (formato ISO 8601)"
-          },
-          "valor_total": {
-            "type": "number",
-            "example": 1000.5,
-            "description": "Valor total da nota fiscal (mínimo 0)"
-          },
-          "chave_acesso": {
-            "type": "string",
-            "example": "35201201234567890123450010000123451234567890",
-            "description": "Chave de acesso da NF-e (44 caracteres)"
           },
           "status": {
             "type": "string",
-            "example": "EMITIDA",
-            "enum": [
-              "EMITIDA",
-              "CANCELADA",
-              "DENEGADA"
-            ],
-            "description": "Status da nota fiscal"
+            "description": "Situação da duplicata (PENDING, PAID, EXPIRES_SOON, EXPIRED)",
+            "example": "PENDING",
+            "maxLength": 50
+          },
+          "orderId": {
+            "type": "string",
+            "description": "ID do pedido na Nexfar",
+            "example": "ORDER-001",
+            "maxLength": 255
+          },
+          "orderExternalId": {
+            "type": "string",
+            "description": "ID do pedido no ERP",
+            "example": "PED-001",
+            "maxLength": 255
+          },
+          "branchId": {
+            "type": "string",
+            "description": "ID da Base",
+            "example": "BASE-001",
+            "maxLength": 255
+          },
+          "ourNumber": {
+            "type": "string",
+            "description": "Número identificador do boleto",
+            "example": "12345678901234567890",
+            "maxLength": 255
+          },
+          "emissionDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data de emissão da duplicata (formato ISO 8601)",
+            "example": "2025-11-03"
+          },
+          "dueDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data do vencimento da duplicata (formato ISO 8601)",
+            "example": "2025-12-03"
+          },
+          "paymentDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Data do pagamento da duplicata (formato ISO 8601)",
+            "example": "2025-12-01"
+          },
+          "linhaDigitavel": {
+            "type": "string",
+            "description": "Linha digitável",
+            "example": "12345.67890 12345.678901 12345.678901 1 12345678901234",
+            "maxLength": 50
+          },
+          "instalment": {
+            "type": "number",
+            "description": "Número da parcela",
+            "example": 1
+          },
+          "instalments": {
+            "type": "number",
+            "description": "Quantidade total de parcelas",
+            "example": 3
+          },
+          "nfeNumber": {
+            "type": "string",
+            "description": "Número da nota fiscal",
+            "example": "123456",
+            "maxLength": 50
+          },
+          "nfeKey": {
+            "type": "string",
+            "description": "Chave da nota fiscal",
+            "example": "35201201234567890123450010000123451234567890",
+            "maxLength": 50
+          },
+          "value": {
+            "type": "number",
+            "description": "Valor do documento (duplicata)",
+            "example": 1000.5
           }
         },
         "required": [
-          "numero_nota_fiscal",
-          "numero_pedido",
-          "data_emissao",
-          "valor_total",
+          "externalId",
+          "clientId",
+          "warehouseId",
+          "cnpj",
+          "origin",
           "status"
         ]
       },
       "CreateSalesGoalDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4891,46 +5646,136 @@
             ],
             "example": "sandbox"
           },
-          "codigo_meta": {
+          "origin": {
             "type": "string",
-            "description": "Código da meta de vendas",
-            "example": "META-Q1-2025",
+            "description": "Origem de onde o dado veio (DISTRIBUTOR ou NEXFAR)",
+            "example": "DISTRIBUTOR",
             "maxLength": 50
           },
-          "descricao": {
+          "sellerId": {
             "type": "string",
-            "description": "Descrição da meta de vendas",
-            "example": "Meta de vendas do primeiro trimestre de 2025",
-            "maxLength": 200
+            "description": "ID do vendedor no ERP (faz referência com seller.externalId)",
+            "example": "VEND-001",
+            "maxLength": 255
           },
-          "valor_meta": {
-            "type": "number",
-            "description": "Valor da meta em reais",
-            "example": 100000
-          },
-          "periodo_inicio": {
+          "userId": {
             "type": "string",
-            "description": "Data de início do período da meta (formato ISO 8601)",
+            "description": "ID do usuário na plataforma",
+            "example": "USER-001",
+            "maxLength": 255
+          },
+          "type": {
+            "type": "string",
+            "description": "Tipo do período (DATE, DATETIME, MONTH, QUARTER ou YEAR)",
+            "example": "MONTH",
+            "maxLength": 50
+          },
+          "dateBegin": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Período: início (formato ISO 8601)",
             "example": "2025-01-01"
           },
-          "periodo_fim": {
+          "dateEnd": {
+            "format": "date-time",
             "type": "string",
-            "description": "Data de fim do período da meta (formato ISO 8601)",
-            "example": "2025-03-31"
+            "description": "Período: fim (formato ISO 8601)",
+            "example": "2025-01-31"
+          },
+          "year": {
+            "type": "number",
+            "description": "Período: ano",
+            "example": 2025
+          },
+          "quarter": {
+            "type": "number",
+            "description": "Período: semestre/quarter",
+            "example": 1
+          },
+          "day": {
+            "type": "number",
+            "description": "Período: dia",
+            "example": 15
+          },
+          "dayOfWeek": {
+            "type": "number",
+            "description": "Período: dia da semana (1=Segunda, 7=Domingo)",
+            "example": 1
+          },
+          "salesTotal": {
+            "type": "number",
+            "description": "Meta: total de vendas",
+            "example": 100000
+          },
+          "salesMargin": {
+            "type": "number",
+            "description": "Meta: margem de venda",
+            "example": 25.5
+          },
+          "includeTaxes": {
+            "type": "boolean",
+            "description": "Se valores incluem impostos ou não",
+            "example": true
+          },
+          "productMixCount": {
+            "type": "number",
+            "description": "Meta: quantidade de produtos diferentes",
+            "example": 50
+          },
+          "productMixPercentage": {
+            "type": "number",
+            "description": "Meta: porcentagem mínima de produtos diferentes que deve ser atendida",
+            "example": 80
+          },
+          "clientPositivationCount": {
+            "type": "number",
+            "description": "Meta: quantidade de clientes positivados",
+            "example": 100
+          },
+          "clientPositivationPercentage": {
+            "type": "number",
+            "description": "Meta: percentual de clientes positivados",
+            "example": 90
+          },
+          "maker": {
+            "type": "string",
+            "description": "Meta: fabricante",
+            "example": "Fabricante A",
+            "maxLength": 255
+          },
+          "principle": {
+            "type": "string",
+            "description": "Meta: princípio",
+            "example": "Princípio A",
+            "maxLength": 255
+          },
+          "uf": {
+            "type": "string",
+            "description": "Meta: UF",
+            "example": "SP",
+            "maxLength": 2
+          },
+          "team": {
+            "type": "number",
+            "description": "Número de clientes na carteira do vendedor no momento da criação da meta",
+            "example": 150
+          },
+          "extraParams": {
+            "type": "object",
+            "description": "Parâmetros extras não mapeados (prefixo: ep_)",
+            "example": {
+              "ep_extra1": "value1"
+            }
           }
         },
         "required": [
-          "codigo_meta",
-          "descricao",
-          "valor_meta",
-          "periodo_inicio",
-          "periodo_fim"
+          "origin"
         ]
       },
       "CreateGenericMarginDeterminationDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4944,36 +5789,49 @@
             ],
             "example": "sandbox"
           },
-          "codigo_determinacao": {
+          "warehouseId": {
             "type": "string",
-            "description": "Código da determinação de margem",
-            "example": "DET-MARGEM-001"
+            "description": "ID do Centro de Distribuição",
+            "example": "CD-001",
+            "maxLength": 255
           },
-          "descricao": {
+          "warehouseUf": {
             "type": "string",
-            "description": "Descrição da determinação de margem",
-            "example": "Determinação de margem para produtos categoria A",
-            "maxLength": 500
+            "description": "Estado do Centro de Distribuição",
+            "example": "SP",
+            "maxLength": 255
           },
-          "tipo_margem": {
+          "sku": {
             "type": "string",
-            "description": "Tipo de margem",
-            "example": "LUCRO_BRUTO"
+            "description": "SKU do Produto no ERP",
+            "example": "SKU-001",
+            "maxLength": 50
           },
-          "data_vigencia": {
+          "clientMarginCode": {
             "type": "string",
-            "description": "Data de vigência da determinação (formato ISO 8601)",
-            "example": "2025-01-01"
+            "description": "Código de agrupamento de clientes para cálculo da margem (faz referência com client.clientMarginCode)",
+            "example": "GRUPO-A",
+            "maxLength": 255
+          },
+          "productMarginCode": {
+            "type": "string",
+            "description": "Código de agrupamento de produtos para cálculo da margem (faz referência com generic_margin.productMarginCode)",
+            "example": "PROD-MARGEM-A",
+            "maxLength": 255
           }
         },
         "required": [
-          "codigo_determinacao"
+          "warehouseId",
+          "warehouseUf",
+          "sku",
+          "clientMarginCode",
+          "productMarginCode"
         ]
       },
       "CreateGenericMarginDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -4987,31 +5845,51 @@
             ],
             "example": "sandbox"
           },
-          "codigo_margem": {
+          "productMarginCode": {
             "type": "string",
-            "description": "Código da margem",
-            "example": "MARGEM-001"
+            "description": "Código de classificação do produto no ERP (faz referência com generic_margin_determination.productMarginCode)",
+            "example": "PROD-MARGEM-A",
+            "maxLength": 255
           },
-          "percentual_margem": {
+          "aliqIcms": {
             "type": "number",
-            "description": "Percentual de margem (0-100)",
-            "example": 25.5
+            "description": "Alíquota de ICMS (default: 0)",
+            "example": 18
           },
-          "aplicacao": {
-            "type": "string",
-            "description": "Aplicação da margem",
-            "example": "CATEGORIA_A"
+          "aliqPisCofins": {
+            "type": "number",
+            "description": "Alíquota PIS/COFINS (default: 0)",
+            "example": 9.25
+          },
+          "kickback": {
+            "type": "number",
+            "description": "Comissão do Vendedor (default: 0)",
+            "example": 5
+          },
+          "carrier": {
+            "type": "number",
+            "description": "Valor do Frete (default: 0)",
+            "example": 10
+          },
+          "operationCost": {
+            "type": "number",
+            "description": "Custo de Operação (default: 0)",
+            "example": 15
+          },
+          "acquisitionCost": {
+            "type": "number",
+            "description": "Custo de Aquisição (default: 0)",
+            "example": 2.5
           }
         },
         "required": [
-          "codigo_margem",
-          "percentual_margem"
+          "productMarginCode"
         ]
       },
       "CreateGenericTaxesDeterminationDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5025,43 +5903,61 @@
             ],
             "example": "sandbox"
           },
-          "codigo_determinacao": {
+          "warehouseId": {
             "type": "string",
-            "description": "Código da determinação de impostos",
-            "example": "DET-IMP-001"
+            "description": "ID do Centro de distribuição",
+            "example": "CD-001",
+            "maxLength": 255
           },
-          "descricao": {
+          "warehouseUf": {
             "type": "string",
-            "description": "Descrição da determinação de impostos",
-            "example": "Determinação ICMS para produtos eletrônicos",
-            "maxLength": 500
-          },
-          "tipo_imposto": {
-            "type": "string",
-            "description": "Tipo de imposto",
-            "example": "ICMS"
-          },
-          "uf": {
-            "type": "string",
-            "description": "Unidade Federativa (sigla de 2 caracteres)",
+            "description": "Estado do Centro de distribuição",
             "example": "SP",
-            "minLength": 2,
             "maxLength": 2
           },
-          "data_vigencia": {
+          "sku": {
             "type": "string",
-            "description": "Data de vigência da determinação (formato ISO 8601)",
-            "example": "2025-01-01"
+            "description": "SKU do Produto no ERP",
+            "example": "SKU-001",
+            "maxLength": 50
+          },
+          "clientTaxCode": {
+            "type": "string",
+            "description": "Código de agrupamento de clientes (faz referência com client_branch.clientTaxCode)",
+            "example": "SP-001",
+            "maxLength": 255
+          },
+          "productTaxCode": {
+            "type": "string",
+            "description": "Código de agrupamento de produtos (faz referência com generic_taxes.productTaxCode)",
+            "example": "PROD-TAX-A",
+            "maxLength": 255
+          },
+          "taxType": {
+            "type": "string",
+            "description": "Tipo de tributação - forma do cálculo da base de débito (FARM_POP, ISENTO, MVA, IVA, PAUTA, PMC, PF, PMPF)",
+            "example": "MVA",
+            "maxLength": 255
+          },
+          "referenceValue": {
+            "type": "number",
+            "description": "Valor de referência - varia de acordo com taxType (deve ser nulo quando usar preço de venda)",
+            "example": 100
           }
         },
         "required": [
-          "codigo_determinacao"
+          "warehouseId",
+          "warehouseUf",
+          "sku",
+          "clientTaxCode",
+          "productTaxCode",
+          "taxType"
         ]
       },
       "CreateGenericTaxesDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5075,42 +5971,76 @@
             ],
             "example": "sandbox"
           },
-          "codigo_imposto": {
+          "productTaxCode": {
             "type": "string",
-            "description": "Código do imposto",
-            "example": "IMP-001"
+            "description": "Código de agrupamento de produtos (faz referência com generic_taxes_determination.productTaxCode)",
+            "example": "PROD-TAX-A",
+            "maxLength": 255
           },
-          "aliquota": {
+          "icmsCreditAliquot": {
             "type": "number",
-            "description": "Alíquota do imposto (0-100%)",
-            "example": 18.5
+            "description": "Alíquota de crédito aplicada à base de crédito (default: 0)",
+            "example": 18
           },
-          "tipo_calculo": {
-            "type": "string",
-            "description": "Tipo de cálculo do imposto",
-            "enum": [
-              "PERCENTUAL",
-              "VALOR_FIXO"
-            ],
-            "example": "PERCENTUAL"
-          },
-          "base_calculo": {
+          "icmsCreditAliquotReducer": {
             "type": "number",
-            "description": "Base de cálculo do imposto",
-            "example": 1000
+            "description": "Redutor percentual da alíquota de crédito (default: 0)",
+            "example": 10
+          },
+          "icmsStDebitAliquot": {
+            "type": "number",
+            "description": "Alíquota de débito do ICMS-ST aplicada na base de débito (default: 0)",
+            "example": 19
+          },
+          "icmsStDebitAliquotReducer": {
+            "type": "number",
+            "description": "Redutor da alíquota de débito (default: 0)",
+            "example": 5
+          },
+          "fcpMultiplier": {
+            "type": "number",
+            "description": "Fator multiplicativo do FCP - Considera (1) ou não (0) o FCP no cálculo da ST (default: 0)",
+            "example": 1
+          },
+          "fcpIcmsCreditAliquot": {
+            "type": "number",
+            "description": "Alíquota de crédito referente ao FCP (default: 0)",
+            "example": 2
+          },
+          "fcpIcmsCreditBaseReducer": {
+            "type": "number",
+            "description": "Redutor de base de crédito referente ao FCP (default: 0)",
+            "example": 3
+          },
+          "fcpStDebitAliquot": {
+            "type": "number",
+            "description": "Alíquota de débito ao FCP (default: 0)",
+            "example": 2.5
+          },
+          "fcpStDebitBaseReducer": {
+            "type": "number",
+            "description": "Redutor da base de débito do FCP (default: 0)",
+            "example": 1.5
+          },
+          "ivaAggregatorFcpSt": {
+            "type": "number",
+            "description": "Agregador do IVA aplicado à base de débito do FCP (default: 0)",
+            "example": 30
+          },
+          "otherCreditBaseReducers": {
+            "type": "number",
+            "description": "Outras possíveis reduções na base de crédito (default: 0)",
+            "example": 5
           }
         },
         "required": [
-          "codigo_imposto",
-          "aliquota",
-          "tipo_calculo",
-          "base_calculo"
+          "productTaxCode"
         ]
       },
       "CreateGenericTaxesBaseCalcStDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5124,38 +6054,46 @@
             ],
             "example": "sandbox"
           },
-          "codigo_base_st": {
+          "productTaxCode": {
             "type": "string",
-            "description": "Código da base de cálculo ST",
-            "example": "BASE-ST-001"
+            "description": "Código de agrupamento de produtos (faz referência com generic_taxes_determination.productTaxCode)",
+            "example": "PROD-TAX-A",
+            "maxLength": 255
           },
-          "percentual_reducao": {
+          "ivaAgregator": {
             "type": "number",
-            "description": "Percentual de redução da base de cálculo (0-100%)",
-            "example": 10.5
-          },
-          "percentual_mva": {
-            "type": "number",
-            "description": "Percentual de MVA (Margem de Valor Agregado)",
+            "description": "Percentual agregador do IVA/MVA (default: 0)",
             "example": 30
           },
-          "valor_agregado": {
+          "debitBaseReducer": {
             "type": "number",
-            "description": "Valor agregado",
-            "example": 500
+            "description": "Redutor de base de débito associado ao tipo tributário (default: 0)",
+            "example": 10
+          },
+          "maximumLimitPercentageFactorIcmsSt": {
+            "type": "number",
+            "description": "Fator percentual máximo para o valor do ICMS-ST (obtido com base no preço de venda, default: 0)",
+            "example": 15
+          },
+          "minimumLimitPercentageFactorIcmsSt": {
+            "type": "number",
+            "description": "Fator percentual mínimo para o valor do ICMS-ST (obtido com base no preço de venda, default: 0)",
+            "example": 5
+          },
+          "otherDebitBaseReducers": {
+            "type": "number",
+            "description": "Outras possíveis reduções na base de débito (default: 0)",
+            "example": 3
           }
         },
         "required": [
-          "codigo_base_st",
-          "percentual_reducao",
-          "percentual_mva",
-          "valor_agregado"
+          "productTaxCode"
         ]
       },
       "CreateGenericExtraInfoDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5208,7 +6146,7 @@
       "CreateComboHeaderDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5272,7 +6210,7 @@
       "CreateComboItemDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5323,7 +6261,7 @@
       "CreateComboClientDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"
@@ -5356,7 +6294,7 @@
       "CreateComboSellerDto": {
         "type": "object",
         "properties": {
-          "client_id": {
+          "tenant_id": {
             "type": "string",
             "description": "ID do cliente extraído do JWT (injetado automaticamente, não enviar no payload)",
             "example": "client_123"

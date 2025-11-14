@@ -215,12 +215,14 @@ Todas as mutations retornam o tipo `IngestionResponseType`, que cont√©m informa√
 ```graphql
 mutation CreateClient {
   createClient(input: {
-    cnpj: "12.345.678/0001-95"
-    razao_social: "Distribuidora XYZ Ltda"
-    nome_fantasia: "XYZ Farma"
-    email: "contato@xyzfarma.com.br"
-    telefone: "(11) 98765-4321"
-    status: ACTIVE
+    name: "XYZ Farma"
+    cnpj: "12345678000195"
+    externalId: "CLI-XYZ-001"
+    razaoSocial: "Distribuidora XYZ Ltda"
+    state: "SP"
+    emailErp: "contato@xyzfarma.com.br"
+    phone: "11987654321"
+    drugstore: true
   }) {
     id
     model
@@ -260,11 +262,13 @@ mutation CreateClient {
 ```graphql
 mutation CreateProduct {
   createProduct(input: {
-    codigo_produto: "PROD-12345"
-    descricao_produto: "Paracetamol 500mg - Caixa com 20 comprimidos"
-    categoria: "MEDICAMENTO"
-    preco_base: 15.50
-    ativo: true
+    name: "Paracetamol 500mg - Caixa com 20 comprimidos"
+    sku: "PROD-12345"
+    partnerMaker: false
+    ean: "7891234567890"
+    maker: "EMS Pharma"
+    category: "MEDICAMENTO"
+    controlled: false
   }) {
     id
     model
@@ -280,12 +284,16 @@ mutation CreateProduct {
 ```graphql
 mutation CreateInvoice {
   createInvoice(input: {
-    numero_nf: "NF-2025-12345"
-    serie_nf: "001"
-    data_emissao: "2025-11-08T10:00:00Z"
-    codigo_cliente: "CLI-001"
-    valor_total: 3200.00
-    status: ISSUED
+    externalId: "INV-2025-12345"
+    clientId: "CLI-001"
+    warehouseId: "WH-SP-001"
+    cnpj: "12345678000190"
+    origin: "NEXFAR"
+    status: "PENDING"
+    issueDate: "2025-11-08"
+    dueDate: "2025-12-08"
+    value: 3200.00
+    instalments: 1
   }) {
     id
     model

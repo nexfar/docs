@@ -38,10 +38,14 @@ const JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
 // Payload com dados do cliente
 // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
 const clientData = {
-    cnpj: "12.345.678/0001-90",  // CNPJ no formato com pontuação
-    razao_social: "Farmácia Exemplo LTDA",
-    email: "contato@exemplo.com.br",
-    status: "ACTIVE"
+    name: "Farmácia Exemplo",
+    cnpj: "12345678000190",
+    externalId: "CLI-EX-001",
+    razaoSocial: "Farmácia Exemplo LTDA",
+    state: "SP",
+    emailErp: "contato@exemplo.com.br",
+    phone: "11987654321",
+    drugstore: true
 };
 
 /**
@@ -165,18 +169,30 @@ const JWT_TOKEN = "seu_token_jwt_aqui";
 
 ```javascript
 const clientData = {
-    cnpj: "12.345.678/0001-90",
-    razao_social: "Farmácia Exemplo LTDA",
-    email: "contato@exemplo.com.br",
-    status: "ACTIVE"
+    name: "Farmácia Exemplo",
+    cnpj: "12345678000190",
+    externalId: "CLI-EX-001",
+    razaoSocial: "Farmácia Exemplo LTDA",
+    state: "SP",
+    emailErp: "contato@exemplo.com.br",
+    phone: "11987654321",
+    drugstore: true
 };
 ```
 
 Os campos obrigatórios para criar um cliente são:
-- **cnpj**: CNPJ no formato XX.XXX.XXX/XXXX-XX
-- **razao_social**: Razão social da empresa
-- **email**: E-mail de contato
-- **status**: Status do cliente (ACTIVE ou INACTIVE)
+- **name**: Nome fantasia da farmácia
+- **cnpj**: CNPJ (apenas números, 14 dígitos)
+- **externalId**: ID do cliente no ERP
+- **razaoSocial**: Razão social da empresa
+- **state**: UF do estado (2 caracteres, ex: "SP")
+
+Campos opcionais comuns:
+- **emailErp**: E-mail de contato
+- **phone**: Telefone (apenas números)
+- **drugstore**: Indica se é farmácia (true/false)
+- **customFields**: Campos personalizados (object)
+- **extraParams**: Parâmetros extras (object)
 
 ### 3. Função Async/Await
 
@@ -212,19 +228,27 @@ import axios, { AxiosError } from 'axios';
 
 // Interfaces
 interface ClientData {
+    name: string;
     cnpj: string;
-    razao_social: string;
-    email: string;
-    status: 'ACTIVE' | 'INACTIVE';
+    externalId: string;
+    razaoSocial: string;
+    state: string;
+    emailErp?: string;
+    phone?: string;
+    drugstore?: boolean;
+    customFields?: Record<string, any>;
+    extraParams?: Record<string, any>;
 }
 
 interface ClientResponse {
     id: string;
     correlation_id: string;
+    name: string;
     cnpj: string;
-    razao_social: string;
-    email: string;
-    status: string;
+    externalId: string;
+    razaoSocial: string;
+    state: string;
+    emailErp?: string;
     created_at: string;
 }
 
@@ -239,10 +263,14 @@ const API_URL = "https://api.nexfar.com.br";
 const JWT_TOKEN = "seu_token_jwt_aqui";
 
 const clientData: ClientData = {
-    cnpj: "12.345.678/0001-90",
-    razao_social: "Farmácia Exemplo LTDA",
-    email: "contato@exemplo.com.br",
-    status: "ACTIVE"
+    name: "Farmácia Exemplo",
+    cnpj: "12345678000190",
+    externalId: "CLI-EX-001",
+    razaoSocial: "Farmácia Exemplo LTDA",
+    state: "SP",
+    emailErp: "contato@exemplo.com.br",
+    phone: "11987654321",
+    drugstore: true
 };
 
 async function sendClient(): Promise<ClientResponse> {

@@ -46,10 +46,14 @@ $jwtToken = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido pela 
 // Payload com dados do cliente
 // IMPORTANTE: Substitua os dados de exemplo pelos dados reais do seu cliente
 $clientData = [
-    'cnpj' => '12.345.678/0001-90',  // CNPJ no formato com pontuação
-    'razao_social' => 'Farmácia Exemplo LTDA',
-    'email' => 'contato@exemplo.com.br',
-    'status' => 'ACTIVE'
+    'name' => 'Farmácia Exemplo',
+    'cnpj' => '12345678000190',
+    'externalId' => 'CLI-EX-001',
+    'razaoSocial' => 'Farmácia Exemplo LTDA',
+    'state' => 'SP',
+    'emailErp' => 'contato@exemplo.com.br',
+    'phone' => '11987654321',
+    'drugstore' => true
 ];
 
 /**
@@ -195,10 +199,14 @@ $jwtToken = "seu_token_jwt_aqui";
 
 ```php
 $clientData = [
-    'cnpj' => '12.345.678/0001-90',
-    'razao_social' => 'Farmácia Exemplo LTDA',
-    'email' => 'contato@exemplo.com.br',
-    'status' => 'ACTIVE'
+    'name' => 'Farmácia Exemplo',
+    'cnpj' => '12345678000190',
+    'externalId' => 'CLI-EX-001',
+    'razaoSocial' => 'Farmácia Exemplo LTDA',
+    'state' => 'SP',
+    'emailErp' => 'contato@exemplo.com.br',
+    'phone' => '11987654321',
+    'drugstore' => true
 ];
 ```
 
@@ -257,10 +265,14 @@ $apiUrl = "https://api.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 
 $clientData = [
-    'cnpj' => '12.345.678/0001-90',
-    'razao_social' => 'Farmácia Exemplo LTDA',
-    'email' => 'contato@exemplo.com.br',
-    'status' => 'ACTIVE'
+    'name' => 'Farmácia Exemplo',
+    'cnpj' => '12345678000190',
+    'externalId' => 'CLI-EX-001',
+    'razaoSocial' => 'Farmácia Exemplo LTDA',
+    'state' => 'SP',
+    'emailErp' => 'contato@exemplo.com.br',
+    'phone' => '11987654321',
+    'drugstore' => true
 ];
 
 // Criar cliente Guzzle
@@ -327,10 +339,14 @@ $jwtToken = "seu_token_jwt_aqui";
 $response = Http::timeout(10)
     ->withToken($jwtToken)
     ->post("{$apiUrl}/api/v1/clients", [
-        'cnpj' => '12.345.678/0001-90',
-        'razao_social' => 'Farmácia Exemplo LTDA',
-        'email' => 'contato@exemplo.com.br',
-        'status' => 'ACTIVE'
+        'name' => 'Farmácia Exemplo',
+        'cnpj' => '12345678000190',
+        'externalId' => 'CLI-EX-001',
+        'razaoSocial' => 'Farmácia Exemplo LTDA',
+        'state' => 'SP',
+        'emailErp' => 'contato@exemplo.com.br',
+        'phone' => '11987654321',
+        'drugstore' => true
     ]);
 
 if ($response->successful()) {

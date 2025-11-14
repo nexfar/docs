@@ -80,10 +80,14 @@ Antes de começar, você precisa de:
       -H "Authorization: Bearer $NEXFAR_JWT" \
       -H "Content-Type: application/json" \
       -d '{
-        "cnpj": "12.345.678/0001-90",
-        "razao_social": "Farmácia Quick Start LTDA",
-        "email": "contato@quickstart.com.br",
-        "status": "ACTIVE"
+        "name": "Farmácia Quick Start",
+        "cnpj": "12345678000190",
+        "externalId": "CLI-QS-001",
+        "razaoSocial": "Farmácia Quick Start LTDA",
+        "state": "SP",
+        "emailErp": "contato@quickstart.com.br",
+        "phone": "11987654321",
+        "drugstore": true
       }'
     ```
 
@@ -103,10 +107,14 @@ Antes de começar, você precisa de:
 
     # Payload
     client_data = {
-        "cnpj": "12.345.678/0001-90",
-        "razao_social": "Farmácia Quick Start LTDA",
-        "email": "contato@quickstart.com.br",
-        "status": "ACTIVE"
+        "name": "Farmácia Quick Start",
+        "cnpj": "12345678000190",
+        "externalId": "CLI-QS-001",
+        "razaoSocial": "Farmácia Quick Start LTDA",
+        "state": "SP",
+        "emailErp": "contato@quickstart.com.br",
+        "phone": "11987654321",
+        "drugstore": True
     }
 
     # Enviar requisição
@@ -143,10 +151,14 @@ Antes de começar, você precisa de:
 
     // Payload
     const clientData = {
-        cnpj: '12.345.678/0001-90',
-        razao_social: 'Farmácia Quick Start LTDA',
-        email: 'contato@quickstart.com.br',
-        status: 'ACTIVE'
+        name: 'Farmácia Quick Start',
+        cnpj: '12345678000190',
+        externalId: 'CLI-QS-001',
+        razaoSocial: 'Farmácia Quick Start LTDA',
+        state: 'SP',
+        emailErp: 'contato@quickstart.com.br',
+        phone: '11987654321',
+        drugstore: true
     };
 
     // Enviar requisição
@@ -244,10 +256,14 @@ Se você prefere usar Postman ao invés de linha de comando:
 
   ```json
   {
-    "cnpj": "12.345.678/0001-90",
-    "razao_social": "Farmácia Quick Start LTDA",
-    "email": "contato@quickstart.com.br",
-    "status": "ACTIVE"
+    "name": "Farmácia Quick Start",
+    "cnpj": "12345678000190",
+    "externalId": "CLI-QS-001",
+    "razaoSocial": "Farmácia Quick Start LTDA",
+    "state": "SP",
+    "emailErp": "contato@quickstart.com.br",
+    "phone": "11987654321",
+    "drugstore": true
   }
   ```
 </Step>
