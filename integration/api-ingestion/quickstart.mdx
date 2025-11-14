@@ -54,7 +54,7 @@ Antes de começar, você precisa de:
     Antes de enviar dados, confirme que a API está acessível:
 
     ```bash
-    curl https://api.nexfar.com.br/api/health
+    curl https://ingestion.nexfar.com.br/api/health
     ```
 
     **Resposta esperada (200 OK):**
@@ -76,7 +76,7 @@ Antes de começar, você precisa de:
     <CodeGroup>
 
     ```bash cURL
-    curl -X POST https://api.nexfar.com.br/api/v1/clients \
+    curl -X POST https://ingestion.nexfar.com.br/api/v1/clients \
       -H "Authorization: Bearer $NEXFAR_JWT" \
       -H "Content-Type: application/json" \
       -d '{
@@ -96,7 +96,7 @@ Antes de começar, você precisa de:
     import os
 
     # Configuração
-    API_URL = "https://api.nexfar.com.br"
+    API_URL = "https://ingestion.nexfar.com.br"
     JWT_TOKEN = os.getenv("NEXFAR_JWT")  # Token do ambiente
 
     # Headers
@@ -140,7 +140,7 @@ Antes de começar, você precisa de:
     const axios = require('axios');
 
     // Configuração
-    const API_URL = 'https://api.nexfar.com.br';
+    const API_URL = 'https://ingestion.nexfar.com.br';
     const JWT_TOKEN = process.env.NEXFAR_JWT;  // Token do ambiente
 
     // Headers
@@ -205,7 +205,7 @@ Antes de começar, você precisa de:
     Valide que seu cliente foi registrado consultando a API de Audit Log:
 
     ```bash
-    curl -X GET "https://api.nexfar.com.br/api/v1/audit-log?date_from=today" \
+    curl -X GET "https://ingestion.nexfar.com.br/api/v1/audit-log?date_from=today" \
       -H "Authorization: Bearer $NEXFAR_JWT"
     ```
 
@@ -242,7 +242,7 @@ Se você prefere usar Postman ao invés de linha de comando:
 <Step title="Criar Nova Requisição">
   1. Abra Postman e clique em **New → HTTP Request**
   2. Configure método: **POST**
-  3. URL: `https://api.nexfar.com.br/api/v1/clients`
+  3. URL: `https://ingestion.nexfar.com.br/api/v1/clients`
 </Step>
 
 <Step title="Configurar Headers">

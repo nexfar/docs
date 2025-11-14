@@ -132,7 +132,7 @@ Este método usa a API REST para criar novos usuários administradores. **Requer
 ### Passo 1: Fazer Login como Admin
 
 ```bash
-curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
+curl -X POST https://ingestion.nexfar.com.br/api/v1/auth/email/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@nexfar.com.br",
@@ -162,7 +162,7 @@ curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
 ### Passo 2: Criar Novo Usuário Admin
 
 ```bash
-curl -X POST https://api.nexfar.com.br/api/v1/users \
+curl -X POST https://ingestion.nexfar.com.br/api/v1/users \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_AQUI" \
   -d '{
@@ -203,7 +203,7 @@ curl -X POST https://api.nexfar.com.br/api/v1/users \
 ### Passo 3: Testar Login do Novo Admin
 
 ```bash
-curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
+curl -X POST https://ingestion.nexfar.com.br/api/v1/auth/email/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "novo.admin@nexfar.com.br",
@@ -222,7 +222,7 @@ curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
 ### Listar Todos os Usuários
 
 ```bash
-curl -X GET https://api.nexfar.com.br/api/v1/users?page=1&limit=10 \
+curl -X GET https://ingestion.nexfar.com.br/api/v1/users?page=1&limit=10 \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN"
 ```
 
@@ -254,7 +254,7 @@ curl -X GET https://api.nexfar.com.br/api/v1/users?page=1&limit=10 \
 ### Atualizar Usuário Existente
 
 ```bash
-curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
+curl -X PATCH https://ingestion.nexfar.com.br/api/v1/users/{user-id} \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN" \
   -d '{
@@ -268,7 +268,7 @@ curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
 ### Promover Usuário a Admin
 
 ```bash
-curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
+curl -X PATCH https://ingestion.nexfar.com.br/api/v1/users/{user-id} \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN" \
   -d '{
@@ -281,7 +281,7 @@ curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
 ### Desativar Usuário
 
 ```bash
-curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
+curl -X PATCH https://ingestion.nexfar.com.br/api/v1/users/{user-id} \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN" \
   -d '{
@@ -294,7 +294,7 @@ curl -X PATCH https://api.nexfar.com.br/api/v1/users/{user-id} \
 ### Deletar Usuário (Soft Delete)
 
 ```bash
-curl -X DELETE https://api.nexfar.com.br/api/v1/users/{user-id} \
+curl -X DELETE https://ingestion.nexfar.com.br/api/v1/users/{user-id} \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN"
 ```
 
@@ -316,7 +316,7 @@ curl -X DELETE https://api.nexfar.com.br/api/v1/users/{user-id} \
 
 ```bash
 # Atualizar senha do próprio admin (via PATCH /auth/me)
-curl -X PATCH https://api.nexfar.com.br/api/v1/auth/me \
+curl -X PATCH https://ingestion.nexfar.com.br/api/v1/auth/me \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SEU_TOKEN" \
   -d '{
@@ -330,7 +330,7 @@ curl -X PATCH https://api.nexfar.com.br/api/v1/auth/me \
 Monitore regularmente os logs de auditoria para detectar acessos suspeitos:
 
 ```bash
-curl -X GET https://api.nexfar.com.br/api/v1/audit-logs?userId={admin-id} \
+curl -X GET https://ingestion.nexfar.com.br/api/v1/audit-logs?userId={admin-id} \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN"
 ```
 
@@ -363,7 +363,7 @@ AUTH_CONFIRM_EMAIL_SECRET=string-para-confirmacao-de-email
 **Solução:**
 ```bash
 # 1. Faça login novamente para obter novo token
-curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
+curl -X POST https://ingestion.nexfar.com.br/api/v1/auth/email/login \
   -H "Content-Type: application/json" \
   -d '{"email": "admin@nexfar.com.br", "password": "sua-senha"}'
 
@@ -377,7 +377,7 @@ curl -X POST https://api.nexfar.com.br/api/v1/auth/email/login \
 **Solução:**
 ```bash
 # Listar usuários para verificar duplicatas
-curl -X GET "https://api.nexfar.com.br/api/v1/users?filters[email]=$eq:novo.admin@nexfar.com.br" \
+curl -X GET "https://ingestion.nexfar.com.br/api/v1/users?filters[email]=$eq:novo.admin@nexfar.com.br" \
   -H "Authorization: Bearer SEU_TOKEN_ADMIN"
 ```
 
@@ -388,7 +388,7 @@ curl -X GET "https://api.nexfar.com.br/api/v1/users?filters[email]=$eq:novo.admi
 **Solução:**
 ```bash
 # Verificar role do usuário atual
-curl -X GET https://api.nexfar.com.br/api/v1/auth/me \
+curl -X GET https://ingestion.nexfar.com.br/api/v1/auth/me \
   -H "Authorization: Bearer SEU_TOKEN"
 
 # Se necessário, peça a outro admin para promover seu usuário

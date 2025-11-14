@@ -40,7 +40,7 @@ O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a A
 <?php
 
 // Configuração da API
-$apiUrl = "https://api.nexfar.com.br";
+$apiUrl = "https://ingestion.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido pela Nexfar
 
 // Payload com dados do cliente
@@ -188,11 +188,11 @@ php sendClient.php
 ### 1. Configuração Inicial
 
 ```php
-$apiUrl = "https://api.nexfar.com.br";
+$apiUrl = "https://ingestion.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 ```
 
-- **$apiUrl**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **$apiUrl**: Endereço do ambiente sandbox. Para produção, use `https://ingestion.nexfar.com.br`
 - **$jwtToken**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
 
 ### 2. Payload do Cliente
@@ -261,7 +261,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 
 // Configuração
-$apiUrl = "https://api.nexfar.com.br";
+$apiUrl = "https://ingestion.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 
 $clientData = [
@@ -333,7 +333,7 @@ Se você está usando Laravel, pode usar o HTTP Client nativo:
 
 use Illuminate\Support\Facades\Http;
 
-$apiUrl = "https://api.nexfar.com.br";
+$apiUrl = "https://ingestion.nexfar.com.br";
 $jwtToken = "seu_token_jwt_aqui";
 
 $response = Http::timeout(10)
@@ -409,11 +409,11 @@ if ($response->successful()) {
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - `https://api.nexfar.com.br`
+       - `https://ingestion.nexfar.com.br`
     2. Teste conectividade:
        ```bash
-       ping api.nexfar.com.br
-       curl -I https://api.nexfar.com.br
+       ping ingestion.nexfar.com.br
+       curl -I https://ingestion.nexfar.com.br
        ```
     3. Verifique configurações de firewall/proxy
   </Accordion>

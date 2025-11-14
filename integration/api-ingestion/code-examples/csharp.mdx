@@ -47,7 +47,7 @@ namespace NexfarIntegration
     class NexfarApiClient
     {
         // Configuração da API
-        private const string API_URL = "https://api.nexfar.com.br";
+        private const string API_URL = "https://ingestion.nexfar.com.br";
         private const string JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido
 
         static async Task Main(string[] args)
@@ -213,7 +213,7 @@ dotnet run
 ### 1. Configuração Inicial
 
 ```csharp
-private const string API_URL = "https://api.nexfar.com.br";
+private const string API_URL = "https://ingestion.nexfar.com.br";
 private const string JWT_TOKEN = "seu_token_jwt_aqui";
 ```
 
@@ -413,7 +413,7 @@ Console.WriteLine($"ID: {clientResponse.Id}");
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - `https://api.nexfar.com.br`
+       - `https://ingestion.nexfar.com.br`
     2. Teste sua conexão com a internet
     3. Verifique configurações de firewall/proxy corporativo
   </Accordion>

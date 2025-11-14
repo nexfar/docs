@@ -18,7 +18,7 @@ A filosofia é simples: **teste sem riscos antes de enviar dados reais**. O Sand
 
 | Aspecto | Sandbox | Produção |
 |---------|---------|----------|
-| **URL Base** | `api.nexfar.com.br` | `api.nexfar.com.br` |
+| **URL Base** | `ingestion.nexfar.com.br` | `ingestion.nexfar.com.br` |
 | **JWT Claim `environment`** | `"sandbox"` | `"production"` |
 | **Finalidade** | Testes, desenvolvimento, integração | Dados reais, uso em produção |
 | **Dados** | Isolados, fictícios ou de teste | Dados reais da operação |
@@ -118,11 +118,11 @@ Dados no Sandbox são **temporários** e deletados automaticamente após **30 di
 
 <Steps>
   <Step title="Começar no Sandbox">
-    Receba credenciais JWT Sandbox via email da Nexfar. Configure sua aplicação para apontar para `api.nexfar.com.br`.
+    Receba credenciais JWT Sandbox via email da Nexfar. Configure sua aplicação para apontar para `ingestion.nexfar.com.br`.
 
     **O que você receberá:**
     - Token JWT com claim `environment: "sandbox"`
-    - URL do Sandbox: `https://api.nexfar.com.br`
+    - URL do Sandbox: `https://ingestion.nexfar.com.br`
     - Link para documentação da API
     - Client ID único
 
@@ -185,7 +185,7 @@ Dados no Sandbox são **temporários** e deletados automaticamente após **30 di
   <Step title="Migrar para Produção">
     Após receber JWT Production:
 
-    - Atualize aplicação: trocar URL (`api.nexfar.com.br`) e JWT token
+    - Atualize aplicação: trocar URL (`ingestion.nexfar.com.br`) e JWT token
     - Envie primeiros dados reais
     - Monitore via [Audit Log API](/integration/api-ingestion/audit-log)
     - Confirme isolamento: dados Sandbox não aparecem em Production
@@ -313,9 +313,9 @@ import os
 
 ENV = os.getenv("NEXFAR_ENV", "sandbox")  # Default: sandbox
 API_URL = (
-    "https://api.nexfar.com.br"
+    "https://ingestion.nexfar.com.br"
     if ENV == "sandbox"
-    else "https://api.nexfar.com.br"
+    else "https://ingestion.nexfar.com.br"
 )
 JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
 ```
@@ -376,8 +376,8 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
   **Validação Imediata:**
   1. Confirme claim `environment` do token atual em [jwt.io](https://jwt.io)
   2. Verifique URL usada:
-     - Sandbox: `api.nexfar.com.br`
-     - Production: `api.nexfar.com.br`
+     - Sandbox: `ingestion.nexfar.com.br`
+     - Production: `ingestion.nexfar.com.br`
   3. Se problema persistir, **reporte IMEDIATAMENTE**: suporte@nexfar.com.br
 
   <Warning>
@@ -393,8 +393,8 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
      - `"sandbox"` → Você está no Sandbox
      - `"production"` → Você está em Produção
   3. **Confirmar URL corresponde ao environment:**
-     - Sandbox: `https://api.nexfar.com.br`
-     - Production: `https://api.nexfar.com.br`
+     - Sandbox: `https://ingestion.nexfar.com.br`
+     - Production: `https://ingestion.nexfar.com.br`
   4. **Enviar requisição de teste e verificar Audit Log**
 
   **Exemplo de Verificação (Python):**
@@ -430,10 +430,10 @@ JWT_TOKEN = os.getenv(f"NEXFAR_JWT_{ENV.upper()}")
      - Copie token completo, sem espaços ou quebras
      - Formato: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (string longa)
   3. **Confirmar URL correta:**
-     - Production usa `api.nexfar.com.br` (SEM "sandbox" na URL)
+     - Production usa `ingestion.nexfar.com.br` (SEM "sandbox" na URL)
   4. **Testar com curl antes de integrar ao código:**
      ```bash
-     curl -X POST https://api.nexfar.com.br/api/v1/clients \
+     curl -X POST https://ingestion.nexfar.com.br/api/v1/clients \
        -H "Authorization: Bearer $NEXFAR_JWT_PRODUCTION" \
        -H "Content-Type: application/json" \
        -d '{"cnpj": "12.345.678/0001-90", "razao_social": "Teste LTDA"}'

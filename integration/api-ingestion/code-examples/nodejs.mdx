@@ -32,7 +32,7 @@ O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a A
 const axios = require('axios');
 
 // Configuração da API
-const API_URL = "https://api.nexfar.com.br";
+const API_URL = "https://ingestion.nexfar.com.br";
 const JWT_TOKEN = "seu_token_jwt_aqui"; // TODO: Substituir pelo token fornecido pela Nexfar
 
 // Payload com dados do cliente
@@ -158,11 +158,11 @@ node sendClient.js
 ### 1. Configuração Inicial
 
 ```javascript
-const API_URL = "https://api.nexfar.com.br";
+const API_URL = "https://ingestion.nexfar.com.br";
 const JWT_TOKEN = "seu_token_jwt_aqui";
 ```
 
-- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://ingestion.nexfar.com.br`
 - **JWT_TOKEN**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
 
 ### 2. Payload do Cliente
@@ -259,7 +259,7 @@ interface ErrorResponse {
 }
 
 // Configuração
-const API_URL = "https://api.nexfar.com.br";
+const API_URL = "https://ingestion.nexfar.com.br";
 const JWT_TOKEN = "seu_token_jwt_aqui";
 
 const clientData: ClientData = {
@@ -324,7 +324,7 @@ npm install node-fetch
 ```javascript
 const fetch = require('node-fetch');
 
-const API_URL = "https://api.nexfar.com.br";
+const API_URL = "https://ingestion.nexfar.com.br";
 const JWT_TOKEN = "seu_token_jwt_aqui";
 
 async function sendClient() {
@@ -395,8 +395,8 @@ async function sendClient() {
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - Sandbox: `https://api.nexfar.com.br`
-       - Produção: `https://api.nexfar.com.br`
+       - Sandbox: `https://ingestion.nexfar.com.br`
+       - Produção: `https://ingestion.nexfar.com.br`
     2. Teste sua conexão com a internet
     3. Verifique configurações de firewall/proxy
   </Accordion>

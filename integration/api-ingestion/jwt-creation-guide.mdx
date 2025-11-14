@@ -431,7 +431,7 @@ Bem-vindo à API de Ingestão Nexfar! Seguem suas credenciais de acesso ao ambie
 ---
 
 **Ambiente:** Sandbox (Testes)
-**URL Base:** https://api.nexfar.com.br
+**URL Base:** https://ingestion.nexfar.com.br
 **Client ID:** cli_abc123xyz789
 **Validade do Token:** 90 dias (até 13/02/2026)
 
@@ -482,7 +482,7 @@ Após gerar o token, valide que está correto:
 
 ```bash
 # Testar token
-curl -X GET https://api.nexfar.com.br/health \
+curl -X GET https://ingestion.nexfar.com.br/health \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
 
 # Resposta esperada (200 OK):
@@ -580,7 +580,7 @@ curl -X GET https://api.nexfar.com.br/health \
   1. Verifique claim `environment` do token em jwt.io
   2. Confirme URL usada:
      - Sandbox: `api-sandbox.nexfar.com.br`
-     - Production: `api.nexfar.com.br`
+     - Production: `ingestion.nexfar.com.br`
   3. Dados Sandbox NUNCA aparecem em Production (isolamento absoluto)
 
   **Solução:**

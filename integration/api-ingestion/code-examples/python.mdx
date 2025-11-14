@@ -28,7 +28,7 @@ O exemplo abaixo demonstra como autenticar e enviar dados de um cliente para a A
 import requests
 
 # Configuração da API
-API_URL = "https://api.nexfar.com.br"
+API_URL = "https://ingestion.nexfar.com.br"
 JWT_TOKEN = "seu_token_jwt_aqui"  # TODO: Substituir pelo token fornecido pela Nexfar
 
 # Headers de autenticação
@@ -136,11 +136,11 @@ python send_client.py
 ### 1. Configuração Inicial
 
 ```python
-API_URL = "https://api.nexfar.com.br"
+API_URL = "https://ingestion.nexfar.com.br"
 JWT_TOKEN = "seu_token_jwt_aqui"
 ```
 
-- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://api.nexfar.com.br`
+- **API_URL**: Endereço do ambiente sandbox. Para produção, use `https://ingestion.nexfar.com.br`
 - **JWT_TOKEN**: Token de autenticação fornecido pela Nexfar. Deve ser substituído pelo token real.
 
 ### 2. Headers de Autenticação
@@ -235,8 +235,8 @@ Para cada tipo de erro, uma mensagem clara é exibida com orientações de como 
 
     **Solução:**
     1. Verifique se a URL está correta:
-       - Sandbox: `https://api.nexfar.com.br`
-       - Produção: `https://api.nexfar.com.br`
+       - Sandbox: `https://ingestion.nexfar.com.br`
+       - Produção: `https://ingestion.nexfar.com.br`
     2. Teste sua conexão com a internet
     3. Verifique configurações de firewall/proxy
   </Accordion>
