@@ -88,11 +88,7 @@
     "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
   },
   "navbar": {
-    "primary": {
-      "type": "button",
-      "label": "Acessar Plataforma",
-      "href": "https://app.nexfar.com.br"
-    }
+    
   },
   "footer": {
     "socials": {
