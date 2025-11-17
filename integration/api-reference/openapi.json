@@ -3113,10 +3113,6 @@
   ],
   "servers": [
     {
-      "url": "https://nf-nest-integration-staging.up.railway.app",
-      "description": "Staging (Sandbox) - Use este servidor para testes"
-    },
-    {
       "url": "https://ingestion.nexfar.com.br",
       "description": "Production - Requer credenciais de produção"
     }
