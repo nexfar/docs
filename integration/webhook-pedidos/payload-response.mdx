@@ -1,0 +1,322 @@
+---
+title: 'Payload e Response'
+description: 'Schema completo do payload de pedidos, response esperada e códigos HTTP'
+icon: 'code'
+---
+
+# Payload e Response
+
+## Payload do Pedido (Request Body)
+
+A Nexfar envia o seguinte payload JSON no body do POST. Todos os campos são autoexplicativos e seguem o formato padronizado Nexfar.
+
+### Campos do Pedido (Header)
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `orderId` | Long | Sim | ID do pedido na Nexfar (chave única) |
+| `orderDate` | String (ISO 8601) | Sim | Data do pedido no formato `yyyy-MM-dd'T'HH:mm:ss'Z'` |
+| `branchId` | Long | Sim | ID da filial Nexfar |
+| `warehouseId` | Long | Sim | ID do depósito/armazém |
+| `clientCnpj` | String | Sim | CNPJ do cliente (farmácia) |
+| `clientName` | String | Sim | Nome/razão social do cliente |
+| `clientExternalId` | String | Sim | ID do cliente no sistema do distribuidor |
+| `sellerExternalId` | String | Não | ID do vendedor no sistema do distribuidor |
+| `mainSellerExternalId` | String | Não | ID do vendedor principal no sistema do distribuidor |
+| `userRole` | String | Não | Papel do usuário que criou o pedido (ex: `SELLER`, `MANAGER`) |
+| `paymentMethod` | String | Não | Método de pagamento (ex: `BOLETO`, `CASH`, `CREDIT_CARD`) |
+| `paymentExternalId` | String | Não | ID da condição de pagamento no sistema do distribuidor |
+| `paymentMediumTerm` | Integer | Não | Prazo médio de pagamento em dias |
+| `comments` | Object | Não | Comentários do vendedor, cliente e gerente de vendas |
+| `comments.seller` | String | Não | Comentário do vendedor |
+| `comments.client` | String | Não | Comentário do cliente |
+| `comments.salesManager` | String | Não | Comentário do gerente de vendas |
+| `originalTotal` | Decimal | Sim | Valor total do pedido (sem impostos) |
+| `originalTotalWithTaxes` | Decimal | Sim | Valor total do pedido (com impostos) |
+| `items` | Array | Sim | Lista de itens do pedido |
+
+### Campos dos Itens
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `sku` | String | Sim | Código SKU do produto no distribuidor |
+| `ean` | String | Sim | Código de barras EAN do produto |
+| `productName` | String | Sim | Nome do produto |
+| `quantityRequested` | Integer | Sim | Quantidade solicitada |
+| `price` | Decimal | Sim | Preço unitário (sem impostos) |
+| `finalPrice` | Decimal | Sim | Preço unitário final (com ST/impostos) |
+| `subsidized` | Boolean | Não | Se o item é subsidiado |
+| `promotionId` | Long | Não | ID da promoção aplicada (se houver) |
+| `promotionName` | String | Não | Nome da promoção aplicada |
+| `sellerKickback` | Decimal | Não | Comissão do vendedor sobre o item |
+
+<Tip>
+  **Datas** seguem o formato ISO 8601: `yyyy-MM-dd'T'HH:mm:ss'Z'` (UTC). Certifique-se de que seu parser aceita este formato.
+</Tip>
+
+---
+
+## Exemplo Completo de Payload
+
+<CodeGroup>
+  ```json Payload
+  {
+    "orderId": 58423,
+    "orderDate": "2026-04-02T14:30:00Z",
+    "branchId": 12,
+    "warehouseId": 3,
+    "clientCnpj": "12345678000199",
+    "clientName": "Farmácia São João",
+    "clientExternalId": "CLI-4521",
+    "sellerExternalId": "VEN-089",
+    "mainSellerExternalId": "VEN-012",
+    "userRole": "SELLER",
+    "paymentMethod": "BOLETO",
+    "paymentExternalId": "COND-30DD",
+    "paymentMediumTerm": 30,
+    "comments": {
+      "seller": "Cliente preferencial - entregar pela manhã",
+      "client": null,
+      "salesManager": null
+    },
+    "originalTotal": 1250.80,
+    "originalTotalWithTaxes": 1487.95,
+    "items": [
+      {
+        "sku": "MED-001",
+        "ean": "7891234567890",
+        "productName": "Paracetamol 750mg cx 20cp",
+        "quantityRequested": 50,
+        "price": 12.50,
+        "finalPrice": 14.87,
+        "subsidized": false,
+        "promotionId": null,
+        "promotionName": null,
+        "sellerKickback": 0.75
+      },
+      {
+        "sku": "MED-042",
+        "ean": "7890000000042",
+        "productName": "Dipirona 500mg cx 10cp",
+        "quantityRequested": 30,
+        "price": 8.36,
+        "finalPrice": 9.93,
+        "subsidized": false,
+        "promotionId": 1001,
+        "promotionName": "Promo Inverno 2026",
+        "sellerKickback": 0.50
+      }
+    ]
+  }
+  ```
+</CodeGroup>
+
+---
+
+## Response Esperada
+
+O endpoint do distribuidor **deve retornar** um JSON com o seguinte formato:
+
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `orderExternalId` | String | **Sim** | ID do pedido no sistema do distribuidor |
+| `status` | String | Não | Status do pedido no distribuidor (ex: `RECEIVED`, `PROCESSING`) |
+| `message` | String | Não | Mensagem descritiva (ex: `Pedido recebido com sucesso`) |
+
+### Exemplo de Response de Sucesso
+
+```json
+{
+  "orderExternalId": "PED-2026-00458",
+  "status": "RECEIVED",
+  "message": "Pedido recebido e em processamento"
+}
+```
+
+<Warning>
+  O campo `orderExternalId` é **obrigatório** e deve ser preenchido. Se a response não contiver este campo (ou vier como `null`/vazio), a Nexfar tratará como falha e fará retry automático.
+</Warning>
+
+---
+
+## Códigos HTTP
+
+A Nexfar interpreta os códigos HTTP da seguinte forma:
+
+| Status Code | Interpretação | Ação da Nexfar |
+|---|---|---|
+| `2xx` + `orderExternalId` preenchido | **Sucesso** | Pedido marcado como recebido pelo distribuidor |
+| `2xx` + `orderExternalId` vazio/null | Falha recuperável | Retry automático |
+| `4xx` | Falha recuperável | Retry automático |
+| `5xx` | Falha recuperável | Retry automático |
+| Timeout / conexão recusada | Falha recuperável | Retry automático |
+
+<Note>
+  Todos os cenários de falha geram **retry automático** até o limite configurado. Se seu endpoint retornar erro temporário (ex: `503 Service Unavailable`), a Nexfar tentará novamente automaticamente.
+</Note>
+
+---
+
+## Exemplo Completo de Request/Response
+
+<Tabs>
+  <Tab title="Com HMAC">
+    **Request:**
+    ```http
+    POST /api/nexfar/orders HTTP/1.1
+    Host: api.seusistema.com.br
+    Content-Type: application/json
+    X-Webhook-Signature: sha256=a1b2c3d4e5f6...
+
+    {
+      "orderId": 58423,
+      "clientCnpj": "12345678000199",
+      "items": [...]
+    }
+    ```
+
+    **Response (200 OK):**
+    ```json
+    {
+      "orderExternalId": "PED-2026-00458",
+      "status": "RECEIVED",
+      "message": "Pedido recebido com sucesso"
+    }
+    ```
+  </Tab>
+
+  <Tab title="Com Bearer Token">
+    **Request:**
+    ```http
+    POST /api/nexfar/orders HTTP/1.1
+    Host: api.seusistema.com.br
+    Content-Type: application/json
+    Authorization: Bearer seu-token-secreto
+
+    {
+      "orderId": 58423,
+      "clientCnpj": "12345678000199",
+      "items": [...]
+    }
+    ```
+
+    **Response (200 OK):**
+    ```json
+    {
+      "orderExternalId": "PED-2026-00458",
+      "status": "RECEIVED"
+    }
+    ```
+  </Tab>
+
+  <Tab title="Com API Key">
+    **Request:**
+    ```http
+    POST /api/nexfar/orders HTTP/1.1
+    Host: api.seusistema.com.br
+    Content-Type: application/json
+    X-Api-Key: sua-api-key-secreta
+
+    {
+      "orderId": 58423,
+      "clientCnpj": "12345678000199",
+      "items": [...]
+    }
+    ```
+
+    **Response (200 OK):**
+    ```json
+    {
+      "orderExternalId": "PED-2026-00458"
+    }
+    ```
+  </Tab>
+
+  <Tab title="Com Basic Auth">
+    **Request:**
+    ```http
+    POST /api/nexfar/orders HTTP/1.1
+    Host: api.seusistema.com.br
+    Content-Type: application/json
+    Authorization: Basic bmV4ZmFyOnNlbmhhMTIz
+
+    {
+      "orderId": 58423,
+      "clientCnpj": "12345678000199",
+      "items": [...]
+    }
+    ```
+
+    **Response (200 OK):**
+    ```json
+    {
+      "orderExternalId": "PED-2026-00458",
+      "message": "OK"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Response sem orderExternalId">
+    **Problema:** Seu endpoint retorna HTTP 200 mas sem o campo `orderExternalId` no JSON.
+
+    **Solução:** Certifique-se de que a response sempre contém o campo `orderExternalId` preenchido com o ID do pedido no seu sistema. A Nexfar trata responses sem este campo como falha.
+
+    ```json
+    // Errado
+    { "status": "OK" }
+
+    // Correto
+    { "orderExternalId": "PED-123", "status": "OK" }
+    ```
+  </Accordion>
+
+  <Accordion title="Timeout na requisição">
+    **Problema:** A Nexfar reporta timeout ao enviar pedidos.
+
+    **Solução:** O timeout padrão da Nexfar é de **30 segundos**. Se o processamento do pedido demora mais, considere:
+    - Aceitar o pedido de forma assíncrona (retorne imediatamente com `orderExternalId` e processe depois)
+    - Otimizar o processamento no seu endpoint
+  </Accordion>
+
+  <Accordion title="Pedidos duplicados">
+    **Problema:** O mesmo pedido aparece mais de uma vez no seu sistema.
+
+    **Solução:** Seu endpoint **deve ser idempotente**. Use o campo `orderId` do payload como chave única:
+    - Antes de criar um novo pedido, verifique se já existe um com aquele `orderId`
+    - Se já existe, retorne o `orderExternalId` existente sem criar duplicata
+  </Accordion>
+
+  <Accordion title="Certificado SSL inválido">
+    **Problema:** A Nexfar não consegue conectar ao seu endpoint.
+
+    **Solução:** Certifique-se de que:
+    - Seu endpoint usa HTTPS com certificado válido (não auto-assinado)
+    - O certificado não está expirado
+    - A cadeia de certificação está completa (incluindo certificados intermediários)
+  </Accordion>
+
+  <Accordion title="Assinatura HMAC não confere">
+    **Problema:** A validação HMAC falha no seu endpoint.
+
+    **Solução:** Verifique:
+    - O shared secret está correto e é o mesmo nos dois lados
+    - Você está calculando o HMAC sobre o **body raw** da requisição (antes de qualquer parsing)
+    - O algoritmo está correto (padrão: `HmacSHA256`)
+    - A comparação é feita corretamente (lembre-se do prefixo `sha256=`)
+  </Accordion>
+
+  <Accordion title="Retries constantes mesmo com endpoint funcionando">
+    **Problema:** A Nexfar continua reenviando pedidos que já foram processados.
+
+    **Solução:** Certifique-se de que sua response:
+    - Retorna HTTP `2xx` (200, 201, etc.)
+    - Contém o campo `orderExternalId` **preenchido** (não null, não vazio)
+    - O Content-Type da response é `application/json`
+  </Accordion>
+</AccordionGroup>

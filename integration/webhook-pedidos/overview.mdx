@@ -1,0 +1,93 @@
+---
+title: 'Webhook de Pedidos'
+description: 'Receba pedidos da Nexfar automaticamente no seu sistema via HTTP POST'
+icon: 'webhook'
+---
+
+# Webhook de Pedidos
+
+## O que é
+
+A Nexfar envia pedidos automaticamente para o endpoint do distribuidor via **HTTP POST** quando um pedido é aprovado. Este é um modelo **push** — a Nexfar inicia o envio, e o distribuidor apenas precisa expor um endpoint para receber.
+
+Não é necessário consultar a Nexfar periodicamente (polling). Os pedidos chegam ao seu sistema em tempo real, assim que são processados na plataforma.
+
+---
+
+## Como Funciona
+
+<Steps>
+  <Step title="Pedido aprovado na Nexfar">
+    Um pedido é criado e aprovado na plataforma Nexfar por um vendedor ou sistema automatizado.
+  </Step>
+
+  <Step title="Nexfar monta o payload padronizado">
+    A Nexfar extrai os dados do pedido (cliente, itens, valores, pagamento) e monta um payload JSON no formato padronizado documentado nesta especificação.
+  </Step>
+
+  <Step title="POST no endpoint do distribuidor">
+    A Nexfar envia o payload via HTTP POST para o endpoint configurado do distribuidor, incluindo os headers de autenticação combinados.
+  </Step>
+
+  <Step title="Distribuidor processa e retorna ID">
+    O distribuidor recebe o pedido, processa no seu sistema, e retorna um JSON contendo o `orderExternalId` — o ID do pedido no sistema do distribuidor.
+  </Step>
+
+  <Step title="Nexfar confirma recebimento">
+    A Nexfar registra o `orderExternalId` retornado e marca o pedido como recebido pelo distribuidor. O ciclo está completo.
+  </Step>
+</Steps>
+
+---
+
+## Requisitos do Endpoint
+
+<Warning>
+  **Requisitos obrigatórios** para o endpoint do distribuidor:
+
+  - **Método:** `POST`
+  - **Content-Type:** `application/json`
+  - **HTTPS obrigatório** — a Nexfar não envia pedidos para endpoints HTTP sem TLS
+  - **Deve ser idempotente** — o mesmo `orderId` Nexfar deve sempre retornar o mesmo pedido, sem criar duplicatas
+  - **Deve retornar JSON** com o campo `orderExternalId` preenchido (ID do pedido no seu sistema)
+</Warning>
+
+---
+
+## Mecanismo de Retry
+
+<Note>
+  A Nexfar reenvia automaticamente em caso de falha (timeout, erro HTTP, conexão recusada):
+
+  - **Intervalo entre tentativas:** configurável (padrão: 5 minutos)
+  - **Máximo de tentativas:** configurável (padrão: 10)
+  - Após esgotar todas as tentativas, o pedido é marcado como **erro** e requer intervenção manual
+
+  Isso significa que seu endpoint pode receber o mesmo pedido mais de uma vez. Por isso a idempotência é obrigatória.
+</Note>
+
+---
+
+## Idempotência
+
+<Warning>
+  **Seu endpoint DEVE ser idempotente.**
+
+  Use o campo `orderId` do payload como chave única. Se o seu sistema já recebeu um pedido com aquele `orderId`, retorne o mesmo `orderExternalId` sem criar um novo pedido.
+
+  **Por que isso é necessário?** Em cenários de falha de rede, é possível que a Nexfar envie o mesmo pedido mais de uma vez (ex: o POST foi bem-sucedido, mas a resposta não chegou de volta). Sem idempotência, pedidos duplicados seriam criados no seu sistema.
+</Warning>
+
+---
+
+## Próximos Passos
+
+<CardGroup cols={2}>
+  <Card title="Autenticação" icon="shield" href="/integration/webhook-pedidos/authentication">
+    Entenda os 5 métodos de autenticação suportados e como validar as requisições da Nexfar
+  </Card>
+
+  <Card title="Payload e Response" icon="code" href="/integration/webhook-pedidos/payload-response">
+    Schema completo do payload, exemplos de request/response e códigos HTTP
+  </Card>
+</CardGroup>
