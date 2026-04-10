@@ -47,7 +47,6 @@ A Nexfar envia o seguinte payload JSON no body do POST. Todos os campos são aut
 | `finalPrice` | Decimal | Sim | Preço unitário final (com ST/impostos) |
 | `subsidized` | Boolean | Não | Se o item é subsidiado |
 | `promotionId` | Long | Não | ID da promoção aplicada (se houver) |
-| `promotionName` | String | Não | Nome da promoção aplicada |
 | `sellerKickback` | Decimal | Não | Comissão do vendedor sobre o item |
 
 <Tip>
@@ -91,7 +90,6 @@ A Nexfar envia o seguinte payload JSON no body do POST. Todos os campos são aut
         "finalPrice": 14.87,
         "subsidized": false,
         "promotionId": null,
-        "promotionName": null,
         "sellerKickback": 0.75
       },
       {
@@ -103,7 +101,6 @@ A Nexfar envia o seguinte payload JSON no body do POST. Todos os campos são aut
         "finalPrice": 9.93,
         "subsidized": false,
         "promotionId": 1001,
-        "promotionName": "Promo Inverno 2026",
         "sellerKickback": 0.50
       }
     ]
