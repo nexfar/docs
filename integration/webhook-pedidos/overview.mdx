@@ -48,7 +48,7 @@ Não é necessário consultar a Nexfar periodicamente (polling). Os pedidos cheg
   - **Método:** `POST`
   - **Content-Type:** `application/json`
   - **HTTPS obrigatório** — a Nexfar não envia pedidos para endpoints HTTP sem TLS
-  - **Deve ser idempotente** — o mesmo `orderId` Nexfar deve sempre retornar o mesmo pedido, sem criar duplicatas
+  - **Deve ser idempotente** — o mesmo `nexfarOrderId` deve sempre retornar o mesmo pedido, sem criar duplicatas
   - **Deve retornar JSON** com o campo `orderExternalId` preenchido (ID do pedido no seu sistema)
 </Warning>
 
@@ -73,7 +73,7 @@ Não é necessário consultar a Nexfar periodicamente (polling). Os pedidos cheg
 <Warning>
   **Seu endpoint DEVE ser idempotente.**
 
-  Use o campo `orderId` do payload como chave única. Se o seu sistema já recebeu um pedido com aquele `orderId`, retorne o mesmo `orderExternalId` sem criar um novo pedido.
+  Use o campo `nexfarOrderId` do payload como chave única. Se o seu sistema já recebeu um pedido com aquele `nexfarOrderId`, retorne o mesmo `orderExternalId` sem criar um novo pedido.
 
   **Por que isso é necessário?** Em cenários de falha de rede, é possível que a Nexfar envie o mesmo pedido mais de uma vez (ex: o POST foi bem-sucedido, mas a resposta não chegou de volta). Sem idempotência, pedidos duplicados seriam criados no seu sistema.
 </Warning>
