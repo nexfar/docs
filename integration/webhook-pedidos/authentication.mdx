@@ -1,0 +1,271 @@
+---
+title: 'Autenticação do Webhook'
+description: 'Métodos de autenticação suportados para validar requisições da Nexfar'
+icon: 'shield'
+---
+
+# Autenticação do Webhook
+
+## Visão Geral
+
+A Nexfar se autentica no endpoint do distribuidor usando um dos 5 métodos abaixo. O método é combinado previamente entre Nexfar e distribuidor durante o processo de onboarding.
+
+Todos os métodos utilizam **HTTPS obrigatório** para garantir que os dados trafegam criptografados.
+
+---
+
+## Métodos Suportados
+
+<Tabs>
+  <Tab title="HMAC Signature">
+    ### HMAC Signature (Recomendado)
+
+    <Tip>
+      Este é o método mais seguro, pois além de autenticar a origem da requisição, **valida a integridade do payload** — garantindo que o conteúdo não foi alterado em trânsito.
+    </Tip>
+
+    **Como funciona:**
+
+    1. A Nexfar serializa o body do request como JSON
+    2. Calcula o HMAC-SHA256 (ou outro algoritmo combinado) usando um **shared secret** conhecido por ambas as partes
+    3. Envia a assinatura no header `X-Webhook-Signature` no formato `sha256=<hex>`
+
+    **Header enviado pela Nexfar:**
+    ```
+    X-Webhook-Signature: sha256=5d41402abc4b2a76b9719d911017c592aed7bcfae6c2b0de26f8b65ac0f8e3b2
+    ```
+
+    ### Como validar no seu sistema
+
+    Para validar, recalcule o HMAC do body recebido usando o mesmo shared secret e compare com o valor do header:
+
+    <CodeGroup>
+      ```python Python
+      import hmac
+      import hashlib
+
+      def validate_webhook(request_body: bytes, signature_header: str, secret: str) -> bool:
+          expected = hmac.new(
+              secret.encode('utf-8'),
+              request_body,
+              hashlib.sha256
+          ).hexdigest()
+          received = signature_header.replace('sha256=', '')
+          return hmac.compare_digest(expected, received)
+
+      # Uso:
+      body = request.get_data()  # bytes do body
+      signature = request.headers.get('X-Webhook-Signature')
+      is_valid = validate_webhook(body, signature, 'seu-shared-secret')
+      ```
+
+      ```javascript Node.js
+      const crypto = require('crypto');
+
+      function validateWebhook(body, signatureHeader, secret) {
+        const expected = crypto
+          .createHmac('sha256', secret)
+          .update(body, 'utf-8')
+          .digest('hex');
+        const received = signatureHeader.replace('sha256=', '');
+        return crypto.timingSafeEqual(
+          Buffer.from(expected, 'hex'),
+          Buffer.from(received, 'hex')
+        );
+      }
+
+      // Uso (Express):
+      app.post('/webhook', (req, res) => {
+        const rawBody = req.rawBody; // configure body-parser para preservar raw body
+        const signature = req.headers['x-webhook-signature'];
+        const isValid = validateWebhook(rawBody, signature, 'seu-shared-secret');
+      });
+      ```
+
+      ```java Java
+      import javax.crypto.Mac;
+      import javax.crypto.spec.SecretKeySpec;
+      import java.nio.charset.StandardCharsets;
+
+      public boolean validateWebhook(String body, String signatureHeader, String secret) {
+          try {
+              Mac mac = Mac.getInstance("HmacSHA256");
+              SecretKeySpec key = new SecretKeySpec(
+                  secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+              mac.init(key);
+              byte[] hash = mac.doFinal(body.getBytes(StandardCharsets.UTF_8));
+
+              StringBuilder expected = new StringBuilder();
+              for (byte b : hash) {
+                  expected.append(String.format("%02x", b));
+              }
+
+              String received = signatureHeader.replace("sha256=", "");
+              return expected.toString().equals(received);
+          } catch (Exception e) {
+              return false;
+          }
+      }
+      ```
+
+      ```php PHP
+      function validateWebhook(string $body, string $signatureHeader, string $secret): bool {
+          $expected = hash_hmac('sha256', $body, $secret);
+          $received = str_replace('sha256=', '', $signatureHeader);
+          return hash_equals($expected, $received);
+      }
+
+      // Uso:
+      $body = file_get_contents('php://input');
+      $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'];
+      $isValid = validateWebhook($body, $signature, 'seu-shared-secret');
+      ```
+    </CodeGroup>
+
+    <Warning>
+      **Importante:** Sempre use comparação em tempo constante (`hmac.compare_digest`, `crypto.timingSafeEqual`, `hash_equals`) para evitar ataques de timing.
+    </Warning>
+  </Tab>
+
+  <Tab title="Bearer Token">
+    ### Bearer Token
+
+    A Nexfar envia um token fixo no header `Authorization`. O distribuidor valida comparando com o token esperado.
+
+    **Header enviado pela Nexfar:**
+    ```
+    Authorization: Bearer seu-token-secreto
+    ```
+
+    ### Como validar no seu sistema
+
+    <CodeGroup>
+      ```python Python
+      def validate_bearer(authorization_header: str, expected_token: str) -> bool:
+          token = authorization_header.replace('Bearer ', '')
+          return token == expected_token
+      ```
+
+      ```javascript Node.js
+      function validateBearer(authorizationHeader, expectedToken) {
+        const token = authorizationHeader.replace('Bearer ', '');
+        return token === expectedToken;
+      }
+      ```
+
+      ```java Java
+      public boolean validateBearer(String authorizationHeader, String expectedToken) {
+          String token = authorizationHeader.replace("Bearer ", "");
+          return token.equals(expectedToken);
+      }
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="API Key Header">
+    ### API Key Header
+
+    A Nexfar envia um token em um header customizado (ex: `X-Api-Key`). O nome do header é combinado durante o onboarding.
+
+    **Header enviado pela Nexfar:**
+    ```
+    X-Api-Key: sua-api-key-secreta
+    ```
+
+    ### Como validar no seu sistema
+
+    <CodeGroup>
+      ```python Python
+      def validate_api_key(api_key_header: str, expected_key: str) -> bool:
+          return api_key_header == expected_key
+      ```
+
+      ```javascript Node.js
+      function validateApiKey(apiKeyHeader, expectedKey) {
+        return apiKeyHeader === expectedKey;
+      }
+      ```
+
+      ```java Java
+      public boolean validateApiKey(String apiKeyHeader, String expectedKey) {
+          return apiKeyHeader.equals(expectedKey);
+      }
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Basic Auth">
+    ### Basic Authentication
+
+    A Nexfar envia credenciais (usuário + senha) codificadas em Base64 no header `Authorization`. **Estritamente via HTTPS.**
+
+    **Header enviado pela Nexfar:**
+    ```
+    Authorization: Basic bmV4ZmFyOnNlbmhhMTIz
+    ```
+
+    O valor após `Basic ` é `base64(usuario:senha)`.
+
+    ### Como validar no seu sistema
+
+    <CodeGroup>
+      ```python Python
+      import base64
+
+      def validate_basic_auth(authorization_header: str, expected_user: str, expected_pass: str) -> bool:
+          encoded = authorization_header.replace('Basic ', '')
+          decoded = base64.b64decode(encoded).decode('utf-8')
+          user, password = decoded.split(':', 1)
+          return user == expected_user and password == expected_pass
+      ```
+
+      ```javascript Node.js
+      function validateBasicAuth(authorizationHeader, expectedUser, expectedPass) {
+        const encoded = authorizationHeader.replace('Basic ', '');
+        const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
+        const [user, password] = decoded.split(':');
+        return user === expectedUser && password === expectedPass;
+      }
+      ```
+
+      ```java Java
+      import java.util.Base64;
+
+      public boolean validateBasicAuth(String authorizationHeader, String expectedUser, String expectedPass) {
+          String encoded = authorizationHeader.replace("Basic ", "");
+          String decoded = new String(Base64.getDecoder().decode(encoded));
+          String[] parts = decoded.split(":", 2);
+          return parts[0].equals(expectedUser) && parts[1].equals(expectedPass);
+      }
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="None">
+    ### Sem Autenticação
+
+    <Warning>
+      **Não recomendado em produção.** Use apenas para desenvolvimento e testes locais.
+
+      Sem autenticação, qualquer pessoa que conheça a URL do seu endpoint pode enviar requisições falsas.
+    </Warning>
+
+    Nenhum header de autenticação é enviado pela Nexfar. O endpoint aceita qualquer requisição POST com o payload correto.
+  </Tab>
+</Tabs>
+
+---
+
+## Qual Método Escolher?
+
+| Método | Segurança | Complexidade | Recomendação |
+|--------|-----------|-------------|--------------|
+| **HMAC Signature** | Alta (valida integridade) | Média | Produção |
+| **Bearer Token** | Média | Baixa | Produção (simples) |
+| **API Key Header** | Média | Baixa | Produção (simples) |
+| **Basic Auth** | Média | Baixa | Produção (legado) |
+| **None** | Nenhuma | Nenhuma | Apenas testes |
+
+<Tip>
+  **Nossa recomendação:** Use **HMAC Signature** para produção. Além de autenticar, ele garante que o payload não foi adulterado em trânsito. Se preferir simplicidade, **Bearer Token** é uma boa alternativa.
+</Tip>

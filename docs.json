@@ -63,6 +63,14 @@
                 ]
               },
               {
+                "group": "Webhook de Pedidos",
+                "pages": [
+                  "integration/webhook-pedidos/overview",
+                  "integration/webhook-pedidos/authentication",
+                  "integration/webhook-pedidos/payload-response"
+                ]
+              },
+              {
                 "group": "Banco de Dados",
                 "pages": [
                   "integration/deployment/data-extraction/database-views"
