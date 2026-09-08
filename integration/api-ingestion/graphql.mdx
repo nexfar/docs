@@ -1,14 +1,14 @@
 ---
 title: "GraphQL - Schema e Exemplos"
-description: "Documentação completa do GraphQL API da Nexfar: schema SDL, mutations para todos os 33 modelos, autenticação JWT, e exemplos práticos. Use GraphQL para queries flexíveis e tipagem forte."
+description: "Documentação completa do GraphQL API da Nexfar: schema SDL, mutations para todos os 31 modelos, autenticação JWT, e exemplos práticos. Use GraphQL para queries flexíveis e tipagem forte."
 icon: "graphql"
 ---
 
 ## Introdução
 
-A API de Ingestão da Nexfar está disponível em duas interfaces complementares: **REST** e **GraphQL**. Ambas compartilham a mesma autenticação JWT, os mesmos ambientes (Sandbox/Produção), e os mesmos 33 modelos de dados.
+A API de Ingestão da Nexfar está disponível em duas interfaces complementares: **REST** e **GraphQL**. Ambas compartilham a mesma autenticação JWT, os mesmos ambientes (Sandbox/Produção), e os mesmos 31 modelos de dados.
 
-GraphQL oferece uma alternativa poderosa para desenvolvedores que preferem queries flexíveis, tipagem forte, e exploração interativa do schema. Esta página documenta o GraphQL API completo, incluindo mutations para todos os 33 modelos, configuração de autenticação, e exemplos práticos.
+GraphQL oferece uma alternativa poderosa para desenvolvedores que preferem queries flexíveis, tipagem forte, e exploração interativa do schema. Esta página documenta o GraphQL API completo, incluindo mutations para todos os 31 modelos, configuração de autenticação, e exemplos práticos.
 
 ## Por que usar GraphQL?
 
@@ -116,7 +116,7 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
     Use a tab **"Docs"** (lado direito) para explorar todas as mutations disponíveis:
 
     1. Clique em "Docs" → "Mutation"
-    2. Navegue pelos 33 modelos disponíveis
+    2. Navegue pelos 31 modelos disponíveis
     3. Clique em qualquer mutation para ver inputs obrigatórios
     4. Use autocompletar (Ctrl+Space) para sugerir campos
 
@@ -139,9 +139,9 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
   </Step>
 </Steps>
 
-## Modelos Disponíveis (33 Types)
+## Modelos Disponíveis (31 Types)
 
-Todos os 33 modelos de dados possuem mutations GraphQL correspondentes. As categorias abaixo são as mesmas usadas na [Visão Geral](/integration/api-ingestion/overview#modelos-de-dados-suportados), onde cada modelo é explicado em detalhe.
+Todos os 31 modelos de dados possuem mutations GraphQL correspondentes. As categorias abaixo são as mesmas usadas na [Visão Geral](/integration/api-ingestion/overview#modelos-de-dados-suportados), onde cada modelo é explicado em detalhe.
 
 <AccordionGroup>
 
@@ -199,15 +199,13 @@ Todos os 33 modelos de dados possuem mutations GraphQL correspondentes. As categ
   **📝 Mutations:** `createSaleHeader`, `createSaleItem`, `createSaleClient`, `createSaleSeller`, `createComboHeader`, `createComboItem`, `createComboClient`, `createComboSeller`
 </Accordion>
 
-<Accordion title="Pedidos e Vendas (6 modelos)">
+<Accordion title="Pedidos e Vendas (4 modelos)">
   - **OrderHeader** (Cabeçalho de Pedido)
   - **OrderItem** (Item de Pedido)
   - **OrderReturnedItem** (Item Devolvido)
-  - **OrderDistributorHeader** (Cabeçalho Pedido Distribuidor)
-  - **OrderDistributorItem** (Item Pedido Distribuidor)
   - **Invoice** (Nota Fiscal)
 
-  **📝 Mutations:** `createOrderHeader`, `createOrderItem`, `createOrderReturnedItem`, `createOrderDistributorHeader`, `createOrderDistributorItem`, `createInvoice`
+  **📝 Mutations:** `createOrderHeader`, `createOrderItem`, `createOrderReturnedItem`, `createInvoice`
 </Accordion>
 
 </AccordionGroup>

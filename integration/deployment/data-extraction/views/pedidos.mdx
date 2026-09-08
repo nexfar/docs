@@ -1,14 +1,11 @@
 ---
 title: "Pedidos"
-description: "VIEWs para integração de pedidos transitados e não transitados pela Nexfar"
+description: "VIEWs para integração dos pedidos transitados pela Nexfar"
 ---
 
 ## Visão Geral
 
-As VIEWs de pedidos permitem a integração bidirecional de informações de pedidos entre a plataforma Nexfar e o ERP. Existem dois tipos principais:
-
-- **Pedidos Nexfar** (`ORDER_*`): Pedidos que transitaram pela plataforma Nexfar
-- **Pedidos Distribuidor** (`ORDER_DISTRIBUTOR_*`): Pedidos não transitados pela Nexfar (importação externa)
+As VIEWs de pedidos (`ORDER_*`) permitem a troca bidirecional de informações entre a plataforma Nexfar e o ERP para os pedidos realizados na plataforma.
 
 <Note>
   **Importante:** As VIEWs de pedidos servem para **retorno de informações** ao ERP (atualização de status, faturamento, etc.)
@@ -104,76 +101,7 @@ Itens devolvidos nos pedidos para integração das informações de devolução.
 
 ---
 
-## VIEW_NEXFAR_ORDER_DISTRIBUTOR_HEADER
-
-Cabeçalhos para importação de pedidos **não transitados** pela Nexfar.
-
-<Warning>
-  **VIEW NÃO PADRÃO:** Deve ser implementada apenas para clientes com acordo específico para importação de pedidos externos.
-</Warning>
-
-### Campos Principais
-
-| Campo Nexfar | Descrição | Tipo | Obrigatório |
-| --- | --- | --- | --- |
-| `orderExternalId` | ID do pedido no ERP | VARCHAR(255) | SIM |
-| `branchId` | ID da Base | VARCHAR(255) | SIM |
-| `clientId` | ID do cliente no ERP | VARCHAR(255) | SIM |
-| `cnpj` | CNPJ do cliente | VARCHAR(20) | SIM |
-| `priceGroupId` | ID da tabela de preço | VARCHAR(20) | SIM |
-| `warehouseId` | ID do Centro de Distribuição | VARCHAR(255) | SIM |
-| `sellerId` | ID do vendedor | VARCHAR(255) | SIM |
-| `paymentConditionId` | ID da condição de pagamento | VARCHAR(255) | SIM |
-| `status` | Status global do pedido | VARCHAR(255) | SIM |
-| `statusLabel` | Substatus personalizado | VARCHAR(255) | NÃO |
-| `statusReason` | Motivo do status | VARCHAR(255) | NÃO |
-| `paymentStatus` | Status de pagamento | VARCHAR(255) | NÃO |
-| `orderDate` | Data do pedido | DATE | SIM |
-| `billingDate` | Data de faturamento | DATE | NÃO |
-| `nfeNumber` | Número da nota fiscal | INTEGER | NÃO |
-| `nfeKey` | Chave da nota fiscal | VARCHAR(255) | NÃO |
-
-### Status de Pagamento
-
-| Status | Descrição |
-| --- | --- |
-| `UNDEFINED` | Indefinido |
-| `PENDING_PAYMENT` | Pagamento pendente |
-| `PAID` | Pago |
-
----
-
-## VIEW_NEXFAR_ORDER_DISTRIBUTOR_ITEM
-
-Itens para importação de pedidos **não transitados** pela Nexfar.
-
-<Warning>
-  **VIEW NÃO PADRÃO:** Deve ser implementada apenas para clientes com acordo específico.
-</Warning>
-
-### Campos Principais
-
-| Campo Nexfar | Descrição | Tipo | Obrigatório |
-| --- | --- | --- | --- |
-| `orderExternalId` | ID do pedido no ERP | VARCHAR(255) | SIM |
-| `productId` | ID do produto no ERP | VARCHAR(20) | SIM |
-| `sku` | SKU do produto | VARCHAR(20) | NÃO |
-| `priceGroupId` | ID da tabela de preço | VARCHAR(20) | SIM |
-| `quantityRequested` | Quantidade solicitada | INTEGER | SIM |
-| `quantityAttended` | Quantidade atendida | INTEGER | SIM |
-| `subsidized` | É item bonificado? | BOOLEAN | SIM |
-| `statusReason` | Situação do item | VARCHAR(255) | NÃO |
-| `price` | Preço sem imposto | NUMERIC(10,2) | SIM |
-| `finalPrice` | Preço com ST | NUMERIC(10,2) | SIM |
-| `industryPrice` | Preço fábrica | NUMERIC(10,2) | NÃO |
-| `discount` | Desconto sobre preço fábrica | NUMERIC(10,2) | NÃO |
-| `sellerKickback` | Comissão do vendedor | NUMERIC(10,2) | NÃO |
-
----
-
 ## Fluxo de Integração
-
-### Pedidos Nexfar (ORDER)
 
 ```mermaid
 graph LR
@@ -189,20 +117,6 @@ graph LR
 3. ERP consulta as VIEWs e importa o pedido
 4. ERP atualiza status (processamento, faturamento, envio)
 5. Nexfar lê atualizações e notifica cliente
-
-### Pedidos Distribuidor (ORDER_DISTRIBUTOR)
-
-```mermaid
-graph LR
-    A[Pedido feito fora da Nexfar] --> B[ERP disponibiliza via VIEW]
-    B --> C[Nexfar importa pedido]
-    C --> D[Exibição na plataforma]
-```
-
-1. Pedido realizado por outros canais (telefone, vendedor externo, etc.)
-2. ERP disponibiliza pedido na VIEW_NEXFAR_ORDER_DISTRIBUTOR
-3. Nexfar importa e exibe na plataforma
-4. Cliente visualiza histórico unificado
 
 ---
 

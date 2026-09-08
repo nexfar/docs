@@ -16,7 +16,7 @@ A **API de Ingestão Nexfar** permite que distribuidoras e indústrias farmacêu
 
 ## REST ou GraphQL?
 
-A API de Ingestão suporta **ambos os protocolos** para os mesmos 33 modelos de dados. Escolha o que melhor se adapta ao seu stack tecnológico:
+A API de Ingestão suporta **ambos os protocolos** para os mesmos 31 modelos de dados. Escolha o que melhor se adapta ao seu stack tecnológico:
 
 <Tabs>
   <Tab title="REST API">
@@ -84,7 +84,7 @@ A API de Ingestão suporta **ambos os protocolos** para os mesmos 33 modelos de 
 
 ## Modelos de Dados Suportados
 
-A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. Todos os modelos são mapeados 1:1 das Database Views (`VIEW_NEXFAR_*`) existentes — o nome do modelo aqui corresponde ao sufixo da VIEW equivalente.
+A API de Ingestão suporta **31 modelos de dados** organizados em 6 categorias. Todos os modelos são mapeados 1:1 das Database Views (`VIEW_NEXFAR_*`) existentes — o nome do modelo aqui corresponde ao sufixo da VIEW equivalente.
 
 <AccordionGroup>
   <Accordion title="Clientes (3 modelos)" icon="address-book">
@@ -148,14 +148,12 @@ A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. 
     </Warning>
   </Accordion>
 
-  <Accordion title="Pedidos e Vendas (6 modelos)" icon="cart-shopping">
+  <Accordion title="Pedidos e Vendas (4 modelos)" icon="cart-shopping">
     O que de fato foi transacionado. Aqui estão os pedidos realizados e seus documentos fiscais.
 
     - **ORDER_HEADER** - Cabeçalho do pedido do cliente: valores, condição de pagamento, situação
     - **ORDER_ITEM** - Itens do pedido, com quantidade, preço praticado e descontos
     - **ORDER_RETURNED_ITEM** - Itens devolvidos e trocas
-    - **ORDER_DISTRIBUTOR_HEADER** - Cabeçalho do pedido de compra do distribuidor para a indústria
-    - **ORDER_DISTRIBUTOR_ITEM** - Itens do pedido de distribuidor
     - **INVOICE** - Notas fiscais emitidas, vinculadas ao pedido
   </Accordion>
 </AccordionGroup>
@@ -197,7 +195,7 @@ A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. 
     - **REST:** Explore endpoints organizados por categoria, teste requisições diretamente no navegador
     - **GraphQL:** Use o GraphQL Playground para testar queries e mutations com autocomplete
 
-    Escolha REST ou GraphQL conforme sua preferência - ambos suportam os mesmos 33 modelos.
+    Escolha REST ou GraphQL conforme sua preferência - ambos suportam os mesmos 31 modelos.
   </Step>
 
   <Step title="Testar no Sandbox">
@@ -228,7 +226,7 @@ A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. 
   <Step title="Promover para Produção">
     Após validação completa no Sandbox:
 
-    1. Valide que todos os 33 modelos necessários foram testados
+    1. Valide que todos os 31 modelos necessários foram testados
     2. Confirme que tratamento de erros está implementado
     3. Solicite credenciais de Produção à Nexfar via suporte
     4. Receba novo token JWT para ambiente de Produção
@@ -256,7 +254,7 @@ A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. 
   </Card>
 
   <Card title="REST API Reference" icon="code" href="/api-reference">
-    Explore todos os 33 endpoints REST interativamente com exemplos de request/response
+    Explore todos os 31 endpoints REST interativamente com exemplos de request/response
   </Card>
 
   <Card title="GraphQL Docs" icon="brackets-curly" href="/integration/api-ingestion/graphql">
