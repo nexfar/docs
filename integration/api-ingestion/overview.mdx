@@ -16,7 +16,7 @@ A **API de Ingestão Nexfar** permite que distribuidoras e indústrias farmacêu
 
 ## REST ou GraphQL?
 
-A API de Ingestão suporta **ambos os protocolos** para os mesmos 34 modelos de dados. Escolha o que melhor se adapta ao seu stack tecnológico:
+A API de Ingestão suporta **ambos os protocolos** para os mesmos 33 modelos de dados. Escolha o que melhor se adapta ao seu stack tecnológico:
 
 <Tabs>
   <Tab title="REST API">
@@ -84,55 +84,85 @@ A API de Ingestão suporta **ambos os protocolos** para os mesmos 34 modelos de 
 
 ## Modelos de Dados Suportados
 
-A API de Ingestão suporta **34 modelos de dados** organizados em 4 categorias. Todos os modelos são mapeados 1:1 das Database Views existentes.
+A API de Ingestão suporta **33 modelos de dados** organizados em 6 categorias. Todos os modelos são mapeados 1:1 das Database Views (`VIEW_NEXFAR_*`) existentes — o nome do modelo aqui corresponde ao sufixo da VIEW equivalente.
 
 <AccordionGroup>
-  <Accordion title="Cadastros Básicos (5 modelos)" icon="address-book">
-    - **CLIENT** - Dados de clientes (distribuidoras, farmácias, hospitais)
-    - **SELLER** - Vendedores e representantes comerciais
-    - **PAYMENT_CONDITION** - Condições de pagamento negociadas
-    - **PRICE_GROUP** - Grupos de preço para segmentação
-    - **CLIENT_BRANCH** - Filiais e pontos de venda de clientes
+  <Accordion title="Clientes (3 modelos)" icon="address-book">
+    Quem compra na plataforma: distribuidoras, farmácias e hospitais, suas filiais e a documentação que libera a compra.
+
+    - **CLIENT** - Cadastro do cliente (razão social, CNPJ, endereço, condições gerais)
+    - **CLIENT_BRANCH** - Filiais e pontos de venda vinculados a um cliente
+    - **CLIENT_DOCUMENT** - Licenças e certificações do cliente (ex.: Autorização de Funcionamento). A plataforma só libera a compra de produtos controlados quando o documento exigido está regular
+  </Accordion>
+
+  <Accordion title="Vendedores (1 modelo)" icon="user-tie">
+    Quem vende pela Força de Vendas (NEXOFF).
+
+    - **SELLER** - Vendedores, representantes e televendedores. É a chave usada para segmentar carteira de clientes, ofertas e combos por vendedor
   </Accordion>
 
   <Accordion title="Produtos (8 modelos)" icon="pills">
-    - **PRODUCT** - Catálogo completo de produtos farmacêuticos
-    - **PRODUCT_BRANCH** - Produtos disponíveis por filial
-    - **PRODUCT_WAREHOUSE** - Estoque de produtos por depósito/armazém
-    - **PRODUCT_PRICE** - Tabelas de preço por produto e cliente
-    - **PRODUCT_PMC_PF** - PMC (Preço Máximo ao Consumidor) e Preço Fábrica
-    - **PRODUCT_RESTRICTION** - Restrições regulatórias de venda
-    - **PRODUCT_SALE_NOT_ALLOWED** - Bloqueios temporários de venda
-    - **CLIENT_DOCUMENT** - Documentos e certificações de clientes
+    O catálogo e tudo que determina se um produto pode ser vendido, para quem, por quanto e de qual estoque.
+
+    - **PRODUCT** - Catálogo de produtos (EAN, descrição, fabricante, princípio ativo)
+    - **PRODUCT_BRANCH** - Disponibilidade do produto por base/filial
+    - **PRODUCT_WAREHOUSE** - Saldo de estoque por centro de distribuição
+    - **PRODUCT_PRICE** - Tabela de preços por produto, considerando grupo de preço e filial
+    - **PRICE_GROUP** - Grupos de preço usados para segmentar clientes em faixas comerciais
+    - **PRODUCT_PMC_PF** - PMC (Preço Máximo ao Consumidor) e PF (Preço Fábrica), tabelados pela CMED
+    - **PRODUCT_RESTRICTION** - Restrições regulatórias permanentes (ex.: produto que exige receita ou licença específica)
+    - **PRODUCT_SALE_NOT_ALLOWED** - Bloqueios pontuais de venda, por produto e cliente ou região
   </Accordion>
 
-  <Accordion title="Pedidos e Vendas (10 modelos)" icon="cart-shopping">
-    - **ORDER_HEADER** - Cabeçalhos de pedidos (dados gerais do pedido)
-    - **ORDER_ITEM** - Itens individuais de pedidos
+  <Accordion title="Pagamentos, Impostos e Margens (7 modelos)" icon="percent">
+    As regras que transformam o preço de tabela no preço final do pedido. Os modelos `*_DETERMINATION` guardam **as regras de quando aplicar**; os modelos correspondentes guardam **os valores aplicados**.
+
+    - **PAYMENT_CONDITION** - Condições de pagamento negociadas (prazos, parcelas, prazo médio)
+    - **GENERIC_TAXES_DETERMINATION** - Regras que determinam quais impostos incidem em cada combinação de produto, cliente e UF
+    - **GENERIC_TAXES** - Alíquotas e tributos efetivamente aplicados
+    - **GENERIC_TAXES_BASE_CALC_ST** - Base de cálculo da Substituição Tributária (ICMS-ST)
+    - **GENERIC_MARGIN_DETERMINATION** - Regras que determinam qual margem se aplica a cada cenário comercial
+    - **GENERIC_MARGIN** - Margens comerciais resultantes, usadas para validar se um pedido é rentável
+    - **GENERIC_EXTRA_INFO** - Informações complementares por base, CD, vendedor e SKU, para cenários avançados de Força de Vendas
+  </Accordion>
+
+  <Accordion title="Ofertas e Combos (8 modelos)" icon="tags">
+    Ações comerciais que você cria no ERP e a Nexfar exibe na plataforma. **Não são vendas realizadas** — são promoções configuradas. Ambas as famílias compartilham a chave `promotionExternalId` e a mesma mecânica de escopo.
+
+    **Ofertas (`SALE_*`)** — desconto em produtos individuais (ex.: produto X por R$ 50):
+
+    - **SALE_HEADER** - Cabeçalho da oferta: título, vigência, base, CD e em quais canais aparece (E-commerce, Força de Vendas, Web/App)
+    - **SALE_ITEM** - Produtos da oferta com preço promocional, quantidade mínima/máxima e regras de negociação de preço e verba
+    - **SALE_CLIENT** - Restringe a oferta a clientes específicos (opcional)
+    - **SALE_SELLER** - Restringe a oferta a vendedores específicos (opcional)
+
+    **Combos (`COMBO_*`)** — pacote de múltiplos produtos (ex.: compre 2 de X + 1 de Y por R$ 100):
+
+    - **COMBO_HEADER** - Cabeçalho do combo: vigência, canais e limites por carrinho, cliente e vendedor
+    - **COMBO_ITEM** - Produtos que compõem o combo, com quantidade vendida e quantidade bonificada
+    - **COMBO_CLIENT** - Restringe o combo a clientes específicos (opcional)
+    - **COMBO_SELLER** - Restringe o combo a vendedores específicos (opcional)
+
+    <Warning>
+      `SALE_CLIENT` e `SALE_SELLER` são **mutuamente exclusivos**, assim como `COMBO_CLIENT` e `COMBO_SELLER`. Configure a ação por cliente **ou** por vendedor, nunca pelos dois. Se a ação vale para todos, não envie nenhum dos dois.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Pedidos e Vendas (6 modelos)" icon="cart-shopping">
+    O que de fato foi transacionado. Aqui estão os pedidos realizados e seus documentos fiscais.
+
+    - **ORDER_HEADER** - Cabeçalho do pedido do cliente: valores, condição de pagamento, situação
+    - **ORDER_ITEM** - Itens do pedido, com quantidade, preço praticado e descontos
     - **ORDER_RETURNED_ITEM** - Itens devolvidos e trocas
-    - **ORDER_DISTRIBUTOR_HEADER** - Pedidos de distribuidor para indústria
-    - **ORDER_DISTRIBUTOR_ITEM** - Itens de pedidos de distribuidor
-    - **SALE_HEADER** - Cabeçalhos de vendas efetivadas
-    - **SALE_ITEM** - Itens de vendas por produto
-    - **SALE_CLIENT** - Vendas agregadas por cliente
-    - **SALE_SELLER** - Vendas agregadas por vendedor
-    - **INVOICE** - Notas fiscais emitidas
-  </Accordion>
-
-  <Accordion title="Impostos, Margens e Combos (11 modelos)" icon="percent">
-    - **SALES_GOAL** - Metas de vendas por período e vendedor
-    - **GENERIC_MARGIN_DETERMINATION** - Regras de determinação de margens
-    - **GENERIC_MARGIN** - Margens comerciais aplicadas
-    - **GENERIC_TAXES_DETERMINATION** - Regras de cálculo de impostos
-    - **GENERIC_TAXES** - Impostos e tributos aplicados
-    - **GENERIC_TAXES_BASE_CALC_ST** - Base de cálculo de Substituição Tributária
-    - **GENERIC_EXTRA_INFO** - Informações extras e metadados
-    - **COMBO_HEADER** - Cabeçalhos de combos e kits promocionais
-    - **COMBO_ITEM** - Itens componentes de combos
-    - **COMBO_CLIENT** - Combos disponíveis por cliente
-    - **COMBO_SELLER** - Combos gerenciados por vendedor
+    - **ORDER_DISTRIBUTOR_HEADER** - Cabeçalho do pedido de compra do distribuidor para a indústria
+    - **ORDER_DISTRIBUTOR_ITEM** - Itens do pedido de distribuidor
+    - **INVOICE** - Notas fiscais emitidas, vinculadas ao pedido
   </Accordion>
 </AccordionGroup>
+
+<Note>
+  **Ofertas x Pedidos:** apesar do prefixo, os modelos `SALE_*` descrevem **ofertas** (promoções configuradas), não vendas concluídas. As transações efetivadas estão em `ORDER_*` e `INVOICE`. A nomenclatura vem das VIEWs originais e é mantida por compatibilidade.
+</Note>
 
 <Info>
   **Schemas detalhados:** Explore a estrutura completa de cada modelo na [API Reference](/api-reference) interativa ou na [documentação GraphQL](/integration/api-ingestion/graphql).
@@ -167,7 +197,7 @@ A API de Ingestão suporta **34 modelos de dados** organizados em 4 categorias. 
     - **REST:** Explore endpoints organizados por categoria, teste requisições diretamente no navegador
     - **GraphQL:** Use o GraphQL Playground para testar queries e mutations com autocomplete
 
-    Escolha REST ou GraphQL conforme sua preferência - ambos suportam os mesmos 34 modelos.
+    Escolha REST ou GraphQL conforme sua preferência - ambos suportam os mesmos 33 modelos.
   </Step>
 
   <Step title="Testar no Sandbox">
@@ -198,7 +228,7 @@ A API de Ingestão suporta **34 modelos de dados** organizados em 4 categorias. 
   <Step title="Promover para Produção">
     Após validação completa no Sandbox:
 
-    1. Valide que todos os 34 modelos necessários foram testados
+    1. Valide que todos os 33 modelos necessários foram testados
     2. Confirme que tratamento de erros está implementado
     3. Solicite credenciais de Produção à Nexfar via suporte
     4. Receba novo token JWT para ambiente de Produção
@@ -226,7 +256,7 @@ A API de Ingestão suporta **34 modelos de dados** organizados em 4 categorias. 
   </Card>
 
   <Card title="REST API Reference" icon="code" href="/api-reference">
-    Explore todos os 34 endpoints REST interativamente com exemplos de request/response
+    Explore todos os 33 endpoints REST interativamente com exemplos de request/response
   </Card>
 
   <Card title="GraphQL Docs" icon="brackets-curly" href="/integration/api-ingestion/graphql">

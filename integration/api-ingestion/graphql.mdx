@@ -1,14 +1,14 @@
 ---
 title: "GraphQL - Schema e Exemplos"
-description: "Documentação completa do GraphQL API da Nexfar: schema SDL, mutations para todos os 34 modelos, autenticação JWT, e exemplos práticos. Use GraphQL para queries flexíveis e tipagem forte."
+description: "Documentação completa do GraphQL API da Nexfar: schema SDL, mutations para todos os 33 modelos, autenticação JWT, e exemplos práticos. Use GraphQL para queries flexíveis e tipagem forte."
 icon: "graphql"
 ---
 
 ## Introdução
 
-A API de Ingestão da Nexfar está disponível em duas interfaces complementares: **REST** e **GraphQL**. Ambas compartilham a mesma autenticação JWT, os mesmos ambientes (Sandbox/Produção), e os mesmos 34 modelos de dados.
+A API de Ingestão da Nexfar está disponível em duas interfaces complementares: **REST** e **GraphQL**. Ambas compartilham a mesma autenticação JWT, os mesmos ambientes (Sandbox/Produção), e os mesmos 33 modelos de dados.
 
-GraphQL oferece uma alternativa poderosa para desenvolvedores que preferem queries flexíveis, tipagem forte, e exploração interativa do schema. Esta página documenta o GraphQL API completo, incluindo mutations para todos os 34 modelos, configuração de autenticação, e exemplos práticos.
+GraphQL oferece uma alternativa poderosa para desenvolvedores que preferem queries flexíveis, tipagem forte, e exploração interativa do schema. Esta página documenta o GraphQL API completo, incluindo mutations para todos os 33 modelos, configuração de autenticação, e exemplos práticos.
 
 ## Por que usar GraphQL?
 
@@ -116,7 +116,7 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
     Use a tab **"Docs"** (lado direito) para explorar todas as mutations disponíveis:
 
     1. Clique em "Docs" → "Mutation"
-    2. Navegue pelos 34 modelos disponíveis
+    2. Navegue pelos 33 modelos disponíveis
     3. Clique em qualquer mutation para ver inputs obrigatórios
     4. Use autocompletar (Ctrl+Space) para sugerir campos
 
@@ -139,69 +139,75 @@ O **GraphQL Playground** é uma interface web interativa hospedada pela Nexfar q
   </Step>
 </Steps>
 
-## Modelos Disponíveis (34 Types)
+## Modelos Disponíveis (33 Types)
 
-Todos os 34 modelos de dados possuem mutations GraphQL correspondentes. Abaixo estão os modelos organizados por categoria:
+Todos os 33 modelos de dados possuem mutations GraphQL correspondentes. As categorias abaixo são as mesmas usadas na [Visão Geral](/integration/api-ingestion/overview#modelos-de-dados-suportados), onde cada modelo é explicado em detalhe.
 
 <AccordionGroup>
 
-<Accordion title="Cadastros Básicos (5 modelos)">
+<Accordion title="Clientes (3 modelos)">
   - **Client** (Cliente)
-  - **Seller** (Vendedor)
-  - **PaymentCondition** (Condição de Pagamento)
-  - **PriceGroup** (Grupo de Preço)
   - **ClientBranch** (Filial de Cliente)
+  - **ClientDocument** (Documento/licença do cliente)
 
-  **📝 Todos os types possuem mutations correspondentes:** `createClient`, `createSeller`, `createPaymentCondition`, `createPriceGroup`, `createClientBranch`
+  **📝 Mutations:** `createClient`, `createClientBranch`, `createClientDocument`
+</Accordion>
+
+<Accordion title="Vendedores (1 modelo)">
+  - **Seller** (Vendedor, representante ou televendedor)
+
+  **📝 Mutations:** `createSeller`
 </Accordion>
 
 <Accordion title="Produtos (8 modelos)">
   - **Product** (Produto)
   - **ProductBranch** (Produto por Filial)
-  - **ProductWarehouse** (Produto por Armazém)
+  - **ProductWarehouse** (Estoque por CD)
   - **ProductPrice** (Preço de Produto)
+  - **PriceGroup** (Grupo de Preço)
   - **ProductPmcPf** (PMC/PF de Produto)
-  - **ProductRestriction** (Restrição de Produto)
-  - **ProductSaleNotAllowed** (Venda Não Permitida)
-  - **ClientDocument** (Documento de Cliente)
+  - **ProductRestriction** (Restrição regulatória)
+  - **ProductSaleNotAllowed** (Bloqueio de venda)
 
-  **📝 Mutations:** `createProduct`, `createProductBranch`, `createProductWarehouse`, `createProductPrice`, `createProductPmcPf`, `createProductRestriction`, `createProductSaleNotAllowed`, `createClientDocument`
+  **📝 Mutations:** `createProduct`, `createProductBranch`, `createProductWarehouse`, `createProductPrice`, `createPriceGroup`, `createProductPmcPf`, `createProductRestriction`, `createProductSaleNotAllowed`
 </Accordion>
 
-<Accordion title="Pedidos e Vendas (10 modelos)">
-  - **Invoice** (Nota Fiscal)
+<Accordion title="Pagamentos, Impostos e Margens (7 modelos)">
+  - **PaymentCondition** (Condição de Pagamento)
+  - **GenericTaxesDetermination** (Regra de incidência de impostos)
+  - **GenericTaxes** (Impostos aplicados)
+  - **GenericTaxesBaseCalcSt** (Base de Cálculo ST)
+  - **GenericMarginDetermination** (Regra de determinação de margem)
+  - **GenericMargin** (Margem aplicada)
+  - **GenericExtraInfo** (Informação complementar)
+
+  **📝 Mutations:** `createPaymentCondition`, `createGenericTaxesDetermination`, `createGenericTaxes`, `createGenericTaxesBaseCalcSt`, `createGenericMarginDetermination`, `createGenericMargin`, `createGenericExtraInfo`
+</Accordion>
+
+<Accordion title="Ofertas e Combos (8 modelos)">
+  Ações comerciais configuradas, **não** vendas realizadas.
+
+  - **SaleHeader** (Cabeçalho da oferta)
+  - **SaleItem** (Produto em oferta, com preço promocional)
+  - **SaleClient** (Oferta restrita a clientes)
+  - **SaleSeller** (Oferta restrita a vendedores)
+  - **ComboHeader** (Cabeçalho do combo)
+  - **ComboItem** (Produto que compõe o combo)
+  - **ComboClient** (Combo restrito a clientes)
+  - **ComboSeller** (Combo restrito a vendedores)
+
+  **📝 Mutations:** `createSaleHeader`, `createSaleItem`, `createSaleClient`, `createSaleSeller`, `createComboHeader`, `createComboItem`, `createComboClient`, `createComboSeller`
+</Accordion>
+
+<Accordion title="Pedidos e Vendas (6 modelos)">
   - **OrderHeader** (Cabeçalho de Pedido)
   - **OrderItem** (Item de Pedido)
   - **OrderReturnedItem** (Item Devolvido)
   - **OrderDistributorHeader** (Cabeçalho Pedido Distribuidor)
   - **OrderDistributorItem** (Item Pedido Distribuidor)
-  - **SaleHeader** (Cabeçalho de Venda)
-  - **SaleItem** (Item de Venda)
-  - **SaleClient** (Venda por Cliente)
-  - **SaleSeller** (Venda por Vendedor)
+  - **Invoice** (Nota Fiscal)
 
-  **📝 Mutations:** `createInvoice`, `createOrderHeader`, `createOrderItem`, `createOrderReturnedItem`, `createOrderDistributorHeader`, `createOrderDistributorItem`, `createSaleHeader`, `createSaleItem`, `createSaleClient`, `createSaleSeller`
-</Accordion>
-
-<Accordion title="Impostos, Margens e Metas (7 modelos)">
-  - **SalesGoal** (Meta de Vendas)
-  - **GenericMarginDetermination** (Determinação de Margem)
-  - **GenericMargin** (Margem Genérica)
-  - **GenericTaxesDetermination** (Determinação de Impostos)
-  - **GenericTaxes** (Impostos Genéricos)
-  - **GenericTaxesBaseCalcSt** (Base de Cálculo ST)
-  - **GenericExtraInfo** (Informação Extra)
-
-  **📝 Mutations:** `createSalesGoal`, `createGenericMarginDetermination`, `createGenericMargin`, `createGenericTaxesDetermination`, `createGenericTaxes`, `createGenericTaxesBaseCalcSt`, `createGenericExtraInfo`
-</Accordion>
-
-<Accordion title="Combos (4 modelos)">
-  - **ComboHeader** (Cabeçalho de Combo)
-  - **ComboItem** (Item de Combo)
-  - **ComboClient** (Cliente de Combo)
-  - **ComboSeller** (Vendedor de Combo)
-
-  **📝 Mutations:** `createComboHeader`, `createComboItem`, `createComboClient`, `createComboSeller`
+  **📝 Mutations:** `createOrderHeader`, `createOrderItem`, `createOrderReturnedItem`, `createOrderDistributorHeader`, `createOrderDistributorItem`, `createInvoice`
 </Accordion>
 
 </AccordionGroup>

@@ -104,28 +104,6 @@ Esta VIEW é fundamental para definir as regras comerciais específicas de cada 
 
 ---
 
-## VIEW_NEXFAR_SALES_GOAL
-
-Metas de vendas por vendedor/período.
-
-### Descrição
-
-Define metas comerciais para vendedores e permite acompanhamento de performance.
-
-### Uso
-
-Utilize esta VIEW para:
-- Definir metas mensais/trimestrais de vendedores
-- Acompanhar performance de vendas
-- Configurar comissionamento por atingimento de meta
-- Gerar relatórios gerenciais
-
-<Note>
-  Esta VIEW é opcional e específica para clientes que trabalham com metas estruturadas de vendas.
-</Note>
-
----
-
 ## VIEW_NEXFAR_GENERIC_EXTRA_INFO
 
 Informações extras de produtos positivados pelo vendedor.
@@ -159,7 +137,6 @@ graph TD
     E[SELLER] --> B
     F[PAYMENT_CONDITION] --> B
     G[PRICE_GROUP] --> B
-    E --> H[SALES_GOAL]
     I[PRODUCT] --> J[EXTRA_INFO]
     E --> J
 ```
