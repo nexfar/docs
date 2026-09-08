@@ -60,7 +60,7 @@ Nesta página você encontrará:
 
 1. Ler campo `message` da resposta - contém lista de erros específicos
 2. Identificar campo problemático mencionado na mensagem
-3. Consultar [API Reference OpenAPI](/integration/api-reference) para ver formato esperado
+3. Consultar [API Reference OpenAPI](/api-reference) para ver formato esperado
 4. Corrigir payload localmente
 5. Testar no Sandbox antes de reenviar
 6. Validar resposta 201 Created
@@ -81,7 +81,7 @@ Nesta página você encontrará:
 }
 ```
 
-Veja mais exemplos na seção [Erros de Validação Comuns](#erros-de-validacao-comuns) abaixo.
+Veja mais exemplos na seção [Erros de Validação Comuns](#-erros-de-validação-comuns-exemplos-práticos) abaixo.
 
 <Warning>
 ⚠️ Valide dados localmente ANTES de enviar - isso reduz drasticamente erros 400 e acelera integração.
@@ -281,7 +281,7 @@ def enviar_com_retry(url, headers, payload, max_retries=3):
 }
 ```
 
-Consulte a seção [Contato de Suporte](#contato-de-suporte) ao final para informações de como reportar o erro.
+Consulte a seção [Contato de Suporte](#-contato-de-suporte-nexfar) ao final para informações de como reportar o erro.
 
 <Warning>
 ⚠️ Erros 500 NÃO são culpa do cliente - sempre indicam problema no backend. Guarde correlation_id para rastreamento.
@@ -497,7 +497,7 @@ Erros **400 Bad Request** geralmente indicam problema de validação. Veja os ca
 }
 ```
 
-**Solução:** Consultar [API Reference](/integration/api-reference) para ver campos obrigatórios do modelo e adicionar campos faltantes ao payload.
+**Solução:** Consultar [API Reference](/api-reference) para ver campos obrigatórios do modelo e adicionar campos faltantes ao payload.
 
 </Accordion>
 

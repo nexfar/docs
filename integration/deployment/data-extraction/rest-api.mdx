@@ -1,15 +1,15 @@
 ---
-title: "REST API"
-description: "Integração via endpoints REST para extração de dados"
+title: "REST API do ERP"
+description: "A Nexfar consome endpoints REST expostos pelo seu ERP"
 ---
 
 ## Visão Geral
 
 A integração via REST API permite que a Nexfar extraia dados do seu ERP através de endpoints HTTP padronizados. Este método oferece flexibilidade, controle de acesso e facilidade de manutenção.
 
-<Note>
-  **API de Ingestão Nexfar:** Para documentação completa e interativa da API de Ingestão da Nexfar (endpoints para envio de dados), consulte a seção [API Reference](#api-reference) no menu lateral.
-</Note>
+<Warning>
+  **Não confunda com a API Nexfar.** Nesta página, **o seu ERP expõe** os endpoints e a Nexfar os consome (*pull*). Se o que você procura é enviar dados **para** a Nexfar (*push*), use a [API de Ingestão Nexfar](/integration/api-ingestion/overview) — são integrações distintas e você só precisa de uma delas.
+</Warning>
 
 ---
 
@@ -54,7 +54,7 @@ GET /api/nexfar/clients?page=1&pageSize=100
 ## Próximos Passos
 
 1. Revise a [documentação de VIEWs](/integration/deployment/data-extraction/database-views) para entender os campos necessários
-2. Consulte a [API Reference completa](#api-reference) para exemplos de integração
+2. Alinhe o contrato dos endpoints com a equipe Nexfar antes de implementar
 3. Entre em contato com a equipe Nexfar para validação
 
 <Warning>

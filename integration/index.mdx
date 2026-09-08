@@ -1,15 +1,20 @@
 ---
-title: "Visão Geral da Implantação"
-description: "Entenda como integrar seu ERP com a plataforma Nexfar para extração de dados"
+title: "Visão Geral da Integração"
+description: "Métodos disponíveis para integrar seu ERP com a plataforma Nexfar"
 ---
 
 ## Objetivo
 
-Esta seção documenta os métodos de integração disponíveis para que a Nexfar possa extrair dados do seu ERP. A integração permite que a plataforma Nexfar acesse informações essenciais como clientes, produtos, pedidos e condições comerciais diretamente do seu sistema.
+Esta seção documenta os métodos de integração entre o seu ERP e a plataforma Nexfar. A integração acontece em dois sentidos:
 
-## Métodos de Extração de Dados
+- **Entrada de dados** — a Nexfar precisa acessar informações do seu sistema (clientes, produtos, condições comerciais, estoque).
+- **Saída de pedidos** — a Nexfar envia para o seu sistema os pedidos aprovados na plataforma.
 
-A Nexfar oferece diferentes métodos de integração para atender às necessidades e infraestrutura de cada cliente:
+---
+
+## Entrada de Dados
+
+A Nexfar oferece diferentes métodos para atender às necessidades e à infraestrutura de cada cliente:
 
 <CardGroup cols={2}>
   <Card title="Banco de Dados" icon="database" href="/integration/deployment/data-extraction/database-views">
@@ -17,64 +22,100 @@ A Nexfar oferece diferentes métodos de integração para atender às necessidad
 
     - Performance superior
     - Dados em tempo real
-    - Requer liberação de IPs
-    - Requer desenvolvimento do lado do distribuidor/industria
+    - Requer liberação de IPs ou VPN
+    - Requer desenvolvimento do lado do distribuidor/indústria
   </Card>
 
-  <Card title="ERPs" icon="plug" href="/integration/deployment/data-extraction/rest-api">
-    Integração diretas com ERPs: Winthor, Result, Target, InFarma, etc.
-
-    - Integração direta com o ERP
-    - Regras e entidades já mapeadas
-    - Requer liberação específicas por ERP.
-  </Card>
-
-  <Card title="API Nexfar" icon="plug" href="/integration/deployment/data-extraction/rest-api">
-    Integração moderna via API REST ou GraphQL
+  <Card title="API Nexfar" icon="plug" href="/integration/api-ingestion/overview">
+    Você envia os dados para a Nexfar via REST ou GraphQL
 
     - Flexível e segura
     - Controle de acesso granular
-    - Requer desenvolvimento do lado do distribuidor/industria
+    - Requer desenvolvimento do lado do distribuidor/indústria
   </Card>
 
-  <Card title="FTP/SFTP" icon="folder-open" href="/integration/deployment/data-extraction/ftp">
-    Transferência de arquivos (EDI)
+  <Card title="REST API do ERP" icon="server" href="/integration/deployment/data-extraction/rest-api">
+    A Nexfar consome endpoints expostos pelo seu ERP
+
+    - Sentido inverso ao da API Nexfar
+    - Contrato e filtros padronizados
+    - Requer desenvolvimento do lado do distribuidor/indústria
+  </Card>
+
+  <Card title="FTP/SFTP e EDI" icon="folder-open" href="/integration/deployment/data-extraction/ftp">
+    Transferência de arquivos em lote
 
     - Simples de implementar
     - Baixo acoplamento
   </Card>
+
+  <Card title="ERPs Homologados" icon="puzzle-piece">
+    Integrações prontas: Winthor, Result, Target, InFarma, entre outros
+
+    - Regras e entidades já mapeadas
+    - Requisitos específicos por ERP
+    - Fale com a equipe Nexfar para verificar disponibilidade
+  </Card>
 </CardGroup>
+
+---
+
+## Saída de Pedidos
+
+<CardGroup cols={2}>
+  <Card title="Webhook de Pedidos" icon="webhook" href="/integration/webhook-pedidos/overview">
+    A Nexfar envia cada pedido aprovado para o seu endpoint via HTTP POST
+
+    - Modelo push, em tempo real
+    - Sem necessidade de polling
+    - Requer endpoint HTTPS exposto pelo distribuidor
+  </Card>
+</CardGroup>
+
+<Note>
+  O Webhook de Pedidos é independente do método escolhido para entrada de dados — você pode, por exemplo, enviar cadastros via Banco de Dados e receber pedidos via Webhook.
+</Note>
+
+---
 
 ## Escolhendo o Método Ideal
 
 Cada método de integração possui características específicas:
 
-### Banco de Dados:
-- **Melhor para**: Acesso direto e em tempo real aos dados
-- **Requisitos**: Liberação de IPs (whitelist) para acesso ao banco de dados via NAT ou via VPN Site-to-Site.
-- **Vantagens**: Performance, dados atualizados, queries customizadas
+### Banco de Dados
+- **Melhor para**: acesso direto e em tempo real aos dados
+- **Requisitos**: liberação de IPs (whitelist) via NAT ou VPN site-to-site
+- **Vantagens**: performance, dados atualizados, queries customizadas
 
-### ERPs
-- **Melhor para**: Integração diretas com ERPs: Winthor, Result, Target, InFarma, etc.
-- **Requisitos**: Cada ERP tem requisitos individuais que devem ser observados
-- **Vantagens**: Regras já mapeadas, integração já testadas em múltiplos clientes.
+### API Nexfar
+- **Melhor para**: integrações modernas em que o distribuidor ou indústria nos envia os dados
+- **Requisitos**: desenvolvimento de integração com a [API de Ingestão](/integration/api-ingestion/overview)
+- **Vantagens**: flexibilidade, facilidade de manutenção e atualização
 
-### REST API Nexfar
-- **Melhor para**: Integrações modernas e flexíveis onde o distribuidor ou indústria nos envia os dados.
-- **Requisitos**: Desenvolvimento de integração com a nossa API
-- **Vantagens**: Flexibilidade, facilidade de manutenção e atualização
+### REST API do ERP
+- **Melhor para**: ERPs que já expõem uma API própria e preferem ser consultados
+- **Requisitos**: endpoints REST com paginação e filtros conforme o contrato Nexfar
+- **Vantagens**: reaproveita API existente, sem desenvolvimento de envio
 
-### FTP/EDI
-- **Melhor para**: Transferência de arquivos EDI e/ou arquivos em lote
-- **Requisitos**: Servidor FTP configurado
-- **Vantagens**: Simplicidade, processamento batch, baixo acoplamento
+### ERPs Homologados
+- **Melhor para**: distribuidores que usam um ERP já integrado pela Nexfar
+- **Requisitos**: cada ERP tem requisitos individuais que devem ser observados
+- **Vantagens**: regras já mapeadas, integração testada em múltiplos clientes
+
+### FTP/SFTP e EDI
+- **Melhor para**: transferência de arquivos EDI e/ou processamento em lote
+- **Requisitos**: servidor FTP/SFTP configurado
+- **Vantagens**: simplicidade, processamento batch, baixo acoplamento
+
+---
 
 ## Próximos Passos
 
-1. Escolha o método de integração mais adequado para sua infraestrutura
+1. Escolha o método de entrada de dados mais adequado para sua infraestrutura
 2. Revise a documentação específica do método escolhido
-3. Prepare seu ambiente seguindo os requisitos técnicos
-4. Entre em contato com a equipe Nexfar para agendar a integração
+3. Configure o [Webhook de Pedidos](/integration/webhook-pedidos/overview) para receber os pedidos
+4. Prepare seu ambiente seguindo os requisitos técnicos
+5. Entre em contato com a equipe Nexfar para agendar a integração
 
 <Note>
   Dúvidas sobre qual método escolher? Entre em contato com a equipe técnica da Nexfar para uma análise personalizada.

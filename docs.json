@@ -73,16 +73,32 @@
               {
                 "group": "Banco de Dados",
                 "pages": [
-                  "integration/deployment/data-extraction/database-views"
+                  "integration/deployment/data-extraction/database-views",
+                  {
+                    "group": "Referência de VIEWs",
+                    "pages": [
+                      "integration/deployment/data-extraction/views/cadastros-basicos",
+                      "integration/deployment/data-extraction/views/produtos",
+                      "integration/deployment/data-extraction/views/combos",
+                      "integration/deployment/data-extraction/views/vendas",
+                      "integration/deployment/data-extraction/views/pedidos",
+                      "integration/deployment/data-extraction/views/documentos-fiscais",
+                      "integration/deployment/data-extraction/views/impostos-margens"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "ERPs"
+                "group": "REST API do ERP",
+                "pages": [
+                  "integration/deployment/data-extraction/rest-api"
+                ]
               },
               {
                 "group": "EDI/FTP/SFTP",
                 "pages": [
-                  "integration/deployment/data-extraction/ftp"
+                  "integration/deployment/data-extraction/ftp",
+                  "integration/deployment/data-extraction/edi"
                 ]
               }
             ]
@@ -94,9 +110,6 @@
   "logo": {
     "light": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png",
     "dark": "https://nexfar.com.br/wp-content/uploads/2023/06/marca-menu-1.png"
-  },
-  "navbar": {
-    
   },
   "footer": {
     "socials": {
