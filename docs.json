@@ -93,13 +93,6 @@
                 "pages": [
                   "integration/deployment/data-extraction/rest-api"
                 ]
-              },
-              {
-                "group": "EDI/FTP/SFTP",
-                "pages": [
-                  "integration/deployment/data-extraction/ftp",
-                  "integration/deployment/data-extraction/edi"
-                ]
               }
             ]
           }
