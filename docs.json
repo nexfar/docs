@@ -93,6 +93,13 @@
                 "pages": [
                   "integration/deployment/data-extraction/rest-api"
                 ]
+              },
+              {
+                "group": "Vendaspharlab",
+                "hidden": true,
+                "pages": [
+                  "integration/pharlab/sales-mobile"
+                ]
               }
             ]
           }

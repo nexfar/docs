@@ -1,0 +1,692 @@
+---
+title: "Integração Vendaspharlab"
+description: "Como enviar produtos, vendedores e pedidos do Vendaspharlab para a Nexfar — via API REST ou pelo portal de conferência, com importação de planilha"
+icon: "capsules"
+noindex: true
+---
+
+<Info>
+  **Guia de integração · Vendaspharlab**
+
+  | | |
+  | --- | --- |
+  | **Tenant** | `vendaspharlab` |
+  | **API** | `ingestion.nexfar.com.br/api/v1` |
+  | **Portal** | [integrador.nexfar.com.br](https://integrador.nexfar.com.br) |
+  | **Canal dos pedidos** | `EXTERNAL` |
+</Info>
+
+## Como funciona
+
+A Vendaspharlab envia três modelos de dados para a Nexfar: **produtos**, **vendedores** e **pedidos com seus itens**. Os dados chegam a uma base de ingestão isolada por tenant e por ambiente, e de lá seguem para a **Inteligência Comercial**, onde compõem as metas de venda.
+
+Estes pedidos **não** são pedidos Nexfar. Eles nascem em outro canal de vendas e existem na base apenas para efeito de meta — nunca são processados pelo NexOn, pelo NexOff ou pelo ERP do distribuidor. É essa a razão de existir o canal `EXTERNAL`: ele marca o pedido como "de fora", para que a plataforma some o resultado sem tentar operá-lo.
+
+Na prática, isso muda três coisas em relação a um pedido comum, e as três estão detalhadas em [Pedidos](#pedidos): o campo `channel` vai fixo em `EXTERNAL`, os campos que apontam para um pedido Nexfar do outro lado ficam vazios, e a data de faturamento acompanha o status.
+
+<Note>
+  **Por que os identificadores importam**
+
+  A meta é atribuída ao vendedor pelo `sellerId` do pedido, que precisa ser exatamente o mesmo `externalId` usado no cadastro de vendedores. E o mix de produtos e a meta por indústria são montados a partir do `productId` de cada item. Um pedido com `sellerId` desconhecido, ou um item sem `productId`, é aceito pela API sem nenhum erro — e simplesmente não aparece em meta nenhuma.
+</Note>
+
+---
+
+## Ordem de carga
+
+Há uma dependência rígida e duas frouxas, e elas falham de formas bem diferentes.
+
+**Rígida:** o item tem chave estrangeira para o cabeçalho do pedido. Enviar um item antes do pedido dele é recusado na hora, pelo banco.
+
+**Frouxas:** o pedido não tem chave estrangeira para vendedor nem para produto. A API aceita um pedido cujo vendedor ainda não existe — e a meta, atribuída depois por correspondência de identificador, simplesmente não fecha. Esse é o erro caro, porque não aparece como erro.
+
+Carregue nesta ordem e nenhum dos dois acontece.
+
+<Steps>
+  <Step title="Produtos">
+    Catálogo completo. A carga inicial é única; depois, só o que mudar.
+  </Step>
+  <Step title="Vendedores">
+    Toda a equipe. O `externalId` aqui é o que amarra a meta.
+  </Step>
+  <Step title="Pedidos">
+    Cabeçalhos com `channel` = `EXTERNAL`.
+  </Step>
+  <Step title="Itens">
+    Só depois do cabeçalho — o banco recusa item de pedido inexistente.
+  </Step>
+</Steps>
+
+Produtos e vendedores mudam pouco; a rotina do dia a dia é enviar os pedidos e itens do período. Uma carga diária, no fim do expediente, atende a maioria dos casos.
+
+---
+
+## Credenciais
+
+A autenticação é por token JWT de longa duração, enviado em toda requisição no cabeçalho `Authorization`. Não existe endpoint de login: o token é emitido pela Nexfar e entregue à Vendaspharlab por canal seguro, separado deste documento.
+
+```http
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+Você recebeu **dois tokens**. Eles apontam para a mesma URL — o que muda é o claim `environment` dentro do token, e é ele que decide em qual base os dados caem. Sandbox e produção são bases completamente separadas.
+
+| Token | environment | Base URL | Uso |
+| --- | --- | --- | --- |
+| `sandbox` | `sandbox` | `https://ingestion.nexfar.com.br/api/v1` | Homologação. Comece por aqui e valide tudo antes de trocar o token. |
+| `production` | `production` | `https://ingestion.nexfar.com.br/api/v1` | Dados reais, que compõem meta. |
+
+<Warning>
+  **A mesma URL nos dois ambientes**
+
+  Como só o token distingue sandbox de produção, um token trocado por engano em uma variável de ambiente grava dados de teste na base real sem nenhum aviso. Guarde os dois em cofres separados e nomeie a variável pelo ambiente, não por "token".
+</Warning>
+
+O token carrega os escopos `ingest:write` (enviar dados) e `audit:read` (consultar o histórico de envios em `GET /audit-log`). Ele não expira no curto prazo; se precisar revogar, fale com a Nexfar.
+
+A documentação interativa fica em [ingestion.nexfar.com.br/api-docs](https://ingestion.nexfar.com.br/api-docs). Clique em *Authorize*, cole o token de sandbox e teste as chamadas direto do navegador.
+
+<Tip>
+  Detalhes sobre a estrutura do JWT e seus claims estão em [Autenticação JWT](/integration/api-ingestion/authentication) e [Ambientes](/integration/api-ingestion/environments).
+</Tip>
+
+---
+
+## Regras gerais
+
+Valem para os quatro modelos.
+
+### Envio unitário e em lote
+
+Todo modelo tem um endpoint unitário (`POST /products`) e um em lote (`POST /products/bulk`). O endpoint em lote recebe um **array JSON puro** na raiz do corpo — sem envelope, sem chave `data`:
+
+```json
+[
+  { "sku": "MED-001", "name": "Dipirona 500mg Cx 20 Comp", "partnerMaker": false },
+  { "sku": "MED-002", "name": "Amoxicilina 500mg Cx 21 Caps", "partnerMaker": true }
+]
+```
+
+### Limites
+
+| Limite | Valor | O que acontece ao estourar |
+| --- | --- | --- |
+| Registros por requisição em lote | 1.000 | `400` — *Maximum 1000 records per request* |
+| Requisições em lote por minuto | 30 | `429` — aguarde a virada da janela |
+| Requisições comuns por minuto | 100 | `429` |
+| Tamanho do corpo | 5 MB | `413` |
+
+Trinta lotes de mil registros por minuto significa **30.000 registros por minuto**, o que cobre com folga uma carga inicial de catálogo. Ao quebrar um volume grande em pedaços, mande o cabeçalho `X-Chunk-Offset` com o índice do primeiro registro do pedaço — os índices na resposta passam a ser globais, e fica trivial localizar a linha do arquivo original que falhou.
+
+```bash
+# 2.500 registros em 3 pedaços
+curl -X POST https://ingestion.nexfar.com.br/api/v1/products/bulk \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "X-Chunk-Offset: 1000" \
+  -d @produtos-parte-2.json
+```
+
+### Resposta de um lote
+
+O lote sempre devolve `201`, mesmo com falhas parciais. O resultado de cada registro está no corpo — **é obrigatório ler a resposta**, não basta checar o status HTTP.
+
+```json
+{
+  "totalReceived": 3,
+  "totalSuccess": 1,
+  "totalFailed": 1,
+  "totalSkipped": 1,
+  "model": "order_header",
+  "correlation_id": "3f2a...c91",
+  "results": {
+    "success": [ { "index": 0, "id": "550e8400-...", "created_at": "2026-09-09T10:30:00.000Z" } ],
+    "failed":  [ { "index": 1, "error": "Status deve ser um de: ...", "fields": ["status"] } ],
+    "skipped": [ { "index": 2, "reason": "Registro já existe no banco (duplicado)" } ]
+  }
+}
+```
+
+<Warning>
+  **Reenviar não atualiza**
+
+  Se um registro já existe, o lote o coloca em `skipped` e **mantém o valor antigo**. Reenviar o mesmo pedido com o status corrigido não corrige nada.
+
+  Para alterar um registro que já está na base, use `PATCH`. É o caminho normal para a evolução de um pedido: ele entra como `RECEIVED_BY_DISTRIBUTOR` e depois vira `BILLED` por um `PATCH`.
+</Warning>
+
+### Como cada modelo é endereçado
+
+Pedidos e itens são endereçados pela **chave natural** — o identificador que vem do seu sistema, direto na URL. Produtos e vendedores são endereçados pelo **UUID** que a Nexfar devolve na criação; se você não o guardou, encontre o registro por `GET` com `search` antes de alterar.
+
+| Modelo | Chave única | Endereçamento em GET / PATCH / DELETE |
+| --- | --- | --- |
+| Produtos | `sku` | `/products/{uuid}` |
+| Vendedores | `externalId` | `/sellers/{uuid}` |
+| Pedidos | `transientOrderExternalId` | `/orders/{transientOrderExternalId}` |
+| Itens | `transientOrderExternalId` + `sku` | `/order-items/{transientOrderExternalId}/{sku}` |
+
+Se o identificador do pedido tiver barra, espaço ou acento, aplique *percent-encoding* em cada segmento da URL — `PED/2026-1` vira `PED%2F2026-1`.
+
+### Formatos de valor
+
+| Tipo | No JSON da API | Observação |
+| --- | --- | --- |
+| Data | `"2026-09-01"` | ISO 8601. Só a data basta; data-hora completa também é aceita. |
+| Decimal | `1500.50` | Número JSON, ponto como separador decimal. Nunca string. |
+| Inteiro | `10` | Sem separador de milhar. |
+| Booleano | `true` / `false` | Literal JSON, não a string `"true"`. |
+| CNPJ | `"10000001000190"` | Só dígitos, sem ponto, barra ou traço. |
+
+Em planilha os formatos são mais tolerantes — `1.234,56` e `R$ 12,50` são aceitos, e booleano aceita `sim` / `nao`. Veja [CSV, Excel e JSON](#csv-excel-e-json).
+
+### Erros
+
+Um campo que não passa na validação devolve `422 Unprocessable Entity`, com o detalhe por campo em `validation_errors`. Guarde o `correlationId`: é por ele que a Nexfar rastreia a requisição.
+
+```json
+{
+  "statusCode": 422,
+  "message": ["Validation failed"],
+  "error": "Bad Request",
+  "timestamp": "2026-09-09T10:30:45.123Z",
+  "path": "/api/v1/orders",
+  "correlationId": "3f2a...c91",
+  "validation_errors": [
+    {
+      "field": "status",
+      "constraints": { "validation": "Status deve ser um de: RECEIVED_BY_DISTRIBUTOR, BILLED, ..." }
+    }
+  ]
+}
+```
+
+<Warning>
+  **Campo desconhecido derruba a requisição inteira**
+
+  A API não ignora campos que não estão no contrato: ela recusa. Um `totalLiquido` a mais no corpo devolve `422` com *property totalLiquido should not exist*, e nenhum registro do lote é gravado. Mande só o que está documentado aqui.
+</Warning>
+
+O `400 Bad Request` aparece em outro caso: lote acima de 1.000 registros, ou parâmetro de query inválido.
+
+---
+
+## Produtos
+
+O catálogo. Cada produto é único pelo `sku` dentro do tenant e do ambiente.
+
+| Método | Endpoint | |
+| --- | --- | --- |
+| `POST` | `/products` | um produto |
+| `POST` | `/products/bulk` | até 1.000 |
+| `GET` | `/products` | lista paginada |
+| `PATCH` | `/products/{uuid}` | alterar |
+| `DELETE` | `/products/{uuid}` | exclusão lógica |
+
+| Campo | Tipo | | Descrição |
+| --- | --- | --- | --- |
+| `name` | texto (255) | **obr** | Nome do produto. Ex.: *Dipirona 500mg Cx 20 Comp* |
+| `sku` | texto (20) | **obr** | Código do produto no seu sistema. É a chave única. |
+| `partnerMaker` | booleano | **obr** | O produto é de fornecedor parceiro? |
+| `ean` | texto (20) | opc | Código de barras. |
+| `maker` | texto (255) | opc | Fabricante. Hoje a Pharlab usa este campo na Nexfar para indicar a **exclusividade do item**: `EXCLUSIVO`, `PHARLAB` (não exclusivo) ou `SEMI-EXCLUSIVO`. |
+| `category` | texto (255) | opc | Categoria. Ex.: *Genérico*, *Similar*. Hoje a Pharlab usa este campo na Nexfar com as opções `BRONZE`, `PRATA`, `OURO` e `DIAMANTE`. |
+| `principle` | texto (255) | opc | Princípio ativo. |
+| `similar` | texto (255) | opc | Produto semelhante, usado na busca por similares. |
+| `reference` | texto (255) | opc | Produto de referência, se houver. |
+| `complementaryDescription` | texto (255) | opc | Descrição complementar. |
+| `boxQuantity` | inteiro | opc | Unidades por caixa padrão. |
+| `controlled` | booleano | opc | Produto controlado. |
+| `requiredDocuments` | texto (255) | opc | Documentos exigidos. Ex.: `RECEITA`, `RECEITA_AZUL` |
+| `launch` | booleano | opc | Produto em lançamento. |
+
+**Exemplo**
+
+```bash
+curl -X POST https://ingestion.nexfar.com.br/api/v1/products/bulk \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "name": "Dipirona 500mg Cx 20 Comp",
+      "sku": "MED-001",
+      "partnerMaker": false,
+      "ean": "7891234567890",
+      "maker": "EXCLUSIVO",
+      "category": "OURO",
+      "principle": "Dipirona Sódica",
+      "boxQuantity": 20,
+      "controlled": false
+    }
+  ]'
+```
+
+---
+
+## Vendedores
+
+A equipe de vendas. Único pelo `externalId`.
+
+<Note>
+  **O campo que amarra a meta**
+
+  O `externalId` do vendedor é o mesmo valor que vai no `sellerId` de cada pedido, e é por ele que a Inteligência Comercial atribui o resultado. Trate-o como estável: se ele mudar entre uma carga e outra, o histórico do vendedor se parte em dois.
+</Note>
+
+| Método | Endpoint | |
+| --- | --- | --- |
+| `POST` | `/sellers` | um vendedor |
+| `POST` | `/sellers/bulk` | até 1.000 |
+| `GET` | `/sellers` | lista paginada |
+| `PATCH` | `/sellers/{uuid}` | alterar |
+| `DELETE` | `/sellers/{uuid}` | exclusão lógica |
+
+| Campo | Tipo | | Descrição |
+| --- | --- | --- | --- |
+| `name` | texto (255) | **obr** | Nome do vendedor. |
+| `externalId` | texto (50) | **obr** | Código do vendedor no seu sistema. É a chave única. |
+| `televendas` | booleano | **obr** | É televendedor? Se o conceito não existe aí, envie `false`. |
+| `clientFullAccess` | booleano | **obr** | Não se aplica ao seu caso — **envie sempre `false`**. O campo é exclusivo do NexOff, mas o contrato da API o exige. |
+| `isSupervisor` | booleano | **obr** | É supervisor? |
+| `team` | texto (255) | opc | Equipe. Ex.: *Equipe Sudeste* |
+| `cpf` | texto (20) | opc | Só dígitos. **Dígito verificador é conferido** — CPF inválido derruba o registro. |
+| `email` | texto (100) | opc | Formato validado. |
+| `supervisorId` | texto (255) | opc | `externalId` do supervisor. |
+
+**Exemplo**
+
+```bash
+curl -X POST https://ingestion.nexfar.com.br/api/v1/sellers/bulk \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "externalId": "VND001",
+      "name": "João Silva",
+      "televendas": false,
+      "clientFullAccess": false,
+      "isSupervisor": true,
+      "team": "Equipe Sudeste",
+      "email": "joao.silva@vendaspharlab.com.br"
+    }
+  ]'
+```
+
+---
+
+## Pedidos
+
+O cabeçalho do pedido. Único pelo `transientOrderExternalId`, que é também como você o endereça depois.
+
+| Método | Endpoint | |
+| --- | --- | --- |
+| `POST` | `/orders` | um pedido |
+| `POST` | `/orders/bulk` | até 1.000 |
+| `GET` | `/orders` | lista paginada |
+| `GET` | `/orders/{transientOrderExternalId}` | um pedido |
+| `PATCH` | `/orders/{transientOrderExternalId}` | alterar |
+| `DELETE` | `/orders/{transientOrderExternalId}` | exclusão lógica |
+
+| Campo | Tipo | | Descrição |
+| --- | --- | --- | --- |
+| `transientOrderExternalId` | texto (255) | **obr** | Número do pedido no seu sistema. Chave única e endereço do pedido na URL. |
+| `clientId` | texto (255) | **obr** | Código do cliente no seu sistema. |
+| `cnpj` | texto (20) | **obr** | CNPJ do cliente, só dígitos. |
+| `sellerId` | texto (255) | **obr** | O `externalId` do vendedor. É o que atribui a meta. |
+| `status` | enum | **obr** | Um dos sete valores da tabela abaixo. Lista fechada. |
+| `orderDate` | data | **obr** | Data do pedido. **É ela que define o mês da meta.** |
+| `channel` | texto (50) | `EXTERNAL` | Sempre `EXTERNAL` para a Vendaspharlab. É o que marca o pedido como de outro canal. |
+| `billingDate` | data | condic. | Data de faturamento. Preencha **quando, e somente quando**, o status for `BILLED`. |
+| `total` | decimal (2) | opc | **Total do pedido com impostos** — o valor da nota fiscal. |
+| `totalWithoutTaxes` | decimal (2) | opc | **Total do mesmo pedido sem impostos.** Independente de `total` — a Nexfar não deriva um do outro. |
+| `discount` | decimal (2) | opc | Desconto total. |
+| `statusLabel` | texto (255) | opc | Nome do substatus exibido. Ex.: *Em separação* |
+| `statusReason` | texto (255) | opc | Motivo do status. Ex.: *Cliente desistiu* |
+| `orderExternalId` | texto (255) | **vazio** | Reservado ao pedido já integrado no ERP de um distribuidor. Veja a nota abaixo. |
+| `orderNexfarId` | inteiro | **vazio** | Identificador do pedido na plataforma Nexfar. |
+
+<Warning>
+  **As três regras do canal EXTERNAL**
+
+  **1.** `channel` é sempre `EXTERNAL`. Sem ele, o pedido é lido como um pedido Nexfar comum.
+
+  **2.** `billingDate` acompanha o status: preenchida quando o pedido está `BILLED`, vazia enquanto está em aberto. Faturado sem data, ou data sem faturamento, são os dois estados proibidos.
+
+  **3.** `orderExternalId` e `orderNexfarId` ficam vazios — não existe pedido Nexfar do outro lado para eles apontarem.
+</Warning>
+
+### Qual identificador usar
+
+O pedido tem dois campos de identificação, e a distinção entre eles não é óbvia:
+
+- `transientOrderExternalId` — **é o que você usa**. Coloque aqui o número do pedido no sistema da Vendaspharlab, seja ele qual for. É a chave única e o endereço do pedido na URL.
+- `orderExternalId` — existe para o caso de um pedido que já foi integrado ao ERP de um distribuidor e ganhou um segundo número lá. Nesse fluxo isso não acontece.
+
+Ou seja: **se você tem um único número de pedido, ele vai em `transientOrderExternalId` e pronto.** Não repita o valor nos dois campos — o portal recusa um pedido `EXTERNAL` com `orderExternalId` preenchido, mesmo que o valor seja idêntico.
+
+### Os dois totais
+
+O pedido carrega duas leituras do mesmo valor, e as duas são úteis na composição de meta:
+
+- `total` — **com impostos**, o valor da nota fiscal.
+- `totalWithoutTaxes` — **sem impostos**.
+
+São campos independentes: a Nexfar grava o que você mandar e não calcula um a partir do outro. Se só um dos dois existir no seu sistema, mande esse e deixe o outro vazio — melhor um campo em branco do que um número estimado entrando na meta.
+
+<Note>
+  **Se o ambiente ainda não tiver o campo**
+
+  `totalWithoutTaxes` é recente. Se uma chamada devolver `422` dizendo *property totalWithoutTaxes should not exist*, aquele ambiente ainda não foi atualizado — avise a Nexfar e, enquanto isso, envie só `total`.
+</Note>
+
+### Valores de status
+
+| Valor | Significado |
+| --- | --- |
+| `RECEIVED_BY_DISTRIBUTOR` | Pedido em aberto, antes do faturamento. É o status de partida. |
+| `BILLED` | Faturado. Exige `billingDate`. |
+| `IN_TRANSIT` | Em trânsito. |
+| `DELIVERED` | Entregue. |
+| `CANCELED` | Cancelado. |
+| `RETURNED` | Devolvido. |
+| `UNDEFINED` | Recurso de escape: o status de origem não corresponde a nenhum dos anteriores. |
+
+Qualquer outro valor é recusado com `422`. Não invente mapeamento: se o seu status não se encaixa, use `UNDEFINED` e nos avise, para avaliarmos o caso.
+
+**Criar um pedido em aberto**
+
+```bash
+curl -X POST https://ingestion.nexfar.com.br/api/v1/orders \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "transientOrderExternalId": "EXT-000002",
+    "clientId": "CLI002",
+    "cnpj": "10000002000134",
+    "sellerId": "VND002",
+    "status": "RECEIVED_BY_DISTRIBUTOR",
+    "orderDate": "2026-09-03",
+    "channel": "EXTERNAL",
+    "total": 820.00,
+    "totalWithoutTaxes": 738.00,
+    "discount": 0
+  }'
+```
+
+**Faturar o mesmo pedido depois**
+
+```bash
+curl -X PATCH https://ingestion.nexfar.com.br/api/v1/orders/EXT-000002 \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "status": "BILLED", "billingDate": "2026-09-05" }'
+```
+
+---
+
+## Itens de pedido
+
+As linhas do pedido. Cada item é único pela combinação `transientOrderExternalId` + `sku` — ou seja, **um item por SKU dentro de um pedido**. Duas linhas do mesmo SKU no mesmo pedido devem ser somadas antes do envio.
+
+| Método | Endpoint | |
+| --- | --- | --- |
+| `POST` | `/order-items` | um item |
+| `POST` | `/order-items/bulk` | até 1.000 |
+| `GET` | `/order-items` | lista paginada |
+| `GET` | `/order-items/{pedido}/{sku}` | um item |
+| `PATCH` | `/order-items/{pedido}/{sku}` | alterar |
+| `DELETE` | `/order-items/{pedido}/{sku}` | exclusão lógica |
+
+| Campo | Tipo | | Descrição |
+| --- | --- | --- | --- |
+| `transientOrderExternalId` | texto (255) | **obr** | O mesmo do cabeçalho. É o que liga o item ao pedido. |
+| `sku` | texto (20) | **obr** | SKU do produto, igual ao cadastrado em Produtos. |
+| `productId` | texto (20) | **obr** | Código do produto no seu sistema. Se não existir um separado, **repita o SKU**. Veja o alerta abaixo. |
+| `quantityRequested` | inteiro | **obr** | Quantidade solicitada. |
+| `quantityAttended` | inteiro | **obr** | Quantidade atendida. **É esta que compõe a meta.** |
+| `subsidized` | booleano | **obr** | Item bonificado. |
+| `price` | decimal (2) | **obr** | Preço unitário sem imposto. |
+| `finalPrice` | decimal (2) | **obr** | Preço unitário com ST. Sem ST, repita o valor de `price`. |
+| `discount` | decimal (2) | opc | Desconto do item. |
+| `statusReason` | texto (255) | opc | Motivo do não atendimento. Ex.: *Estoque parcial* |
+| `returned` | booleano | opc | Houve devolução deste item. |
+| `returnedQuantity` | inteiro | opc | Quantidade devolvida. |
+| `returnedDate` | data | opc | Data da devolução. |
+| `returnedReason` | texto (255) | opc | Motivo da devolução. |
+| `orderExternalId` | texto (255) | **vazio** | Não se aplica ao canal EXTERNAL. |
+| `orderNexfarId` | inteiro | **vazio** | Não se aplica ao canal EXTERNAL. |
+
+<Warning>
+  **`productId` é obrigatório na prática**
+
+  A API aceita um item sem `productId` e devolve `201`. Mas a Inteligência Comercial usa esse campo para montar o mix de produtos do vendedor e para chegar ao cadastro do produto nas metas por indústria. Um item sem ele atravessa toda a esteira sem erro em ponto nenhum — e some da meta. Envie sempre.
+
+  **Se o seu sistema tem só um código de produto, use-o nos dois campos:** `sku` e `productId` com o mesmo valor. É o esperado, não um contorno — vale para os dois lados, e o mesmo raciocínio se aplica ao cadastro de Produtos, onde o `sku` é a chave.
+</Warning>
+
+Quantidades não podem ser negativas. Já os campos de dinheiro aceitam valor negativo, para representar crédito ou ajuste.
+
+**Exemplo**
+
+```bash
+curl -X POST https://ingestion.nexfar.com.br/api/v1/order-items/bulk \
+  -H "Authorization: Bearer $NEXFAR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "transientOrderExternalId": "EXT-000002",
+      "sku": "MED-003",
+      "productId": "PROD-003",
+      "quantityRequested": 20,
+      "quantityAttended": 18,
+      "subsidized": true,
+      "price": 8.90,
+      "finalPrice": 8.90,
+      "statusReason": "Estoque parcial"
+    }
+  ]'
+```
+
+---
+
+## Exemplo completo
+
+Um pedido faturado, com dois itens, do zero. As chamadas são sequenciais: o cabeçalho primeiro, os itens depois.
+
+**1. Cabeçalho**
+
+```json
+POST /api/v1/orders
+
+{
+  "transientOrderExternalId": "EXT-000001",
+  "clientId": "CLI001",
+  "cnpj": "10000001000190",
+  "sellerId": "VND001",
+  "status": "BILLED",
+  "orderDate": "2026-09-01",
+  "billingDate": "2026-09-02",
+  "channel": "EXTERNAL",
+  "total": 1500.50,
+  "totalWithoutTaxes": 1350.00,
+  "discount": 50.00
+}
+```
+
+**2. Itens**
+
+```json
+POST /api/v1/order-items/bulk
+
+[
+  {
+    "transientOrderExternalId": "EXT-000001",
+    "sku": "MED-001",
+    "productId": "PROD-001",
+    "quantityRequested": 10,
+    "quantityAttended": 10,
+    "subsidized": false,
+    "price": 12.50,
+    "finalPrice": 11.90,
+    "discount": 6.00
+  },
+  {
+    "transientOrderExternalId": "EXT-000001",
+    "sku": "MED-002",
+    "productId": "PROD-002",
+    "quantityRequested": 5,
+    "quantityAttended": 5,
+    "subsidized": false,
+    "price": 30.00,
+    "finalPrice": 28.50,
+    "discount": 7.50
+  }
+]
+```
+
+**3. Conferir**
+
+```http
+GET /api/v1/orders/EXT-000001
+GET /api/v1/order-items?search=EXT-000001
+```
+
+As listagens aceitam `page`, `limit` (máx. 100), `search`, `sortBy`, `sortOrder` e `includeDeleted`, e devolvem `{ data, total, page, limit }`.
+
+---
+
+## Portal de conferência
+
+Além da API, existe uma interface web para conferir o que foi enviado e para importar planilhas sem escrever código. Ela conversa com a mesma API e com os mesmos dados.
+
+Endereço: [**integrador.nexfar.com.br**](https://integrador.nexfar.com.br)
+
+### Entrar
+
+Não há usuário e senha: a tela inicial pede o **token JWT**. Cole o mesmo token que você usa na API — o de sandbox para homologar, o de produção depois. O ambiente do portal é o ambiente do token.
+
+### O que dá para fazer
+
+- **Conferir** — cada modelo tem sua tela de lista, com busca, ordenação, paginação e exportação para CSV.
+- **Corrigir pontualmente** — abrir um registro, ajustar um campo e salvar, sem precisar de uma chamada `PATCH`.
+- **Importar em lote** — arrastar um CSV, um Excel ou um JSON e acompanhar o resultado linha a linha.
+
+As telas relevantes para a Vendaspharlab são **Produtos**, **Vendedores**, **Pedidos** e **Itens de Pedido**.
+
+### Importar uma planilha
+
+<Steps>
+  <Step title="Abrir o assistente">
+    Abra a tela do modelo e clique em **Importar**.
+  </Step>
+  <Step title="Escolher o arquivo">
+    Arraste o arquivo, ou baixe antes o **CSV de exemplo** que o próprio assistente oferece — ele já vem com os cabeçalhos corretos e linhas preenchidas.
+  </Step>
+  <Step title="Conferir o preview">
+    O portal valida cada linha antes de enviar e mostra os erros com o número da linha e o nome do campo.
+  </Step>
+  <Step title="Confirmar">
+    O envio é feito em blocos de mil registros, e no fim aparece o resumo de criados, pulados e falhos.
+  </Step>
+</Steps>
+
+<Warning>
+  **O portal valida mais que a API**
+
+  Duas verificações existem só na interface, porque protegem a composição de meta: o **CNPJ do pedido** tem o dígito verificador conferido, e o **`productId` do item** é exigido. Um arquivo aceito pelo portal passa na API; o contrário nem sempre é verdade.
+</Warning>
+
+---
+
+## CSV, Excel e JSON
+
+O assistente de importação aceita `.csv`, `.xlsx` e `.json`. Em todos, **a primeira linha é o cabeçalho** e cada nome de coluna precisa ser exatamente o nome do campo da API — com maiúsculas e minúsculas idênticas. Colunas opcionais podem ser omitidas; célula vazia significa "não informado".
+
+### Formatos aceitos em planilha
+
+| Tipo | Aceita | Não aceita |
+| --- | --- | --- |
+| Decimal | `12,50` `12.50` `1.234,56` `R$ 12,50` | `12,5,0` |
+| Inteiro | `1000` | `1.000` `1,000` |
+| Booleano | `true` `false` `1` `0` `sim` `nao` | `S` `N` `V` `F` |
+| Data | `2026-09-01` | `01/09/2026` |
+| CNPJ / CPF | `10000001000190` | `10.000.001/0001-90` |
+
+O separador decimal é detectado por linha: `1.234,56` e `1,234.56` chegam ambos a 1234,56. Já para inteiros qualquer separador é erro — `1.000` é ambíguo demais para adivinhar.
+
+No JSON, envie um array de objetos, ou um objeto com a chave `data` contendo o array. Os tipos seguem o JSON de verdade: número sem aspas, booleano literal.
+
+```csv pedidos.csv
+transientOrderExternalId,clientId,cnpj,sellerId,status,orderDate,channel,billingDate,total,totalWithoutTaxes,discount
+EXT-000001,CLI001,10000001000190,VND001,BILLED,2026-09-01,EXTERNAL,2026-09-02,1500.50,1350.00,50
+EXT-000002,CLI002,10000002000134,VND002,RECEIVED_BY_DISTRIBUTOR,2026-09-03,EXTERNAL,,820,738,0
+```
+
+```csv itens-de-pedido.csv
+transientOrderExternalId,sku,productId,quantityRequested,quantityAttended,subsidized,price,finalPrice,discount,statusReason
+EXT-000001,MED-001,PROD-001,10,10,false,"12,50","11,90",6,
+EXT-000001,MED-002,PROD-002,5,5,false,30,"28,50","7,50",
+EXT-000002,MED-003,PROD-003,20,18,true,"8,90","8,90",,Estoque parcial
+```
+
+```csv produtos.csv
+name,sku,partnerMaker,ean,maker,category,principle,boxQuantity,controlled,requiredDocuments
+Dipirona 500mg Cx 20 Comp,MED-001,false,7891234567890,EXCLUSIVO,OURO,Dipirona Sódica,20,false,
+Rivotril 2mg Cx 30 Comp,MED-005,false,7897778889990,PHARLAB,PRATA,Clonazepam,30,true,RECEITA_AZUL
+```
+
+```csv vendedores.csv
+externalId,name,televendas,clientFullAccess,isSupervisor,team,cpf,email,supervisorId
+VND001,João Silva,false,false,true,Equipe Sudeste,10000000108,joao.silva@vendaspharlab.com.br,
+VND002,Maria Santos,true,false,false,Equipe Sudeste,10000000280,maria.santos@vendaspharlab.com.br,VND001
+```
+
+<Note>
+  **Sobre valores com vírgula no CSV**
+
+  Um decimal escrito como `12,50` precisa vir entre aspas, senão a vírgula é lida como separador de coluna. Se preferir evitar o problema, use ponto: `12.50` funciona igual e dispensa aspas.
+</Note>
+
+---
+
+## Homologação
+
+Um roteiro curto para validar a integração em sandbox antes de trocar o token. Cada passo verifica uma coisa que costuma quebrar depois, em produção, quando ninguém está olhando.
+
+1. **Autenticação.** `GET /products` com o token de sandbox devolve `200` e uma lista vazia.
+2. **Catálogo.** Carregue os produtos e confira que `totalSuccess` bate com o número de linhas do arquivo.
+3. **Equipe.** Carregue os vendedores. Anote os `externalId` — eles precisam ser exatamente os que vão nos pedidos.
+4. **Um pedido em aberto.** Status `RECEIVED_BY_DISTRIBUTOR`, `billingDate` vazio, `channel` igual a `EXTERNAL`.
+5. **Os itens desse pedido.** Todos com `productId` preenchido.
+6. **O faturamento.** `PATCH` no pedido, mudando para `BILLED` e informando `billingDate`.
+7. **Um reenvio.** Mande o mesmo pedido de novo e confirme que ele volta em `skipped` — e que o valor na base continua o corrigido, não o antigo.
+8. **Um erro de propósito.** Mande um status inválido e confirme que o seu lado registra o `correlationId` e a linha que falhou.
+9. **Volume real.** Um dia inteiro de pedidos, no formato definitivo. É aqui que aparecem acentuação, SKU acima de 20 caracteres e SKU repetido no mesmo pedido.
+10. **Conferência visual.** Abra o portal com o token de sandbox e compare uma amostra com a origem.
+
+Fechados os dez passos, troque o token pelo de produção e repita os passos 2 e 3 com a carga inicial completa.
+
+---
+
+## Erros comuns
+
+| Sintoma | Causa | Solução |
+| --- | --- | --- |
+| `401` em toda chamada | Token ausente, malformado ou sem o prefixo `Bearer`. | Confira o cabeçalho: `Authorization: Bearer eyJ...`, com um espaço. |
+| `429` no meio de uma carga | Mais de 30 lotes no mesmo minuto. | Espere a virada da janela e retome do pedaço que falhou, mantendo o `X-Chunk-Offset`. |
+| Registros voltam em `skipped` | Já existem na base. O lote não atualiza. | Use `PATCH` para alterar. Comportamento esperado em reenvio. |
+| *Status deve ser um de...* | Status fora da lista fechada. | Mapeie para um dos sete valores, ou use `UNDEFINED`. |
+| Pedido gravado, mas some da meta | `sellerId` não corresponde a nenhum `externalId` de vendedor. | Cadastre o vendedor e reenvie. Nada é rejeitado nesse caso — só não compõe. |
+| Meta de mix e de indústria sem os produtos | Itens enviados sem `productId`. | `PATCH` em cada item preenchendo o campo. |
+| Meta cai no mês errado | O mês vem de `orderDate`, não de `billingDate`. | Envie em `orderDate` a data em que o pedido foi feito. |
+| Item recusado com erro de *foreign key* | O item foi enviado antes do cabeçalho do pedido. | Grave o pedido primeiro. Essa dependência é cobrada pelo banco, não é só recomendação. |
+| Um item do pedido desapareceu | Dois itens com o mesmo SKU no mesmo pedido — o segundo é duplicata. | Some as quantidades e envie uma linha por SKU. |
+| Valor decimal recusado | Formato ambíguo, ou espaço no meio do número. | Use `12.50` no JSON; em planilha, `12,50` entre aspas. |
+| Dados de teste na base de produção | Token trocado — a URL é a mesma nos dois ambientes. | Avise a Nexfar de imediato com o identificador de correlação, para a limpeza. |
+
+Em qualquer caso, o identificador de correlação da resposta é o que permite rastrear a requisição do lado da Nexfar — `correlation_id` na resposta de um lote, `correlationId` na resposta de erro. Inclua-o sempre ao abrir um chamado. O histórico dos seus próprios envios está em [`GET /audit-log`](/integration/api-ingestion/audit-log), com filtros por período, modelo e status.
+
+---
+
+Dúvidas sobre o contrato dos endpoints: [Swagger da API de ingestão](https://ingestion.nexfar.com.br/api-docs). Dúvidas sobre a composição de meta, credenciais ou liberação de produção: fale com a equipe Nexfar.
